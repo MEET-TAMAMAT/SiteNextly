@@ -1,0 +1,5 @@
+UPDATE GITHUB AFTER MAKING CHANGES LOCALLY
+
+git add . 
+git commit -m "Describe what changed" 
+git push

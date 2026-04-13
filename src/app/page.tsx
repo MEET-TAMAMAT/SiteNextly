@@ -16,9 +16,7 @@ export default function Home() {
         preTitle="Nextly Benefits"
         title=" Why should you use this landing page"
       >
-        Nextly is a free landing page & marketing website template for startups
-        and indie projects. Its built with Next.js & TailwindCSS. And its
-        completely open-source.
+        TAMAMAT is designed for Direct Method teaching and small group lessons of up to 8 students - perfect for language schools and beyond! Keep your students engaged with dynamic question-switching, ensuring active participation and focus. Our shortcut selection tools make managing group lessons effortless, interactive, and highly effective.
       </SectionTitle>
 
       <Benefits data={benefitOne} />

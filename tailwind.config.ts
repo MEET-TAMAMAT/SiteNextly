@@ -10,11 +10,13 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class", // or 'media' or 'class'
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
         trueGray: colors.neutral,
+        primary: "#3b82f6",
+        "primary-hover": "#2563eb",
       },
     },
     fontFamily: {
@@ -27,4 +29,5 @@ const config: Config = {
   },
   plugins: [],
 };
+
 export default config;

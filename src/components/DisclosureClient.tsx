@@ -94,7 +94,7 @@ export function DisclosureClient(props: Readonly<DisclosureClientProps>) {
               <Link
                 href={cta.href}
                 target={cta.external ? "_blank" : "_self"}
-                className="w-full px-6 py-2 mt-3 text-center text-white bg-indigo-600 rounded-md lg:ml-5"
+                className="w-full px-6 py-2 mt-3 text-center text-white bg-primary rounded-md lg:ml-5"
               >
                 {cta.text}
               </Link>
