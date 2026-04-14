@@ -2,27 +2,56 @@ import { Container } from "@/components/Container";
 import { Hero } from "@/components/Hero";
 import { directus, readItems } from "@/lib/directus";
 
-async function getHeroData() {
+async function fetchSingle(collection: string) {
   try {
-    const data = await directus.request(readItems("hero"));
-    console.log("DIRECTUS HERO DATA:", data);
-    return data;
+    const data = await directus.request(readItems(collection, { limit: 1 }));
+    return data?.[0] || null;
   } catch (error) {
-    console.error("DIRECTUS ERROR:", error);
+    console.error(`DIRECTUS ERROR (${collection}):`, error);
     return null;
   }
 }
 
+async function fetchMany(collection: string) {
+  try {
+    const data = await directus.request(readItems(collection));
+    return data || [];
+  } catch (error) {
+    console.error(`DIRECTUS ERROR (${collection}):`, error);
+    return [];
+  }
+}
+
 export default async function Home() {
-  const heroData = await getHeroData();
+  const [
+    heroData,
+    howItWorksData,
+    howItWorksStepsData,
+    featuresData,
+    featuresItemsData,
+    pricingPlansData,
+    faqItemsData,
+    testimonialsData,
+    contactData,
+    contactFormData,
+  ] = await Promise.all([
+    fetchSingle("hero"),
+    fetchSingle("how_it_works"),
+    fetchMany("how_it_works_steps"),
+    fetchSingle("features"),
+    fetchMany("features_items"),
+    fetchMany("pricing_plans"),
+    fetchMany("faq_items"),
+    fetchMany("testimonials"),
+    fetchSingle("contact"),
+    fetchSingle("contact_form"),
+  ]);
 
   return (
     <Container>
-      <Hero data={heroData?.[0] || null} />
+      <Hero data={heroData} />
 
-      <pre className="mt-10 whitespace-pre-wrap text-xs">
-        {JSON.stringify(heroData, null, 2)}
-      </pre>
+      {/* Next sections will be connected one by one */}
     </Container>
   );
 }
