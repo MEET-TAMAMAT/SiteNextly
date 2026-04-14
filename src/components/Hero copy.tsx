@@ -63,7 +63,7 @@ export const Hero = ({ data }: HeroProps) => {  return (
       <Container>
         <div className="flex flex-col justify-center">
           <div className="text-xl text-center text-gray-700 dark:text-white">
-            Trusted by <span className="text-indigo-600">2000+</span>{" "}
+            Trusted by <span style={{color: "#3B82F6"}}>2000+</span>{" "}
             customers worldwide
           </div>
 

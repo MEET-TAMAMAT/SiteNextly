@@ -1,57 +1,57 @@
 import {
-  FaceSmileIcon,
+  EnvelopeIcon,
+  UsersIcon,
   ChartBarSquareIcon,
-  CursorArrowRaysIcon,
   DevicePhoneMobileIcon,
+  GlobeAltIcon,
   AdjustmentsHorizontalIcon,
-  SunIcon,
 } from "@heroicons/react/24/solid";
 
 import benefitOneImg from "../../public/img/benefit-one.png";
 import benefitTwoImg from "../../public/img/benefit-two.png";
 
 const benefitOne = {
-  title: "Highlight your benefits",
-  desc: "You can use this space to highlight your first benefit or a feature of your product. It can also contain an image or Illustration like in the example along with some bullet points.",
+  title: "Simple and Effective Teaching Tools",
+  desc: "TAMAMAT provides everything you need to run engaging small group lessons with ease. Our platform is designed specifically for language schools and educators who want to maximize student participation.",
   image: benefitOneImg,
   bullets: [
     {
-      title: "Understand your customers",
-      desc: "Then explain the first point breifly in one or two lines.",
-      icon: <FaceSmileIcon />,
+      title: "Simple Invitations",
+      desc: "Email-based class access with permanent links. Students can join your classroom with just one click.",
+      icon: <EnvelopeIcon />,
     },
     {
-      title: "Improve acquisition",
-      desc: "Here you can add the next benefit point.",
+      title: "Student Management",
+      desc: "Easily add and remove students from your dashboard. Keep your classroom organized and up-to-date.",
+      icon: <UsersIcon />,
+    },
+    {
+      title: "Participation Insights",
+      desc: "Monthly statistics help you track student engagement and participation patterns.",
       icon: <ChartBarSquareIcon />,
-    },
-    {
-      title: "Drive customer retention",
-      desc: "This will be your last bullet point in this section.",
-      icon: <CursorArrowRaysIcon />,
     },
   ],
 };
 
 const benefitTwo = {
-  title: "Offer more benefits here",
-  desc: "You can use this same layout with a flip image to highlight your rest of the benefits of your product. It can also contain an image or Illustration as above section along with some bullet points.",
+  title: "Accessible and User-Friendly",
+  desc: "No complex setup or software installations required. TAMAMAT works seamlessly across all devices, giving you complete control over your virtual classroom experience.",
   image: benefitTwoImg,
   bullets: [
     {
-      title: "Mobile Responsive Template",
-      desc: "Nextly is designed as a mobile first responsive template.",
+      title: "Device Friendly",
+      desc: "Works perfectly on desktop, tablet, and mobile with responsive design that adapts to any screen size.",
       icon: <DevicePhoneMobileIcon />,
     },
     {
-      title: "Powered by Next.js & TailwindCSS",
-      desc: "This template is powered by latest technologies and tools.",
-      icon: <AdjustmentsHorizontalIcon />,
+      title: "No App Needed",
+      desc: "Browser-based platform means no software installation required. Just open your browser and start teaching.",
+      icon: <GlobeAltIcon />,
     },
     {
-      title: "Dark & Light Mode",
-      desc: "Nextly comes with a zero-config light & dark mode. ",
-      icon: <SunIcon />,
+      title: "Teacher Control",
+      desc: "Complete control over student participation and selection. Manage your classroom your way.",
+      icon: <AdjustmentsHorizontalIcon />,
     },
   ],
 };

@@ -9,46 +9,84 @@ import userThreeImg from "../../public/img/user3.jpg";
 export const Testimonials = () => {
   return (
     <Container>
-      <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-3">
-        <div className="lg:col-span-2 xl:col-auto">
-          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-14 rounded-2xl py-14 dark:bg-trueGray-800">
-            <p className="text-2xl leading-normal ">
-              Share a real <Mark>testimonial</Mark>
-              that hits some of your benefits from one of your popular customer.
+      {/* First row - 2 testimonials */}
+      <div className="grid gap-10 lg:grid-cols-2 mb-10">
+        <div>
+          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-10 rounded-2xl py-10 dark:bg-trueGray-800">
+            <p className="text-xl leading-normal">
+              &ldquo;This platform finally makes small group lessons feel <Mark>organized</Mark>.
+              The automatic student selection keeps everyone involved, and the simple classroom links
+              make it incredibly easy for my students to join.&rdquo;
             </p>
 
             <Avatar
               image={userOneImg}
-              name="Sarah Steiner"
-              title="VP Sales at Google"
+              name="Daniel Novak"
+              title="School Owner"
             />
           </div>
         </div>
-        <div className="">
-          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-14 rounded-2xl py-14 dark:bg-trueGray-800">
-            <p className="text-2xl leading-normal ">
-              Make sure you only pick the <Mark>right sentence</Mark>
-              to keep it short and simple.
+
+        <div>
+          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-10 rounded-2xl py-10 dark:bg-trueGray-800">
+            <p className="text-xl leading-normal">
+              &ldquo;Managing participation used to be stressful in my online classes. Now the system
+              randomly selects students for questions, which keeps everyone <Mark>alert and engaged</Mark>.
+              My students know they can be called anytime.&rdquo;
             </p>
 
             <Avatar
               image={userTwoImg}
-              name="Dylan Ambrose"
-              title="Lead marketer at Netflix"
+              name="Maria Garcia"
+              title="Language Coach"
             />
           </div>
         </div>
-        <div className="">
-          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-14 rounded-2xl py-14 dark:bg-trueGray-800">
-            <p className="text-2xl leading-normal ">
-              This is an <Mark>awesome</Mark> landing page template I&apos;ve
-              seen. I would use this for anything.
+      </div>
+
+      {/* Second row - 3 testimonials */}
+      <div className="grid gap-10 lg:grid-cols-3">
+        <div>
+          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-8 rounded-2xl py-10 dark:bg-trueGray-800">
+            <p className="text-lg leading-normal">
+              &ldquo;What I appreciate most is how <Mark>little setup</Mark> is required.
+              I send one link and my students are ready to learn. No downloads, no confusion.&rdquo;
             </p>
 
             <Avatar
               image={userThreeImg}
-              name="Gabrielle Winn"
-              title="Co-founder of Acme Inc"
+              name="Sofia Kos"
+              title="English Teacher"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-8 rounded-2xl py-10 dark:bg-trueGray-800">
+            <p className="text-lg leading-normal">
+              &ldquo;The <Mark>simplicity</Mark> is what convinced me to switch.
+              Invitations take seconds to send, and students enter the classroom with a single click.&rdquo;
+            </p>
+
+            <Avatar
+              image={userOneImg}
+              name="Matt Brandon"
+              title="Director of Studies"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div className="flex flex-col justify-between w-full h-full bg-gray-100 px-8 rounded-2xl py-10 dark:bg-trueGray-800">
+            <p className="text-lg leading-normal">
+              &ldquo;<Mark>Interaction is essential</Mark> in my field. This platform keeps
+              the lesson dynamic by selecting students randomly. It creates a lively atmosphere.&rdquo;
+            </p>
+
+            <Avatar
+              image={userTwoImg}
+              name="Anton Markov"
+              title="Pronunciation Coach"
             />
           </div>
         </div>
@@ -87,7 +125,7 @@ function Mark(props: { readonly children: React.ReactNode }) {
   return (
     <>
       {" "}
-      <mark className="text-indigo-800 bg-indigo-100 rounded-md ring-indigo-100 ring-4 dark:ring-indigo-900 dark:bg-indigo-900 dark:text-indigo-200">
+      <mark className="rounded-md ring-4" style={{color: "#1E40AF", backgroundColor: "#DBEAFE", ringColor: "#DBEAFE"}}>
         {props.children}
       </mark>{" "}
     </>
