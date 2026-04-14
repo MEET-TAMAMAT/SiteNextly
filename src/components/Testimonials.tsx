@@ -125,7 +125,7 @@ function Mark(props: { readonly children: React.ReactNode }) {
   return (
     <>
       {" "}
-      <mark className="rounded-md ring-4" style={{color: "#1E40AF", backgroundColor: "#DBEAFE", ringColor: "#DBEAFE"}}>
+      <mark className="rounded-md ring-4 ring-blue-100" style={{color: "#1E40AF", backgroundColor: "#DBEAFE"}}>
         {props.children}
       </mark>{" "}
     </>
