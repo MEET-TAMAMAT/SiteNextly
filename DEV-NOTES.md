@@ -5,6 +5,8 @@ UPDATE GITHUB AFTER MAKING CHANGES LOCALLY
 
 ```bash
 yarn build
+or 
+yarn dev
 git add . 
 git commit -m "Describe what changed" 
 git push

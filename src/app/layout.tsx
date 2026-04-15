@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Uncial_Antiqua } from "next/font/google";
+import { Nunito } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
@@ -14,6 +15,11 @@ const uncialAntiqua = Uncial_Antiqua({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-uncial-antiqua"
+});
+const nunito = Nunito({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-nunito"
 });
 
 export const metadata: Metadata = {
@@ -32,10 +38,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} ${uncialAntiqua.variable}`}>
+      <body className={`${inter.className} ${uncialAntiqua.variable} ${nunito.variable}`}>
         <ThemeProvider attribute="class">
           <Navbar />
-          <div>{children}</div>
+          <div className="pt-28 pb-8">{children}</div>
           <Footer />
           <BackToTop />
         </ThemeProvider>

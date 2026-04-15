@@ -5,15 +5,12 @@ import { Container } from "@/components/Container";
 
 export function Footer() {
   return (
-    <div className="relative">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 dark:bg-trueGray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-trueGray-700">
       <Container>
-        <div className="pt-10 mx-auto mt-5 border-t border-gray-100 dark:border-trueGray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center py-6">
+        <div className="pt-0 mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-center py-0">
             {/* Social media on the left */}
-            <div className="flex flex-col items-center md:items-start mb-4 md:mb-0">
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Follow Us on Social Media
-              </div>
+            <div className="flex items-center mb-0 md:mb-0">
               <div className="flex space-x-4 text-gray-400 dark:text-gray-500">
                 <a
                   href="https://twitter.com/tamamat"
@@ -64,8 +61,9 @@ export function Footer() {
             </div>
 
             {/* Copyright on the right */}
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Copyright © {new Date().getFullYear()} TAMAMAT. All rights reserved.
+            <div className="text-sm text-gray-600 dark:text-gray-400 text-center">
+              <span className="block md:inline">Copyright © {new Date().getFullYear()} TAMAMAT.</span>
+              <span className="block md:inline"> All rights reserved.</span>
             </div>
           </div>
         </div>

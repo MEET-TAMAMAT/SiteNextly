@@ -32,11 +32,11 @@ export const BackToTop = () => {
       {isVisible && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-5 right-5 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="fixed bottom-6 right-5 z-50 flex items-center justify-center w-11 h-11 rounded-full shadow-lg transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           style={{ backgroundColor: "#3B82F6" }}
           aria-label="Back to top"
         >
-          <ChevronUpIcon className="w-6 h-6 text-white" />
+          <ChevronUpIcon className="w-5 h-5 text-white" />
         </button>
       )}
     </>
