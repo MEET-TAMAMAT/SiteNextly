@@ -39,7 +39,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${uncialAntiqua.variable} ${nunito.variable}`}>
-        <ThemeProvider attribute="class">
+        <ThemeProvider attribute="class" defaultTheme="light">
           <Navbar />
           <div className="pt-28 pb-8">{children}</div>
           <Footer />

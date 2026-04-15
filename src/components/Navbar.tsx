@@ -103,6 +103,11 @@ export const Navbar = () => {
               </li>
             ))}
             <li className="ml-2">
+              <div className="text-gray-700 dark:text-white">
+                <ThemeChanger />
+              </div>
+            </li>
+            <li className="ml-2">
               <Link
                 href="/"
                 className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_10px_20px_rgba(59,130,246,0.4)] whitespace-nowrap"
@@ -112,13 +117,20 @@ export const Navbar = () => {
             </li>
           </ul>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMobileMenu}
-            className={`lg:hidden flex flex-col gap-1 w-6 h-4 cursor-pointer z-50 transition-all duration-300 ${
-              mobileMenuOpen ? 'active' : ''
-            }`}
-          >
+          {/* Mobile Controls Group */}
+          <div className="lg:hidden flex items-center gap-2">
+            {/* Mobile Theme Toggle */}
+            <div className="text-gray-700 dark:text-white">
+              <ThemeChanger />
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMobileMenu}
+              className={`flex flex-col gap-1 w-6 h-4 cursor-pointer z-50 transition-all duration-300 ${
+                mobileMenuOpen ? 'active' : ''
+              }`}
+            >
             <span className={`w-6 h-0.5 bg-gray-800 dark:bg-white rounded transition-all duration-300 ${
               mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''
             }`}></span>
@@ -129,6 +141,7 @@ export const Navbar = () => {
               mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
             }`}></span>
           </button>
+          </div>
         </nav>
       </div>
 
@@ -185,22 +198,6 @@ export const Navbar = () => {
           ))}
         </ul>
 
-        {/* Theme Toggle */}
-        <div className="px-8 py-1">
-          <div className="flex items-center justify-center gap-3 px-5 py-2 cursor-pointer hover:bg-white/5 rounded-xl transition-all duration-300" onClick={(e) => {
-            e.preventDefault();
-            const themeButton = e.currentTarget.querySelector('button');
-            if (themeButton) {
-              themeButton.click();
-            }
-            setMobileMenuOpen(false);
-          }}>
-            <span className="text-white/90 font-medium text-lg">Theme</span>
-            <div className="text-white [&>button]:text-white [&_svg]:fill-white [&_*]:text-white">
-              <ThemeChanger />
-            </div>
-          </div>
-        </div>
 
         {/* Mobile CTA */}
         <div className="p-8">
@@ -213,10 +210,6 @@ export const Navbar = () => {
         </div>
       </div>
 
-      {/* Theme Changer - Desktop only */}
-      <div className="hidden lg:block fixed top-4 right-4 z-40">
-        <ThemeChanger />
-      </div>
 
       {/* Add custom styles */}
       <style jsx global>{`
