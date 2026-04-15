@@ -5,7 +5,7 @@ import { Container } from "@/components/Container";
 
 export function Footer() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/80 dark:bg-trueGray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-trueGray-700">
+    <div className="lg:fixed lg:bottom-0 lg:left-0 lg:right-0 z-40 bg-white/80 dark:bg-trueGray-900/80 backdrop-blur-md border-t border-gray-200 dark:border-trueGray-700">
       <Container>
         <div className="pt-0 mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center py-0">

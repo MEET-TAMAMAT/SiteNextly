@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className={`${inter.className} ${uncialAntiqua.variable} ${nunito.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="light">
           <Navbar />
-          <div className="pt-28 pb-8">{children}</div>
+          <div className="pt-28 lg:pb-8">{children}</div>
           <Footer />
           <BackToTop />
         </ThemeProvider>

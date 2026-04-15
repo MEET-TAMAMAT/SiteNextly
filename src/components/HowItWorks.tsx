@@ -19,8 +19,8 @@ export const HowItWorks = () => {
             <Image
               src="/img/Num-0-Auto.png"
               alt="TAMAMAT How It Works Interface Diagram"
-              width={450}
-              height={360}
+              width={473}
+              height={378}
               className="max-w-full h-auto rounded-lg"
             />
           </div>
@@ -71,11 +71,11 @@ export const HowItWorks = () => {
               </ul>
             </div>
 
-            {/* Buttons */}
-            <div className="pt-4 flex gap-4">
-              <button className="inline-flex items-center px-6 py-3 text-white rounded-lg font-medium transition-colors hover:opacity-90 h-12" style={{backgroundColor: "#3B82F6"}}>
+            {/* Button */}
+            <div className="pt-4">
+              <button className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_10px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center">
                 Advanced Features
-                <ArrowDownCircleIcon className="w-5 h-5 ml-2" />
+                <ArrowDownCircleIcon className="w-4 h-4 ml-2" />
               </button>
             </div>
           </div>

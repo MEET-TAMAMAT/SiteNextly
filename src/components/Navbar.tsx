@@ -20,6 +20,31 @@ export const Navbar = () => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       setIsScrolled(scrollTop > 10);
+
+      // Update active link based on scroll position
+      const sections = [
+        { name: 'Contact', element: document.getElementById('contact') },
+        { name: 'FAQ', element: document.getElementById('faq') },
+        { name: 'Pricing', element: document.getElementById('pricing') },
+        { name: 'Features', element: document.getElementById('features') },
+        { name: 'How it Works', element: document.getElementById('how-it-works') }
+      ];
+
+      const offset = 200; // Account for navbar height
+      let currentActive = 'Home';
+
+      // Check sections from bottom to top
+      for (const section of sections) {
+        if (section.element) {
+          const rect = section.element.getBoundingClientRect();
+          if (rect.top <= offset) {
+            currentActive = section.name;
+            break;
+          }
+        }
+      }
+
+      setActiveLink(currentActive);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -54,6 +79,21 @@ export const Navbar = () => {
   const handleLinkClick = (item: string) => {
     setActiveLink(item);
     setMobileMenuOpen(false);
+
+    // Navigate to the section
+    if (item !== "Home") {
+      const href = getHref(item);
+      if (href.startsWith('#')) {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        window.location.href = href;
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const toggleMobileMenu = () => {
@@ -89,8 +129,7 @@ export const Navbar = () => {
           <ul className="hidden lg:flex items-center gap-1 list-none z-10 relative">
             {navigation.map((item) => (
               <li key={item}>
-                <Link
-                  href={getHref(item)}
+                <button
                   onClick={() => handleLinkClick(item)}
                   className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-[25px] transition-all duration-300 relative overflow-hidden ${
                     activeLink === item
@@ -99,7 +138,7 @@ export const Navbar = () => {
                   }`}
                 >
                   <span>{item}</span>
-                </Link>
+                </button>
               </li>
             ))}
             <li className="ml-2">
@@ -183,21 +222,19 @@ export const Navbar = () => {
         <ul className="p-8 space-y-2">
           {navigation.map((item) => (
             <li key={item}>
-              <Link
-                href={getHref(item)}
+              <button
                 onClick={() => handleLinkClick(item)}
-                className={`flex items-center gap-4 p-5 text-lg font-medium rounded-2xl transition-all duration-300 border ${
+                className={`flex items-center gap-4 p-5 text-lg font-medium rounded-2xl transition-all duration-300 border w-full text-left ${
                   activeLink === item
                     ? 'bg-black/25 text-white border-white/20 shadow-lg'
                     : 'text-white/90 hover:text-white hover:bg-white/10 hover:transform hover:translate-x-2 border-white/10 bg-white/5'
                 }`}
               >
                 <span>{item}</span>
-              </Link>
+              </button>
             </li>
           ))}
         </ul>
-
 
         {/* Mobile CTA */}
         <div className="p-8">
@@ -209,7 +246,6 @@ export const Navbar = () => {
           </Link>
         </div>
       </div>
-
 
       {/* Add custom styles */}
       <style jsx global>{`
