@@ -8,7 +8,7 @@ import userThreeImg from "../../public/img/user3.jpg";
 
 export const Testimonials = () => {
   return (
-    <Container>
+    <Container className="px-8">
       {/* First row - 2 testimonials */}
       <div className="grid gap-10 lg:grid-cols-2 mb-10">
         <div>

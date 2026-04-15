@@ -9,12 +9,10 @@ import Link from "next/link";
 
 export const Contact = () => {
   return (
-    <Container>
+    <Container className="px-8">
       <SectionTitle
-        preTitle="Get in Touch"
-        title="Contact Us"
+        title="Ways to Reach Us"
       >
-        We&apos;re here to help with any questions about TAMAMAT. Reach out through any of these channels.
       </SectionTitle>
 
       <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-2">

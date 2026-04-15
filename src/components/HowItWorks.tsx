@@ -1,13 +1,12 @@
 import Image from "next/image";
 import { Container } from "./Container";
 import { SectionTitle } from "./SectionTitle";
-import { ArrowDownCircleIcon } from "@heroicons/react/24/outline";
+import { PlayCircleIcon } from "@heroicons/react/24/solid";
 
 export const HowItWorks = () => {
   return (
-    <Container>
+    <Container className="px-12">
       <SectionTitle
-        preTitle="HOW IT WORKS"
         title="Teach Faster with Smart Shortcuts"
       >
       </SectionTitle>
@@ -30,7 +29,7 @@ export const HowItWorks = () => {
         <div className="lg:col-span-1">
           <div className="space-y-8">
             {/* Manual Selection Section */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+            <div className="bg-gray-100 dark:bg-gray-800/20 rounded-lg p-6">
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4" style={{color: "#3B82F6"}}>
                 Manual Selection
               </h3>
@@ -51,7 +50,7 @@ export const HowItWorks = () => {
             </div>
 
             {/* Auto Selection Section */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+            <div className="bg-gray-100 dark:bg-gray-800/20 rounded-lg p-6">
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4" style={{color: "#3B82F6"}}>
                 Auto Selection
               </h3>
@@ -72,10 +71,10 @@ export const HowItWorks = () => {
             </div>
 
             {/* Button */}
-            <div className="pt-4">
-              <button className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_10px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center">
-                Advanced Features
-                <ArrowDownCircleIcon className="w-4 h-4 ml-2" />
+            <div className="pt-4 flex justify-center">
+              <button className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center">
+                Watch Video
+                <PlayCircleIcon className="w-4 h-4 ml-2" />
               </button>
             </div>
           </div>

@@ -5,12 +5,10 @@ import Link from "next/link";
 
 export const Pricing = () => {
   return (
-    <Container>
+    <Container className="px-8">
       <SectionTitle
-        preTitle="Pricing Plans"
         title="Choose Your Plan"
       >
-        Flexible pricing options to fit your teaching needs, from individual educators to language schools.
       </SectionTitle>
 
       <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-3">
@@ -164,11 +162,6 @@ export const Pricing = () => {
         </div>
       </div>
 
-      <div className="mt-12 text-center">
-        <p className="text-lg text-gray-600 dark:text-gray-300">
-          All plans include unlimited students per classroom and full access to our teaching tools.
-        </p>
-      </div>
     </Container>
   );
 };
