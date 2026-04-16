@@ -18,14 +18,10 @@
     font-family: var(--font-nunito), sans-serif;
     color: #3B82F6 !important;
   }
-}
 
-@layer utilities {
-  h1,
-  h2,
-  h3 {
-    color: #3B82F6 !important;
-    font-family: var(--font-nunito), sans-serif !important;
+  p,
+  li {
+    font-family: var(--font-nunito), sans-serif;
   }
 }
 

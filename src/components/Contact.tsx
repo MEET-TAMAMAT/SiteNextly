@@ -9,7 +9,7 @@ import Link from "next/link";
 
 export const Contact = () => {
   return (
-    <Container className="px-8">
+    <Container className="px-4 lg:px-8">
       <SectionTitle
         title="Ways to Reach Us"
       >

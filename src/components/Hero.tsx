@@ -6,14 +6,14 @@ import { PlayCircleIcon } from "@heroicons/react/24/solid";
 
 export const Hero = () => {
   return (
-    <Container className="flex flex-wrap px-8 pt-0">
+    <Container className="flex flex-wrap px-4 lg:px-8 pt-0 lg:pt-8 xl:pt-12">
       <div className="flex items-center w-full lg:w-1/2 lg:pl-8 xl:pl-12">
         <div className="max-w-2xl mb-2 lg:mb-8">
-          <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-800 lg:text-4xl lg:leading-tight xl:text-5xl xl:leading-tight dark:text-white text-center lg:text-left">
+          <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-800 lg:text-3xl lg:leading-tight xl:text-4xl xl:leading-tight dark:text-white text-center lg:text-left">
             Online Teaching Platform for Small Groups
           </h1>
 
-          <p className="py-5 text-base leading-relaxed lg:leading-loose xl:[line-height:2.025] text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300">
+          <p className="py-5 text-sm leading-relaxed lg:leading-loose xl:[line-height:2.025] text-gray-500 lg:text-lg xl:text-xl dark:text-gray-300">
             TAMAMAT is designed for Direct Method teaching and small group lessons
             of up to 8 students - perfect for language schools and beyond! Keep
             your students engaged with dynamic question-switching, ensuring active

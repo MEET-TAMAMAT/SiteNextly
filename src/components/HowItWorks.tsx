@@ -5,15 +5,15 @@ import { PlayCircleIcon } from "@heroicons/react/24/solid";
 
 export const HowItWorks = () => {
   return (
-    <Container className="px-12">
+    <Container className="px-4 lg:px-8">
       <SectionTitle
         title="Teach Faster with Smart Shortcuts"
       >
       </SectionTitle>
 
-      <div className="grid gap-16 lg:grid-cols-2 items-center">
+      <div className="grid gap-12 lg:grid-cols-10 items-center">
         {/* Left side - Image */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-4 order-2 lg:order-1">
           <div className="relative flex justify-center">
             <Image
               src="/img/Num-0-Auto.png"
@@ -26,7 +26,7 @@ export const HowItWorks = () => {
         </div>
 
         {/* Right side - Content */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-6 order-1 lg:order-2">
           <div className="space-y-8">
             {/* Manual Selection Section */}
             <div className="bg-gray-100 dark:bg-gray-800/20 rounded-lg p-6">
