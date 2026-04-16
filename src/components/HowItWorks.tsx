@@ -29,7 +29,7 @@ export const HowItWorks = () => {
         <div className="lg:col-span-6 order-1 lg:order-2">
           <div className="space-y-8">
             {/* Manual Selection Section */}
-            <div className="bg-gray-100 dark:bg-gray-800/20 rounded-lg p-6">
+            <div className="bg-gray-100 dark:bg-gray-800/20 rounded-lg px-6 py-2">
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4" style={{color: "#3B82F6"}}>
                 Manual Selection
               </h3>
@@ -50,7 +50,7 @@ export const HowItWorks = () => {
             </div>
 
             {/* Auto Selection Section */}
-            <div className="bg-gray-100 dark:bg-gray-800/20 rounded-lg p-6">
+            <div className="bg-gray-100 dark:bg-gray-800/20 rounded-lg px-6 py-2">
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4" style={{color: "#3B82F6"}}>
                 Auto Selection
               </h3>

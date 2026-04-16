@@ -10,37 +10,35 @@ import {
 import { Container } from "@/components/Container";
 import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
-import { Benefits } from "@/components/Benefits";
 import { Pricing } from "@/components/Pricing";
 import { Faq } from "@/components/Faq";
 import { Contact } from "@/components/Contact";
 import { SectionTitle } from "@/components/SectionTitle";
 
-import { benefitOne, benefitTwo } from "@/components/data";
 
 export default function Home() {
   return (
     <>
       <Hero />
 
-      <section id="how-it-works">
+      <section id="how-it-works" className="scroll-mt-6 lg:scroll-mt-16">
         <HowItWorks />
       </section>
 
-      <section id="features">
-        <Container className="px-12">
+      <section id="features" className="scroll-mt-6 lg:scroll-mt-16">
+        <Container className="px-4 lg:px-8">
           <SectionTitle
             title="Built for Small Groups"
           >
           </SectionTitle>
 
-          <div className="grid gap0 lg:grid-cols-5 items-center">
+          <div className="grid gap-0 lg:grid-cols-5 items-center">
             {/* Left side - Feature blocks */}
             <div className="lg:col-span-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {/* Feature Block 1 */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
-                  <div className="flex items-center mb0">
+                  <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <EnvelopeIcon className="w-8 h-8 text-blue-600" />
                     </div>
@@ -51,7 +49,7 @@ export default function Home() {
 
                 {/* Feature Block 2 */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
-                  <div className="flex items-center mb0">
+                  <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <UsersIcon className="w-8 h-8 text-blue-600" />
                     </div>
@@ -62,7 +60,7 @@ export default function Home() {
 
                 {/* Feature Block 3 */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
-                  <div className="flex items-center mb0">
+                  <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <ChartBarSquareIcon className="w-8 h-8 text-blue-600" />
                     </div>
@@ -73,7 +71,7 @@ export default function Home() {
 
                 {/* Feature Block 4 */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
-                  <div className="flex items-center mb0">
+                  <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <DevicePhoneMobileIcon className="w-8 h-8 text-blue-600" />
                     </div>
@@ -84,7 +82,7 @@ export default function Home() {
 
                 {/* Feature Block 5 */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
-                  <div className="flex items-center mb0">
+                  <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <GlobeAltIcon className="w-8 h-8 text-blue-600" />
                     </div>
@@ -95,7 +93,7 @@ export default function Home() {
 
                 {/* Feature Block 6 */}
                 <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
-                  <div className="flex items-center mb0">
+                  <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <AdjustmentsHorizontalIcon className="w-8 h-8 text-blue-600" />
                     </div>
@@ -122,12 +120,12 @@ export default function Home() {
         </Container>
       </section>
 
-      <section id="pricing">
+      <section id="pricing" className="scroll-mt-6 lg:scroll-mt-16">
         <Pricing />
       </section>
 
 
-      <section id="faq">
+      <section id="faq" className="scroll-mt-16 lg:scroll-mt-20">
         <SectionTitle
           title="Frequently Asked Questions"
         >
@@ -135,7 +133,7 @@ export default function Home() {
         <Faq />
       </section>
 
-      <section id="contact">
+      <section id="contact" className="scroll-mt-6 lg:scroll-mt-16">
         <Contact />
       </section>
     </>
