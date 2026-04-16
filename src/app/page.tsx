@@ -37,7 +37,7 @@ export default function Home() {
             <div className="lg:col-span-3">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {/* Feature Block 1 */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
+                <div className="bg-white dark:bg-gray-800/20 rounded-lg px-2 py-1 ">
                   <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <EnvelopeIcon className="w-8 h-8 text-blue-600" />
@@ -48,7 +48,7 @@ export default function Home() {
                 </div>
 
                 {/* Feature Block 2 */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
+                <div className="bg-white dark:bg-gray-800/20 rounded-lg px-2 py-1 ">
                   <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <UsersIcon className="w-8 h-8 text-blue-600" />
@@ -59,7 +59,7 @@ export default function Home() {
                 </div>
 
                 {/* Feature Block 3 */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
+                <div className="bg-white dark:bg-gray-800/20 rounded-lg px-2 py-1 ">
                   <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <ChartBarSquareIcon className="w-8 h-8 text-blue-600" />
@@ -70,7 +70,7 @@ export default function Home() {
                 </div>
 
                 {/* Feature Block 4 */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
+                <div className="bg-white dark:bg-gray-800/20 rounded-lg px-2 py-1 ">
                   <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <DevicePhoneMobileIcon className="w-8 h-8 text-blue-600" />
@@ -81,7 +81,7 @@ export default function Home() {
                 </div>
 
                 {/* Feature Block 5 */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
+                <div className="bg-white dark:bg-gray-800/20 rounded-lg px-2 py-1 ">
                   <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <GlobeAltIcon className="w-8 h-8 text-blue-600" />
@@ -92,7 +92,7 @@ export default function Home() {
                 </div>
 
                 {/* Feature Block 6 */}
-                <div className="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 ">
+                <div className="bg-white dark:bg-gray-800/20 rounded-lg px-2 py-1 ">
                   <div className="flex items-center mb-0">
                     <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
                       <AdjustmentsHorizontalIcon className="w-8 h-8 text-blue-600" />

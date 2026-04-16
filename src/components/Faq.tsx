@@ -15,16 +15,17 @@ export const Faq = () => {
               <Disclosure defaultOpen={index === 0}>
                 {({ open }) => (
                   <>
-                    <DisclosureButton className="flex items-center justify-between w-full px-4 py-4 text-xl font-bold text-left text-gray-800 rounded-lg bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-100 focus-visible:ring-opacity-75 dark:bg-trueGray-800 dark:text-gray-200">
+                    <DisclosureButton className="flex items-center justify-between w-full px-4 py-4 text-xl font-semibold text-left text-gray-800 rounded-lg bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-100 focus-visible:ring-opacity-75 dark:bg-trueGray-800 dark:text-gray-200">
                       <span style={{color: "#3B82F6"}}>{item.question}</span>
                       <ChevronUpIcon
                         className={`${
                           open ? "transform rotate-180" : ""
-                        } w-7 h-7 font-bold`}
-                        style={{color: "#3B82F6"}}
+                        } w-7 h-7 text-gray-700 font-black flex-shrink-0`}
+                        strokeWidth={2}
+                        style={{ minWidth: '28px', minHeight: '28px' }}
                       />
                     </DisclosureButton>
-                    <DisclosurePanel className="px-4 pt-4 pb-2 text-base text-gray-500 dark:text-gray-300" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
+                    <DisclosurePanel className="px-4 pt-2 pb-2 text-base text-gray-500 dark:text-gray-300" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
                       {item.answer}
                     </DisclosurePanel>
                   </>
@@ -41,16 +42,17 @@ export const Faq = () => {
               <Disclosure>
                 {({ open }) => (
                   <>
-                    <DisclosureButton className="flex items-center justify-between w-full px-4 py-4 text-xl font-bold text-left text-gray-800 rounded-lg bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-100 focus-visible:ring-opacity-75 dark:bg-trueGray-800 dark:text-gray-200">
+                    <DisclosureButton className="flex items-center justify-between w-full px-4 py-4 text-xl font-semibold text-left text-gray-800 rounded-lg bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-100 focus-visible:ring-opacity-75 dark:bg-trueGray-800 dark:text-gray-200">
                       <span style={{color: "#3B82F6"}}>{item.question}</span>
                       <ChevronUpIcon
                         className={`${
                           open ? "transform rotate-180" : ""
-                        } w-7 h-7 font-bold`}
-                        style={{color: "#3B82F6"}}
+                        } w-7 h-7 text-gray-700 font-black flex-shrink-0`}
+                        strokeWidth={2}
+                        style={{ minWidth: '28px', minHeight: '28px' }}
                       />
                     </DisclosureButton>
-                    <DisclosurePanel className="px-4 pt-4 pb-2 text-base text-gray-500 dark:text-gray-300" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
+                    <DisclosurePanel className="px-4 pt-2 pb-2 text-base text-gray-500 dark:text-gray-300" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
                       {item.answer}
                     </DisclosurePanel>
                   </>

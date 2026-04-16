@@ -11,7 +11,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center py-0">
             {/* Social media on the left */}
             <div className="flex items-center mb-0 md:mb-0">
-              <div className="flex space-x-4 text-gray-400 dark:text-gray-500">
+              <div className="flex space-x-4 mb-4 text-gray-400 dark:text-gray-500">
                 <a
                   href="https://twitter.com/tamamat"
                   target="_blank"
@@ -61,8 +61,8 @@ export function Footer() {
             </div>
 
             {/* Copyright on the right */}
-            <div className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              <span className="block md:inline">Copyright © {new Date().getFullYear()} TAMAMAT.</span>
+            <div className="text-sm text-gray-600 dark:text-gray-400 text-center" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
+              <span className="block md:inline mb-1 md:mb-0">Copyright © {new Date().getFullYear()} TAMAMAT.</span>
               <span className="block md:inline"> All rights reserved.</span>
             </div>
           </div>
