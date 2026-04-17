@@ -1,9 +1,19 @@
+"use client";
+
+import { useState } from 'react';
 import Image from "next/image";
 import { Container } from "./Container";
 import { SectionTitle } from "./SectionTitle";
+import { VideoModal } from "./VideoModal";
 import { PlayCircleIcon } from "@heroicons/react/24/solid";
 
 export const HowItWorks = () => {
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
+  const handleWatchVideo = () => {
+    setIsVideoModalOpen(true);
+  };
+
   return (
     <Container className="px-4 lg:px-8">
       <SectionTitle
@@ -72,7 +82,10 @@ export const HowItWorks = () => {
 
             {/* Button */}
             <div className="pt-4 flex justify-center">
-              <button className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center">
+              <button
+                onClick={handleWatchVideo}
+                className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:shadow-[0_12px_30px_rgba(59,130,246,0.5)] transition-all duration-200"
+              >
                 Watch Video
                 <PlayCircleIcon className="w-4 h-4 ml-2" />
               </button>
@@ -80,6 +93,13 @@ export const HowItWorks = () => {
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+        videoUrl="#"
+      />
     </Container>
   );
 };

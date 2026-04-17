@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "directus": {
+      "command": "npx",
+      "args": [
+        "directus-mcp-server",
+        "--url",
+        "https://directus-production-8f45.up.railway.app",
+        "--token",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhmZTY3OTgxLWYzNDYtNGQxZi05OTYxLWNhNjFhMjExZjMwOCIsInJvbGUiOiI1YzRkN2QzMC1lNjY4LTQzZjQtYmQ0My1lYTI4MGI2MDhlY2IiLCJhcHBfYWNjZXNzIjp0cnVlLCJhZG1pbl9hY2Nlc3MiOnRydWUsImlhdCI6MTc3NjQ1MDQ4MiwiZXhwIjoxNzc2NDUxMzgyLCJpc3MiOiJkaXJlY3R1cyJ9.sN-noMoTd7DOLx6wXRpZMS5p2YMJYhLVMMaJbA73jAc"
+      ],
+      "env": {
+        "DIRECTUS_URL": "https://directus-production-8f45.up.railway.app",
+        "DIRECTUS_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhmZTY3OTgxLWYzNDYtNGQxZi05OTYxLWNhNjFhMjExZjMwOCIsInJvbGUiOiI1YzRkN2QzMC1lNjY4LTQzZjQtYmQ0My1lYTI4MGI2MDhlY2IiLCJhcHBfYWNjZXNzIjp0cnVlLCJhZG1pbl9hY2Nlc3MiOnRydWUsImlhdCI6MTc3NjQ1MDQ4MiwiZXhwIjoxNzc2NDUxMzgyLCJpc3MiOiJkaXJlY3R1cyJ9.sN-noMoTd7DOLx6wXRpZMS5p2YMJYhLVMMaJbA73jAc"
+      }
+    }
+  }
+}

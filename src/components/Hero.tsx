@@ -1,10 +1,19 @@
+"use client";
+
+import { useState } from 'react';
 import Image from "next/image";
-import Link from "next/link";
 import { Container } from "./Container";
+import { VideoModal } from "./VideoModal";
 import heroImg from "../../public/img/hero.png";
 import { PlayCircleIcon } from "@heroicons/react/24/solid";
 
 export const Hero = () => {
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+
+  const handleWatchVideo = () => {
+    setIsVideoModalOpen(true);
+  };
+
   return (
     <Container className="flex flex-wrap px-4 lg:px-8 pt-0 lg:pt-8 xl:pt-12">
       <div className="flex items-center w-full lg:w-1/2 lg:pl-8 xl:pl-12">
@@ -22,13 +31,13 @@ export const Hero = () => {
           </p>
 
           <div className="flex flex-row items-center justify-center">
-            <Link
-              href="#how-it-works"
-              className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center"
+            <button
+              onClick={handleWatchVideo}
+              className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:shadow-[0_12px_30px_rgba(59,130,246,0.5)] transition-all duration-200"
             >
               Watch Video
               <PlayCircleIcon className="w-4 h-4 ml-2" />
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -45,6 +54,13 @@ export const Hero = () => {
           />
         </div>
       </div>
+
+      {/* Video Modal */}
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+        videoUrl="#"
+      />
     </Container>
   );
 };

@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(npm install:*)",
-      "Bash(yarn build *)"
+      "Bash(yarn build *)",
+      "WebFetch(domain:directus-production-d4f6.up.railway.app)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "directus"
+  ]
 }
