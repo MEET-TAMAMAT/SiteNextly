@@ -2,6 +2,29 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  // Block security scan attempts (common attack vectors)
+  const blockedPaths = [
+    '/.git',
+    '/.env',
+    '/.DS_Store',
+    '/config',
+    '/admin',
+    '/wp-admin',
+    '/wp-content',
+    '/xmlrpc.php'
+  ]
+
+  if (blockedPaths.some(blocked => pathname.startsWith(blocked))) {
+    return new NextResponse('Access denied', {
+      status: 403,
+      headers: {
+        'X-Robots-Tag': 'noindex, nofollow'
+      }
+    })
+  }
+
   // Block search engine indexing with HTTP headers
   const response = NextResponse.next()
 
