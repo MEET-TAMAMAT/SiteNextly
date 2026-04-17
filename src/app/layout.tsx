@@ -23,16 +23,25 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: "Online Platform for Small Classes | TAMAMAT",
-  description:
-    "TAMAMAT is an online teaching platform designed for small groups and effective lesson management tools.",
+  title: "TAMAMAT Development Site",
+  description: "Development environment - Not for public use",
   robots: {
     index: false,
     follow: false,
+    noarchive: true,
+    nosnippet: true,
+    noimageindex: true,
+    nocache: true,
     googleBot: {
       index: false,
       follow: false,
+      noarchive: true,
+      nosnippet: true,
+      noimageindex: true,
     },
+  },
+  other: {
+    "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet, noimageindex, nocache",
   },
   icons: {
     icon: "/icon.png",
