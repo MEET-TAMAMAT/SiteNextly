@@ -26,6 +26,14 @@ export const metadata: Metadata = {
   title: "Online Platform for Small Classes | TAMAMAT",
   description:
     "TAMAMAT is an online teaching platform designed for small groups and effective lesson management tools.",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
   icons: {
     icon: "/icon.png",
   },
