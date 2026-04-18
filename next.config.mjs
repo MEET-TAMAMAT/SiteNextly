@@ -11,6 +11,8 @@ const nextConfig = {
         hostname: "admin.tamamat.com",
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
   },
 };
 
