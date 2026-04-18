@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "directus-production-d4f6.up.railway.app",
       },
+      {
+        protocol: "https",
+        hostname: "admin.tamamat.com",
+      },
     ],
   },
 };
