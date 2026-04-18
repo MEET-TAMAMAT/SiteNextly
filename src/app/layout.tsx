@@ -5,7 +5,7 @@ import { Nunito } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
-import { Navbar } from "@/components/Navbar";
+import { DirectusNavbar } from "@/components/DirectusNavbar";
 import { Footer } from "@/components/Footer";
 import { BackToTop } from "@/components/BackToTop";
 
@@ -48,7 +48,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${uncialAntiqua.variable} ${nunito.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="light">
-          <Navbar />
+          <DirectusNavbar />
           <div className="pt-28 lg:pb-8">{children}</div>
           <Footer />
           <BackToTop />
