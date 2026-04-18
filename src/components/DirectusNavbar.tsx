@@ -85,11 +85,17 @@ export const DirectusNavbar = () => {
         .map(item => item.label)
     : fallbackNavigation;
 
-  // Get logo source (using static images until Directus file permissions are resolved)
+  // Get logo source
   const getLogoSource = () => {
     if (!mounted) return "/img/TAMAMAT-logo-200x122-Light-Theme.svg";
 
-    // Use static images for now - Directus file access blocked for public role
+    if (headerConfig?.logo) {
+      const isDark = resolvedTheme === 'dark' || theme === 'dark';
+      const logoFileId = isDark ? headerConfig.logo.dark_theme_logo : headerConfig.logo.light_theme_logo;
+      return getImageUrl(logoFileId);
+    }
+
+    // Fallback
     return (resolvedTheme === 'dark' || theme === 'dark')
       ? "/img/TAMAMAT-logo-200x122-Dark-Theme.svg"
       : "/img/TAMAMAT-logo-200x122-Light-Theme.svg";
