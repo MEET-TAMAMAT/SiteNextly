@@ -34,8 +34,6 @@ export const DirectusNavbar = () => {
   const loadHeaderConfig = async () => {
     try {
       const config = await getHeaderConfig();
-      console.log("🔍 Debug - Header Config:", config);
-      console.log("🔍 Debug - Logo Data:", config?.logo);
       setHeaderConfig(config);
     } catch (error) {
       console.error("Failed to load header config:", error);
@@ -93,8 +91,8 @@ export const DirectusNavbar = () => {
 
     if (headerConfig?.logo) {
       const isDark = resolvedTheme === 'dark' || theme === 'dark';
-      const logoFile = isDark ? headerConfig.logo.dark_theme_logo : headerConfig.logo.light_theme_logo;
-      return getImageUrl(logoFile.id);
+      const logoFileId = isDark ? headerConfig.logo.dark_theme_logo : headerConfig.logo.light_theme_logo;
+      return getImageUrl(logoFileId);
     }
 
     // Fallback
