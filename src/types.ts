@@ -8,8 +8,8 @@ export interface PageProps {
 // Directus Header Configuration
 export interface HeaderLogo {
   id: string;
-  light_theme_logo: string;
-  dark_theme_logo: string;
+  light_theme_logo: string | { id: string; [key: string]: any };
+  dark_theme_logo: string | { id: string; [key: string]: any };
   alt_text: string;
   width: number;
   height: number;

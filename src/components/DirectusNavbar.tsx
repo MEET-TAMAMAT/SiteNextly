@@ -91,8 +91,11 @@ export const DirectusNavbar = () => {
 
     if (headerConfig?.logo) {
       const isDark = resolvedTheme === 'dark' || theme === 'dark';
-      const logoFileId = isDark ? headerConfig.logo.dark_theme_logo : headerConfig.logo.light_theme_logo;
-      return getImageUrl(logoFileId);
+      const logoFile = isDark ? headerConfig.logo.dark_theme_logo : headerConfig.logo.light_theme_logo;
+      const logoFileId = typeof logoFile === 'string' ? logoFile : logoFile?.id;
+      if (logoFileId) {
+        return getImageUrl(logoFileId);
+      }
     }
 
     // Fallback
