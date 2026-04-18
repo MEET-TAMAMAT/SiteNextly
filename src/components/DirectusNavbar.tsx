@@ -34,6 +34,8 @@ export const DirectusNavbar = () => {
   const loadHeaderConfig = async () => {
     try {
       const config = await getHeaderConfig();
+      console.log("🔍 Debug - Header Config:", config);
+      console.log("🔍 Debug - Logo Data:", config?.logo);
       setHeaderConfig(config);
     } catch (error) {
       console.error("Failed to load header config:", error);
