@@ -242,8 +242,12 @@ export const DirectusNavbar = () => {
               className="h-8 w-auto"
             />
             <span
-              className="bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-100 bg-clip-text text-transparent"
-              style={{ fontFamily: "'Uncial Antiqua', serif" }}
+              className="company-title"
+              style={{
+                fontFamily: "'Uncial Antiqua', serif",
+                color: currentTheme === 'dark' ? '#ffffff' : '#1f2937',
+                fontWeight: 'bold'
+              }}
             >
               {companyTitle}
             </span>
@@ -338,7 +342,15 @@ export const DirectusNavbar = () => {
                 className="h-7 w-auto"
               />
             </div>
-            <span style={{ fontFamily: "'Uncial Antiqua', serif" }}>{companyTitle}</span>
+            <span
+              style={{
+                fontFamily: "'Uncial Antiqua', serif",
+                color: '#ffffff',
+                fontWeight: 'bold'
+              }}
+            >
+              {companyTitle}
+            </span>
           </Link>
           <button
             onClick={() => setMobileMenuOpen(false)}
@@ -381,13 +393,27 @@ export const DirectusNavbar = () => {
 
       {/* Add custom styles with better browser compatibility */}
       <style jsx global>{`
+        /* Force dark theme background for older browsers */
+        html.dark,
+        html.dark body {
+          background-color: #0f172a !important;
+          color: #ffffff !important;
+        }
+
+        /* Light theme background */
+        html:not(.dark),
+        html:not(.dark) body {
+          background-color: #ffffff !important;
+          color: #1f2937 !important;
+        }
+
         /* Enhanced theme support for older browsers */
         html.dark body,
         html.dark .navbar {
           --tw-bg-opacity: 1;
         }
 
-        /* Force theme colors for older browsers */
+        /* Force theme colors for navbar */
         html.dark .navbar {
           background-color: rgba(0, 0, 0, 0.1) !important;
           border-color: rgba(255, 255, 255, 0.1) !important;
@@ -396,6 +422,15 @@ export const DirectusNavbar = () => {
         html:not(.dark) .navbar {
           background-color: rgba(255, 255, 255, 0.8) !important;
           border-color: rgba(229, 231, 235, 0.5) !important;
+        }
+
+        /* Company title styling */
+        html.dark .company-title {
+          color: #ffffff !important;
+        }
+
+        html:not(.dark) .company-title {
+          color: #1f2937 !important;
         }
 
         /* Theme-specific text colors */
@@ -409,6 +444,26 @@ export const DirectusNavbar = () => {
 
         html:not(.dark) .text-gray-800 {
           color: rgba(31, 41, 55, 1) !important;
+        }
+
+        html:not(.dark) .text-gray-700 {
+          color: rgba(55, 65, 81, 1) !important;
+        }
+
+        /* Force dark background for all major containers */
+        html.dark main,
+        html.dark section,
+        html.dark div.bg-white {
+          background-color: #0f172a !important;
+        }
+
+        /* Button and interactive element colors */
+        html.dark button {
+          color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        html.dark button:hover {
+          color: rgba(255, 255, 255, 1) !important;
         }
 
         /* Navbar animations */
