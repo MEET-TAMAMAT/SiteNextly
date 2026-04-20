@@ -15,6 +15,7 @@ export const DirectusNavbar = () => {
   const [activeLink, setActiveLink] = useState("Home");
   const [headerConfig, setHeaderConfig] = useState<HeaderConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentTheme, setCurrentTheme] = useState<string>('light');
 
   // Fallback navigation for when Directus is unavailable
   const fallbackNavigation = [
@@ -30,6 +31,38 @@ export const DirectusNavbar = () => {
     setMounted(true);
     loadHeaderConfig();
   }, []);
+
+  // Enhanced theme tracking for older browsers
+  useEffect(() => {
+    if (mounted) {
+      const detectTheme = () => {
+        // Check multiple sources for theme
+        const htmlElement = document.documentElement;
+        const hasThemeClass = htmlElement.classList.contains('dark');
+        const bodyHasTheme = document.body.classList.contains('dark');
+        const themeValue = resolvedTheme || theme;
+
+        // Force theme application if not properly applied
+        const isDark = hasThemeClass || bodyHasTheme || themeValue === 'dark';
+        setCurrentTheme(isDark ? 'dark' : 'light');
+
+        // Ensure theme class is applied to html element
+        if (isDark && !hasThemeClass) {
+          htmlElement.classList.add('dark');
+        } else if (!isDark && hasThemeClass) {
+          htmlElement.classList.remove('dark');
+        }
+      };
+
+      detectTheme();
+
+      // Re-check theme every 100ms for the first 2 seconds (older browser compatibility)
+      const themeCheckInterval = setInterval(detectTheme, 100);
+      setTimeout(() => clearInterval(themeCheckInterval), 2000);
+
+      return () => clearInterval(themeCheckInterval);
+    }
+  }, [mounted, theme, resolvedTheme]);
 
   const loadHeaderConfig = async () => {
     try {
@@ -85,12 +118,12 @@ export const DirectusNavbar = () => {
         .map(item => item.label)
     : fallbackNavigation;
 
-  // Get logo source (using legacy syntax instead of optional chaining)
+  // Get logo source (using legacy syntax and reliable theme detection)
   const getLogoSource = () => {
     if (!mounted) return "/img/TAMAMAT-logo-200x122-Light-Theme.svg";
 
     if (headerConfig && headerConfig.logo) {
-      const isDark = resolvedTheme === 'dark' || theme === 'dark';
+      const isDark = currentTheme === 'dark';
       const logoFile = isDark ? headerConfig.logo.dark_theme_logo : headerConfig.logo.light_theme_logo;
       let logoFileId;
 
@@ -105,8 +138,8 @@ export const DirectusNavbar = () => {
       }
     }
 
-    // Fallback
-    return (resolvedTheme === 'dark' || theme === 'dark')
+    // Fallback using currentTheme
+    return currentTheme === 'dark'
       ? "/img/TAMAMAT-logo-200x122-Dark-Theme.svg"
       : "/img/TAMAMAT-logo-200x122-Light-Theme.svg";
   };
@@ -210,7 +243,7 @@ export const DirectusNavbar = () => {
             />
             <span
               className="bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-100 bg-clip-text text-transparent"
-              style={{ fontFamily: "var(--font-uncial-antiqua)" }}
+              style={{ fontFamily: "'Uncial Antiqua', serif" }}
             >
               {companyTitle}
             </span>
@@ -305,7 +338,7 @@ export const DirectusNavbar = () => {
                 className="h-7 w-auto"
               />
             </div>
-            <span style={{ fontFamily: "var(--font-uncial-antiqua)" }}>{companyTitle}</span>
+            <span style={{ fontFamily: "'Uncial Antiqua', serif" }}>{companyTitle}</span>
           </Link>
           <button
             onClick={() => setMobileMenuOpen(false)}
@@ -346,8 +379,39 @@ export const DirectusNavbar = () => {
         )}
       </div>
 
-      {/* Add custom styles */}
+      {/* Add custom styles with better browser compatibility */}
       <style jsx global>{`
+        /* Enhanced theme support for older browsers */
+        html.dark body,
+        html.dark .navbar {
+          --tw-bg-opacity: 1;
+        }
+
+        /* Force theme colors for older browsers */
+        html.dark .navbar {
+          background-color: rgba(0, 0, 0, 0.1) !important;
+          border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        html:not(.dark) .navbar {
+          background-color: rgba(255, 255, 255, 0.8) !important;
+          border-color: rgba(229, 231, 235, 0.5) !important;
+        }
+
+        /* Theme-specific text colors */
+        html.dark .text-gray-800 {
+          color: rgba(255, 255, 255, 1) !important;
+        }
+
+        html.dark .text-gray-700 {
+          color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        html:not(.dark) .text-gray-800 {
+          color: rgba(31, 41, 55, 1) !important;
+        }
+
+        /* Navbar animations */
         .navbar:hover::before {
           left: 100% !important;
         }
@@ -368,6 +432,7 @@ export const DirectusNavbar = () => {
           transform: translateY(-2px);
           box-shadow: 0 25px 50px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
         }
+
         @media (max-width: 1024px) {
           .fixed.top-8 {
             top: 20px;
