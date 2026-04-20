@@ -433,7 +433,7 @@ export const DirectusNavbar = () => {
           color: #1f2937 !important;
         }
 
-        /* Fix heading colors - always blue regardless of theme */
+        /* Fix heading colors - always blue regardless of theme - HIGHEST SPECIFICITY */
         html h1,
         html h2,
         html h3,
@@ -442,24 +442,49 @@ export const DirectusNavbar = () => {
         html.dark h3,
         html:not(.dark) h1,
         html:not(.dark) h2,
-        html:not(.dark) h3 {
+        html:not(.dark) h3,
+        body h1,
+        body h2,
+        body h3,
+        html body h1,
+        html body h2,
+        html body h3,
+        html.dark body h1,
+        html.dark body h2,
+        html.dark body h3 {
           color: #3B82F6 !important;
         }
 
-        /* Theme-specific text colors */
-        html.dark .text-gray-800 {
+        /* Also target headings with specific text classes */
+        html h1.text-gray-800,
+        html h2.text-gray-800,
+        html h3.text-gray-800,
+        html h1.text-gray-700,
+        html h2.text-gray-700,
+        html h3.text-gray-700,
+        html.dark h1.text-gray-800,
+        html.dark h2.text-gray-800,
+        html.dark h3.text-gray-800,
+        html.dark h1.text-white,
+        html.dark h2.text-white,
+        html.dark h3.text-white {
+          color: #3B82F6 !important;
+        }
+
+        /* Theme-specific text colors (excluding headings) */
+        html.dark .text-gray-800:not(h1):not(h2):not(h3) {
           color: rgba(255, 255, 255, 1) !important;
         }
 
-        html.dark .text-gray-700 {
+        html.dark .text-gray-700:not(h1):not(h2):not(h3) {
           color: rgba(255, 255, 255, 0.9) !important;
         }
 
-        html:not(.dark) .text-gray-800 {
+        html:not(.dark) .text-gray-800:not(h1):not(h2):not(h3) {
           color: rgba(31, 41, 55, 1) !important;
         }
 
-        html:not(.dark) .text-gray-700 {
+        html:not(.dark) .text-gray-700:not(h1):not(h2):not(h3) {
           color: rgba(55, 65, 81, 1) !important;
         }
 
