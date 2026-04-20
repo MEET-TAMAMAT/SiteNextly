@@ -408,19 +408,22 @@ export const DirectusNavbar = () => {
         }
 
         /* Enhanced theme support for older browsers */
-        html.dark body,
-        html.dark .navbar {
+        html.dark body {
           --tw-bg-opacity: 1;
         }
 
-        /* Force theme colors for navbar */
+        /* Force navbar transparency with backdrop-blur support */
         html.dark .navbar {
-          background-color: rgba(0, 0, 0, 0.1) !important;
+          background: rgba(0, 0, 0, 0.1) !important;
+          backdrop-filter: blur(20px) !important;
+          -webkit-backdrop-filter: blur(20px) !important;
           border-color: rgba(255, 255, 255, 0.1) !important;
         }
 
         html:not(.dark) .navbar {
-          background-color: rgba(255, 255, 255, 0.8) !important;
+          background: rgba(255, 255, 255, 0.8) !important;
+          backdrop-filter: blur(20px) !important;
+          -webkit-backdrop-filter: blur(20px) !important;
           border-color: rgba(229, 231, 235, 0.5) !important;
         }
 
@@ -495,20 +498,20 @@ export const DirectusNavbar = () => {
           background-color: #0f172a !important;
         }
 
-        /* Fix specific section backgrounds in dark mode */
+        /* Fix specific section backgrounds in dark mode - TARGETED APPROACH */
 
-        /* 1. How It Works section - Manual/Auto Selection backgrounds */
-        html.dark .bg-gray-100 {
+        /* HowItWorks: Manual/Auto Selection blocks - preserve transparency */
+        html.dark .bg-gray-100.dark\\:bg-gray-800\\/20 {
           background-color: rgba(55, 65, 81, 0.2) !important;
         }
 
-        /* 2. Pricing section - Card backgrounds */
-        html.dark .bg-white {
+        /* Pricing: Only solid white cards, not semi-transparent ones */
+        html.dark .bg-white:not([class*="/80"]):not([class*="backdrop-blur"]) {
           background-color: #171717 !important;
         }
 
-        /* 3. FAQ section - Question backgrounds */
-        html.dark .bg-gray-50 {
+        /* FAQ: Question disclosure buttons only */
+        html.dark .bg-gray-50[class*="DisclosureButton"] {
           background-color: #374151 !important;
         }
 
@@ -516,8 +519,8 @@ export const DirectusNavbar = () => {
           background-color: #4b5563 !important;
         }
 
-        /* 4. Contact section - Contact blocks */
-        html.dark .bg-gray-100 {
+        /* Contact: Only non-blurred gray backgrounds */
+        html.dark .bg-gray-100:not([class*="backdrop-blur"]):not([class*="/80"]) {
           background-color: #374151 !important;
         }
 
@@ -528,13 +531,6 @@ export const DirectusNavbar = () => {
           background-color: #374151 !important;
           border-color: #4b5563 !important;
           color: #ffffff !important;
-        }
-
-        /* Override any remaining light backgrounds in dark mode */
-        html.dark [class*="bg-gray-50"],
-        html.dark [class*="bg-gray-100"],
-        html.dark [class*="bg-white"] {
-          background-color: #374151 !important;
         }
 
         /* Pricing card specific overrides */

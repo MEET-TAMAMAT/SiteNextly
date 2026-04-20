@@ -13,7 +13,7 @@ export const Pricing = () => {
 
       <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-3">
         {/* Free Plan */}
-        <div className="flex flex-col justify-between w-full h-full bg-white dark:bg-[#171717] px-8 rounded-2xl py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
+        <div className="flex flex-col justify-between w-full h-full px-8 rounded-2xl py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
           <div>
             <h3 className="text-2xl font-bold text-center text-[#22c55e] dark:text-[#22c55e] mb-6">
               Free Plan
@@ -55,14 +55,14 @@ export const Pricing = () => {
 
           <Link
             href="/signup"
-            className="w-[62.5%] mx-auto px-6 py-3 text-center text-[#22c55e] bg-white dark:bg-[#171717] border border-[#22c55e] rounded-[25px] font-semibold shadow-[0_4px_12px_rgba(34,197,94,0.15)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_8px_20px_rgba(34,197,94,0.25)] hover:bg-[#22c55e] hover:text-white"
+            className="w-[62.5%] mx-auto px-6 py-3 text-center text-[#22c55e] border border-[#22c55e] rounded-[25px] font-semibold shadow-[0_4px_12px_rgba(34,197,94,0.15)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_8px_20px_rgba(34,197,94,0.25)] hover:bg-[#22c55e] hover:text-white"
           >
             Get Started
           </Link>
         </div>
 
         {/* Pay-as-You-Go Plan */}
-        <div className="flex flex-col justify-between w-full h-full bg-white dark:bg-[#171717] px-8 rounded-2xl py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)] relative">
+        <div className="flex flex-col justify-between w-full h-full px-8 rounded-2xl py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)] relative">
 
           <div>
             <h3 className="text-2xl font-bold text-center text-[#f4a300] dark:text-[#f4a300] mb-6">
@@ -106,14 +106,14 @@ export const Pricing = () => {
 
           <Link
             href="/signup"
-            className="w-[62.5%] mx-auto px-6 py-3 text-center text-[#f4a300] bg-white dark:bg-[#171717] border border-[#f4a300] rounded-[25px] font-semibold shadow-[0_4px_12px_rgba(244,163,0,0.15)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_8px_20px_rgba(244,163,0,0.25)] hover:bg-[#f4a300] hover:text-white"
+            className="w-[62.5%] mx-auto px-6 py-3 text-center text-[#f4a300] border border-[#f4a300] rounded-[25px] font-semibold shadow-[0_4px_12px_rgba(244,163,0,0.15)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_8px_20px_rgba(244,163,0,0.25)] hover:bg-[#f4a300] hover:text-white"
           >
             Start Paying
           </Link>
         </div>
 
         {/* Custom Plan */}
-        <div className="flex flex-col justify-between w-full h-full bg-white dark:bg-[#171717] px-8 rounded-2xl py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
+        <div className="flex flex-col justify-between w-full h-full px-8 rounded-2xl py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
           <div>
             <h3 className="text-2xl font-bold text-center text-[#a855f7] dark:text-[#a855f7] mb-6">
               Custom
@@ -154,7 +154,7 @@ export const Pricing = () => {
 
           <Link
             href="/contact"
-            className="w-[62.5%] mx-auto px-6 py-3 text-center text-[#a855f7] bg-white dark:bg-[#171717] border border-[#a855f7] rounded-[25px] font-semibold shadow-[0_4px_12px_rgba(168,85,247,0.15)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_8px_20px_rgba(168,85,247,0.25)] hover:bg-[#a855f7] hover:text-white"
+            className="w-[62.5%] mx-auto px-6 py-3 text-center text-[#a855f7] border border-[#a855f7] rounded-[25px] font-semibold shadow-[0_4px_12px_rgba(168,85,247,0.15)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_8px_20px_rgba(168,85,247,0.25)] hover:bg-[#a855f7] hover:text-white"
           >
             Contact Now
           </Link>
