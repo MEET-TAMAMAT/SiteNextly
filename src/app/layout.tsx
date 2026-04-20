@@ -5,7 +5,7 @@ import { Nunito } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
-import { DirectusNavbar } from "@/components/DirectusNavbar";
+import { DirectusNavbar } from "@/components/DirectusNavbar-Legacy";
 import { Footer } from "@/components/Footer";
 import { BackToTop } from "@/components/BackToTop";
 

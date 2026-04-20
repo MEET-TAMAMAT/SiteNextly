@@ -1,0 +1,9 @@
+# Browsers that we support
+
+>= 0.5%
+last 2 major versions
+not dead
+Chrome >= 70
+Firefox >= 70
+Safari >= 12.1
+iOS >= 12.1

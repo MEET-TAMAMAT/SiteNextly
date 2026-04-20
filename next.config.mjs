@@ -14,6 +14,15 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
   },
+  compiler: {
+    // Enable SWC minification for better backward compatibility
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  // Ensure proper transpilation for older browsers
+  experimental: {
+    esmExternals: false,
+  },
+  transpilePackages: ['@directus/sdk'],
 };
 
 export default nextConfig;
