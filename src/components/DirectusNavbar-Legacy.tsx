@@ -242,7 +242,7 @@ export const DirectusNavbar = () => {
               className="h-8 w-auto"
             />
             <span
-              className="company-title"
+              className="company-title mt-3"
               style={{
                 fontFamily: "'Uncial Antiqua', serif",
                 color: currentTheme === 'dark' ? '#ffffff' : '#1f2937',
