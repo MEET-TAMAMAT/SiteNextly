@@ -433,6 +433,19 @@ export const DirectusNavbar = () => {
           color: #1f2937 !important;
         }
 
+        /* Fix heading colors - always blue regardless of theme */
+        html h1,
+        html h2,
+        html h3,
+        html.dark h1,
+        html.dark h2,
+        html.dark h3,
+        html:not(.dark) h1,
+        html:not(.dark) h2,
+        html:not(.dark) h3 {
+          color: #3B82F6 !important;
+        }
+
         /* Theme-specific text colors */
         html.dark .text-gray-800 {
           color: rgba(255, 255, 255, 1) !important;
