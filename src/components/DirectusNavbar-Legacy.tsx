@@ -457,6 +457,53 @@ export const DirectusNavbar = () => {
           background-color: #0f172a !important;
         }
 
+        /* Fix specific section backgrounds in dark mode */
+
+        /* 1. How It Works section - Manual/Auto Selection backgrounds */
+        html.dark .bg-gray-100 {
+          background-color: rgba(55, 65, 81, 0.2) !important;
+        }
+
+        /* 2. Pricing section - Card backgrounds */
+        html.dark .bg-white {
+          background-color: #171717 !important;
+        }
+
+        /* 3. FAQ section - Question backgrounds */
+        html.dark .bg-gray-50 {
+          background-color: #374151 !important;
+        }
+
+        html.dark .hover\\:bg-gray-100:hover {
+          background-color: #4b5563 !important;
+        }
+
+        /* 4. Contact section - Contact blocks */
+        html.dark .bg-gray-100 {
+          background-color: #374151 !important;
+        }
+
+        /* Contact form inputs */
+        html.dark input,
+        html.dark textarea,
+        html.dark select {
+          background-color: #374151 !important;
+          border-color: #4b5563 !important;
+          color: #ffffff !important;
+        }
+
+        /* Override any remaining light backgrounds in dark mode */
+        html.dark [class*="bg-gray-50"],
+        html.dark [class*="bg-gray-100"],
+        html.dark [class*="bg-white"] {
+          background-color: #374151 !important;
+        }
+
+        /* Pricing card specific overrides */
+        html.dark .shadow-lg {
+          box-shadow: 0 10px 40px rgba(255,255,255,0.1) !important;
+        }
+
         /* Button and interactive element colors */
         html.dark button {
           color: rgba(255, 255, 255, 0.9) !important;
