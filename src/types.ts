@@ -36,3 +36,15 @@ export interface HeaderConfig {
   };
   status: string;
 }
+
+// Directus Homepage Configuration
+export interface HomeContent {
+  id: string;
+  status: string;
+  home_title: string;
+  home_description: string;
+  home_button: string;  
+  home_image: string | { id: string; [key: string]: any } | null;
+  created_on: string;
+  updated_on: string;
+}

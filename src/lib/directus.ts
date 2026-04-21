@@ -1,5 +1,5 @@
-import { createDirectus, rest, readItems } from "@directus/sdk";
-import { HeaderConfig, NavigationItem } from "@/types";
+import { createDirectus, rest, readItems, readSingleton } from "@directus/sdk";
+import { HeaderConfig, NavigationItem, HomeContent } from "@/types";
 
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
@@ -58,3 +58,28 @@ export function getImageUrl(fileId: string): string {
 }
 
 export { directus, readItems };
+
+
+// Homepage Data Fetching Functions
+
+export async function getHomeContent(): Promise<HomeContent | null> {
+  try {
+    const response = await directus.request(
+      readSingleton("tamamat_com_home" as any, {
+        fields: [
+          "*",
+          "home_image.*"  // Gets image details
+        ],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        }
+      })
+    );
+return (response as HomeContent) || null;
+  } catch (error) {
+    console.error("Failed to fetch home content:", error);
+    return null;
+  }
+}
