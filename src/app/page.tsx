@@ -8,7 +8,7 @@ import {
   AdjustmentsHorizontalIcon,
 } from "@heroicons/react/24/solid";
 import { Container } from "@/components/Container";
-import { Hero } from "@/components/Hero";
+import { DirectusHome } from "@/components/DirectusHome";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Pricing } from "@/components/Pricing";
 import { Faq } from "@/components/Faq";
@@ -19,7 +19,7 @@ import { SectionTitle } from "@/components/SectionTitle";
 export default function Home() {
   return (
     <>
-      <Hero />
+      <DirectusHome />
 
       <section id="how-it-works" className="scroll-mt-6 lg:scroll-mt-16">
         <HowItWorks />
