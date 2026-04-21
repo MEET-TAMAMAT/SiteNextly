@@ -13,6 +13,8 @@ export async function getHeaderConfig(): Promise<HeaderConfig | null> {
         fields: [
           "*",
           "logo.*",
+          "logo.light_theme_logo.*",
+          "logo.dark_theme_logo.*",
           "navigation_items.*"
         ],
         filter: {
