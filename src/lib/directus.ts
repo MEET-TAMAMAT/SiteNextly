@@ -10,13 +10,6 @@ export async function getHeaderConfig(): Promise<HeaderConfig | null> {
   try {
     const response = await directus.request(
       readItems("header_config" as any, {
-        fields: [
-          "*",
-          "logo.*",
-          "logo.light_theme_logo.*",
-          "logo.dark_theme_logo.*",
-          "navigation_items.*"
-        ],
         filter: {
           status: {
             _eq: "published"
