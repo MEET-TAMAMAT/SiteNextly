@@ -19,10 +19,50 @@ export const Contact = () => {
     message: ''
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [isDark, setIsDark] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const subjectRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
+
+  // Helper function to get theme-aware background colors
+  const getBackgroundColors = (hasValue: boolean, isDarkTheme: boolean) => {
+    if (isDarkTheme) {
+      return hasValue ? '#4B5563' : '#374151'; // gray-600 : gray-700
+    } else {
+      return hasValue ? '#f0fdf4' : '#f9fafb'; // light green : light gray
+    }
+  };
+
+  // Watch for theme changes
+  useEffect(() => {
+    const checkTheme = () => {
+      if (typeof window !== 'undefined') {
+        setIsDark(document.documentElement.classList.contains('dark'));
+      }
+    };
+
+    // Check theme on mount
+    checkTheme();
+
+    // Watch for theme changes using MutationObserver
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          checkTheme();
+        }
+      });
+    });
+
+    if (typeof window !== 'undefined') {
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+      });
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -166,7 +206,7 @@ export const Contact = () => {
                   id="name"
                   name="name"
                   required
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:!text-black ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
                     showValidation && fieldValues.name.trim() === ''
                       ? 'border-red-500 dark:border-red-400 border-2'
                       : focusedField === 'name'
@@ -174,10 +214,10 @@ export const Contact = () => {
                         : 'border-gray-300 dark:border-gray-600'
                   }`}
                   style={{
-                    backgroundColor: fieldValues.name.trim() !== '' ? '#f0fdf4' : '#f9fafb',
+                    backgroundColor: getBackgroundColors(fieldValues.name.trim() !== '', isDark),
                     boxShadow: focusedField === 'name'
-                      ? `inset 0 0 0 1000px ${fieldValues.name.trim() !== '' ? '#f0fdf4' : '#f9fafb'}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
-                      : `inset 0 0 0 1000px ${fieldValues.name.trim() !== '' ? '#f0fdf4' : '#f9fafb'}`
+                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.name.trim() !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.name.trim() !== '', isDark)}`
                   }}
                   onFocus={(e) => {
                     setFocusedField('name');
@@ -201,7 +241,7 @@ export const Contact = () => {
                   id="email"
                   name="email"
                   required
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:!text-black ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
                     showValidation && fieldValues.email.trim() === ''
                       ? 'border-red-500 dark:border-red-400 border-2'
                       : focusedField === 'email'
@@ -209,10 +249,10 @@ export const Contact = () => {
                         : 'border-gray-300 dark:border-gray-600'
                   }`}
                   style={{
-                    backgroundColor: fieldValues.email.trim() !== '' ? '#f0fdf4' : '#f9fafb',
+                    backgroundColor: getBackgroundColors(fieldValues.email.trim() !== '', isDark),
                     boxShadow: focusedField === 'email'
-                      ? `inset 0 0 0 1000px ${fieldValues.email.trim() !== '' ? '#f0fdf4' : '#f9fafb'}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
-                      : `inset 0 0 0 1000px ${fieldValues.email.trim() !== '' ? '#f0fdf4' : '#f9fafb'}`
+                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.email.trim() !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.email.trim() !== '', isDark)}`
                   }}
                   onChange={(e) => {
                     setFieldValues(prev => ({ ...prev, email: e.target.value }));
@@ -235,16 +275,16 @@ export const Contact = () => {
                   type="text"
                   id="subject"
                   name="subject"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:!text-black ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 ${
                     focusedField === 'subject'
                       ? 'border-green-500 dark:border-green-400 border-2'
                       : 'border-gray-300 dark:border-gray-600'
                   }`}
                   style={{
-                    backgroundColor: fieldValues.subject.trim() !== '' ? '#f0fdf4' : '#f9fafb',
+                    backgroundColor: getBackgroundColors(fieldValues.subject.trim() !== '', isDark),
                     boxShadow: focusedField === 'subject'
-                      ? `inset 0 0 0 1000px ${fieldValues.subject.trim() !== '' ? '#f0fdf4' : '#f9fafb'}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
-                      : `inset 0 0 0 1000px ${fieldValues.subject.trim() !== '' ? '#f0fdf4' : '#f9fafb'}`
+                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.subject.trim() !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.subject.trim() !== '', isDark)}`
                   }}
                   onChange={(e) => setFieldValues(prev => ({ ...prev, subject: e.target.value }))}
                   onInput={(e) => setFieldValues(prev => ({ ...prev, subject: (e.target as HTMLInputElement).value }))}
@@ -264,7 +304,7 @@ export const Contact = () => {
                   name="message"
                   rows={3}
                   required
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:!text-black resize-none ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none ${
                     showValidation && fieldValues.message.trim() === ''
                       ? 'border-red-500 dark:border-red-400 border-2'
                       : focusedField === 'message'
@@ -272,10 +312,10 @@ export const Contact = () => {
                         : 'border-gray-300 dark:border-gray-600'
                   }`}
                   style={{
-                    backgroundColor: fieldValues.message.trim() !== '' ? '#f0fdf4' : '#f9fafb',
+                    backgroundColor: getBackgroundColors(fieldValues.message.trim() !== '', isDark),
                     boxShadow: focusedField === 'message'
-                      ? `inset 0 0 0 1000px ${fieldValues.message.trim() !== '' ? '#f0fdf4' : '#f9fafb'}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
-                      : `inset 0 0 0 1000px ${fieldValues.message.trim() !== '' ? '#f0fdf4' : '#f9fafb'}`
+                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.message.trim() !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.message.trim() !== '', isDark)}`
                   }}
                   onChange={(e) => {
                     setFieldValues(prev => ({ ...prev, message: e.target.value }));
