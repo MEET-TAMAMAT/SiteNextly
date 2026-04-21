@@ -1,8 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 
+interface TestResults {
+  direct?: string;
+  env?: string;
+}
+
 export default function TestPage() {
-  const [results, setResults] = useState<any>({});
+  const [results, setResults] = useState<TestResults>({});
 
   useEffect(() => {
     const runTests = async () => {
