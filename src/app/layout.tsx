@@ -6,7 +6,7 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 import { DirectusNavbar } from "@/components/DirectusNavbar-Legacy";
-import { Footer } from "@/components/Footer";
+import { Footer } from "@/components/FooterWrapper";
 import { BackToTop } from "@/components/BackToTop";
 
 

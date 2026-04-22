@@ -2,8 +2,14 @@ import Link from "next/link";
 import Image from "next/image";
 import React from "react";
 import { Container } from "@/components/Container";
+import { FooterContent } from "@/types";
 
-export function Footer() {
+interface FooterProps {
+  footerData: FooterContent;
+  isUsingDirectus: boolean;
+}
+
+export function FooterClient({ footerData, isUsingDirectus }: FooterProps) {
   return (
     <div className="border-t border-gray-200 dark:border-trueGray-700">
       <Container>
@@ -12,58 +18,67 @@ export function Footer() {
             {/* Social media on the left */}
             <div className="flex items-center mb-0 md:mb-0">
               <div className="flex space-x-4 text-gray-400 dark:text-gray-500">
-                <a
-                  href="https://twitter.com/tamamat"
-                  target="_blank"
-                  rel="noopener"
-                  className="hover:text-blue-500 transition-colors"
-                >
-                  <span className="sr-only">Twitter</span>
-                  <Twitter />
-                </a>
-                <a
-                  href="https://facebook.com/tamamat"
-                  target="_blank"
-                  rel="noopener"
-                  className="hover:text-blue-500 transition-colors"
-                >
-                  <span className="sr-only">Facebook</span>
-                  <Facebook />
-                </a>
-                <a
-                  href="https://instagram.com/tamamat"
-                  target="_blank"
-                  rel="noopener"
-                  className="hover:text-blue-500 transition-colors"
-                >
-                  <span className="sr-only">Instagram</span>
-                  <Instagram />
-                </a>
-                <a
-                  href="https://linkedin.com/company/tamamat"
-                  target="_blank"
-                  rel="noopener"
-                  className="hover:text-blue-500 transition-colors"
-                >
-                  <span className="sr-only">LinkedIn</span>
-                  <Linkedin />
-                </a>
-                <a
-                  href="https://youtube.com/@tamamat"
-                  target="_blank"
-                  rel="noopener"
-                  className="hover:text-blue-500 transition-colors"
-                >
-                  <span className="sr-only">YouTube</span>
-                  <YouTube />
-                </a>
+                {footerData.twitter_enabled && (
+                  <a
+                    href={footerData.twitter_url}
+                    target="_blank"
+                    rel="noopener"
+                    className="hover:text-blue-500 transition-colors"
+                  >
+                    <span className="sr-only">Twitter</span>
+                    <Twitter />
+                  </a>
+                )}
+                {footerData.facebook_enabled && (
+                  <a
+                    href={footerData.facebook_url}
+                    target="_blank"
+                    rel="noopener"
+                    className="hover:text-blue-500 transition-colors"
+                  >
+                    <span className="sr-only">Facebook</span>
+                    <Facebook />
+                  </a>
+                )}
+                {footerData.instagram_enabled && (
+                  <a
+                    href={footerData.instagram_url}
+                    target="_blank"
+                    rel="noopener"
+                    className="hover:text-blue-500 transition-colors"
+                  >
+                    <span className="sr-only">Instagram</span>
+                    <Instagram />
+                  </a>
+                )}
+                {footerData.linkedin_enabled && (
+                  <a
+                    href={footerData.linkedin_url}
+                    target="_blank"
+                    rel="noopener"
+                    className="hover:text-blue-500 transition-colors"
+                  >
+                    <span className="sr-only">LinkedIn</span>
+                    <Linkedin />
+                  </a>
+                )}
+                {footerData.youtube_enabled && (
+                  <a
+                    href={footerData.youtube_url}
+                    target="_blank"
+                    rel="noopener"
+                    className="hover:text-blue-500 transition-colors"
+                  >
+                    <span className="sr-only">YouTube</span>
+                    <YouTube />
+                  </a>
+                )}
               </div>
             </div>
 
             {/* Copyright on the right */}
             <div className="text-sm text-gray-600 dark:text-gray-400 text-center" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
-              <span className="block md:inline mb-1 md:mb-0">Copyright © {new Date().getFullYear()} TAMAMAT.</span>
-              <span className="block md:inline"> All rights reserved.</span>
+              {footerData.copyright_text}
             </div>
           </div>
         </div>

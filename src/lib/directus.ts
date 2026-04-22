@@ -1,5 +1,5 @@
 import { createDirectus, rest, readItems, readSingleton } from "@directus/sdk";
-import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent, FaqSectionContent, FaqItem, ContactContent } from "@/types";
+import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent, FaqSectionContent, FaqItem, ContactContent, FooterContent } from "@/types";
 
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
@@ -199,6 +199,26 @@ export async function getContactContent(): Promise<ContactContent | null> {
     return (response as ContactContent) || null;
   } catch (error) {
     console.error("Failed to fetch contact content:", error);
+    return null;
+  }
+}
+
+// Footer Section Data Fetching Function
+export async function getFooterContent(): Promise<FooterContent | null> {
+  try {
+    const response = await directus.request(
+      readSingleton("footer_section" as any, {
+        fields: ["*"],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        }
+      })
+    );
+    return (response as FooterContent) || null;
+  } catch (error) {
+    console.error("Failed to fetch footer content:", error);
     return null;
   }
 }

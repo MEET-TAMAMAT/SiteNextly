@@ -169,3 +169,21 @@ export interface ContactContent {
   submit_button_text: string;
   success_message: string;
 }
+
+// Directus Footer Section Configuration
+export interface FooterContent {
+  id: string;
+  status: string;
+  copyright_text: string;
+  copyright_year: string;
+  twitter_url: string;
+  twitter_enabled: boolean;
+  facebook_url: string;
+  facebook_enabled: boolean;
+  instagram_url: string;
+  instagram_enabled: boolean;
+  linkedin_url: string;
+  linkedin_enabled: boolean;
+  youtube_url: string;
+  youtube_enabled: boolean;
+}
