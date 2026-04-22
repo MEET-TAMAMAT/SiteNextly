@@ -43,8 +43,20 @@ export interface HomeContent {
   status: string;
   home_title: string;
   home_description: string;
-  home_button: string;  
+  home_button: string;
   home_image: string | { id: string; [key: string]: any } | null;
   created_on: string;
   updated_on: string;
+}
+
+// Directus How it Works Configuration
+export interface HowItWorksContent {
+  id: string;
+  main_heading: string;
+  manual_selection_title: string;
+  manual_selection_description: string;
+  auto_selection_title: string;
+  auto_selection_description: string;
+  video_button_text: string;
+  main_illustration: string | { id: string; [key: string]: any } | null;
 }

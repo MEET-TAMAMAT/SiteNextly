@@ -1,5 +1,5 @@
 import { createDirectus, rest, readItems, readSingleton } from "@directus/sdk";
-import { HeaderConfig, NavigationItem, HomeContent } from "@/types";
+import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent } from "@/types";
 
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
@@ -73,6 +73,24 @@ export async function getHomeContent(): Promise<HomeContent | null> {
 return (response as HomeContent) || null;
   } catch (error) {
     console.error("Failed to fetch home content:", error);
+    return null;
+  }
+}
+
+// How it Works Data Fetching Function
+export async function getHowItWorksContent(): Promise<HowItWorksContent | null> {
+  try {
+    const response = await directus.request(
+      readSingleton("how_it_works" as any, {
+        fields: [
+          "*",
+          "main_illustration.*"  // Gets image details
+        ]
+      })
+    );
+    return (response as HowItWorksContent) || null;
+  } catch (error) {
+    console.error("Failed to fetch how it works content:", error);
     return null;
   }
 }

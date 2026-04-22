@@ -4,5 +4,9 @@
       "Bash(npm install:*)",
       "Bash(yarn build *)"
     ]
-  }
+  },
+  "enabledPlugins": {
+    "directus-mcp@anthropic-tools": true
+  },
+  "enableAllProjectMcpServers": true
 }
