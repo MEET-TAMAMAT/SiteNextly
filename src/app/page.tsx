@@ -4,9 +4,8 @@ import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Features } from "@/components/Features";
 import { Pricing } from "@/components/Pricing";
-import { Faq } from "@/components/Faq";
+import { Faq } from "@/components/FaqWrapper";
 import { Contact } from "@/components/Contact";
-import { SectionTitle } from "@/components/SectionTitle";
 
 
 export default function Home() {
@@ -27,10 +26,6 @@ export default function Home() {
 
 
       <section id="faq" className="scroll-mt-16 lg:scroll-mt-20">
-        <SectionTitle
-          title="Frequently Asked Questions"
-        >
-        </SectionTitle>
         <Faq />
       </section>
 

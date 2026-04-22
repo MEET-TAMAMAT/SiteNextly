@@ -129,3 +129,20 @@ export interface PricingContent {
   plan_3_button_text: string;
   plan_3_button_link: string;
 }
+
+// Directus FAQ Section Configuration
+export interface FaqSectionContent {
+  id: string;
+  main_title: string;
+  status: string;
+}
+
+// Directus FAQ Item Configuration
+export interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+  sort: number;
+  status: string;
+  default_open: boolean;
+}

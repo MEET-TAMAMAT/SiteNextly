@@ -1,5 +1,5 @@
 import { createDirectus, rest, readItems, readSingleton } from "@directus/sdk";
-import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent } from "@/types";
+import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent, FaqSectionContent, FaqItem } from "@/types";
 
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
@@ -140,5 +140,45 @@ export async function getPricingContent(): Promise<PricingContent | null> {
   } catch (error) {
     console.error("Failed to fetch pricing content:", error);
     return null;
+  }
+}
+
+// FAQ Section Data Fetching Functions
+export async function getFaqSectionContent(): Promise<FaqSectionContent | null> {
+  try {
+    const response = await directus.request(
+      readSingleton("faq_section" as any, {
+        fields: ["*"],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        }
+      })
+    );
+    return (response as FaqSectionContent) || null;
+  } catch (error) {
+    console.error("Failed to fetch FAQ section content:", error);
+    return null;
+  }
+}
+
+export async function getFaqItems(): Promise<FaqItem[]> {
+  try {
+    const response = await directus.request(
+      readItems("faq_items" as any, {
+        fields: ["*"],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        },
+        sort: ["sort"]
+      })
+    );
+    return (response as FaqItem[]) || [];
+  } catch (error) {
+    console.error("Failed to fetch FAQ items:", error);
+    return [];
   }
 }
