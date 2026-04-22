@@ -35,9 +35,15 @@ export const HowItWorks = async () => {
   };
 
   const data = content || fallbackContent;
+  const isUsingDirectus = !!content;
 
   return (
     <Container className="px-4 lg:px-8">
+      {/* Debug indicator */}
+      <div className="text-xs text-center mb-4 opacity-50">
+        Data source: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
+      </div>
+
       <SectionTitle
         title={data.main_heading}
       >

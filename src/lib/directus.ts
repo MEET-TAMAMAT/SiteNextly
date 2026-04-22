@@ -85,7 +85,12 @@ export async function getHowItWorksContent(): Promise<HowItWorksContent | null> 
         fields: [
           "*",
           "main_illustration.*"  // Gets image details
-        ]
+        ],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        }
       })
     );
     return (response as HowItWorksContent) || null;
