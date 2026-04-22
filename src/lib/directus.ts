@@ -1,5 +1,5 @@
 import { createDirectus, rest, readItems, readSingleton } from "@directus/sdk";
-import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent } from "@/types";
+import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent } from "@/types";
 
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
@@ -96,6 +96,49 @@ export async function getHowItWorksContent(): Promise<HowItWorksContent | null> 
     return (response as HowItWorksContent) || null;
   } catch (error) {
     console.error("Failed to fetch how it works content:", error);
+    return null;
+  }
+}
+
+// Features Section Data Fetching Function
+export async function getFeaturesContent(): Promise<FeaturesContent | null> {
+  try {
+    const response = await directus.request(
+      readSingleton("features_section" as any, {
+        fields: [
+          "*",
+          "main_image.*"  // Gets image details
+        ],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        }
+      })
+    );
+    return (response as FeaturesContent) || null;
+  } catch (error) {
+    console.error("Failed to fetch features content:", error);
+    return null;
+  }
+}
+
+// Pricing Section Data Fetching Function
+export async function getPricingContent(): Promise<PricingContent | null> {
+  try {
+    const response = await directus.request(
+      readSingleton("pricing_section" as any, {
+        fields: ["*"],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        }
+      })
+    );
+    return (response as PricingContent) || null;
+  } catch (error) {
+    console.error("Failed to fetch pricing content:", error);
     return null;
   }
 }

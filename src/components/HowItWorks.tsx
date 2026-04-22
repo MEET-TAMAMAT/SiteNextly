@@ -60,8 +60,8 @@ export const HowItWorks = async () => {
                   : "/img/Num-0-Auto.png"
               }
               alt="TAMAMAT How It Works Interface Diagram"
-              width={473}
-              height={378}
+              width={350}
+              height={351}
               className="max-w-full h-auto rounded-lg"
             />
           </div>

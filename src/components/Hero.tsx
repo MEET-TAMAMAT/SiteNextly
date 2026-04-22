@@ -12,6 +12,7 @@ import { HomeContent } from "@/types";
 export const Hero = () => {
   const [homeContent, setHomeContent] = useState<HomeContent | null>(null);
   const [loading, setLoading] = useState(true);
+  const isUsingDirectus = !!homeContent;
 
   useEffect(() => {
     const loadHomeContent = async () => {
@@ -30,6 +31,11 @@ export const Hero = () => {
 
   return (
     <div>
+      {/* Debug indicator */}
+      <div className="text-xs text-center mb-2 opacity-50">
+        Hero Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
+      </div>
+
       {/* Centered Title Section */}
       <Container className="flex w-full flex-col items-center justify-center text-center mt-1">
         <h1 className="text-2xl font-bold leading-snug tracking-tight text-gray-800 lg:leading-tight lg:text-4xl xl:text-4xl dark:text-white">
