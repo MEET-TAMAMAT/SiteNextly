@@ -146,3 +146,26 @@ export interface FaqItem {
   status: string;
   default_open: boolean;
 }
+
+// Directus Contact Section Configuration
+export interface ContactContent {
+  id: string;
+  status: string;
+  main_title: string;
+  contact_info_title: string;
+  form_title: string;
+  email_address: string;
+  telegram_handle: string;
+  support_hours_days: string;
+  support_hours_time: string;
+  name_field_label: string;
+  name_field_placeholder: string;
+  email_field_label: string;
+  email_field_placeholder: string;
+  subject_field_label: string;
+  subject_field_placeholder: string;
+  message_field_label: string;
+  message_field_placeholder: string;
+  submit_button_text: string;
+  success_message: string;
+}

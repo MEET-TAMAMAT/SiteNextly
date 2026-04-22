@@ -2,15 +2,20 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { Container } from "./Container";
-import { SectionTitle } from "./SectionTitle";
 import {
   EnvelopeIcon,
   ClockIcon,
   ChatBubbleLeftRightIcon
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { ContactContent } from "@/types";
 
-export const Contact = () => {
+interface ContactProps {
+  contactData: ContactContent;
+  isUsingDirectus: boolean;
+}
+
+export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) => {
   const [showValidation, setShowValidation] = useState(false);
   const [fieldValues, setFieldValues] = useState({
     name: '',
@@ -118,17 +123,12 @@ export const Contact = () => {
 
   return (
     <Container className="px-4 lg:px-8">
-      <SectionTitle
-        title="Ways to Reach Us"
-      >
-      </SectionTitle>
-
       <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-2">
         {/* Contact Information */}
         <div className="lg:col-span-1">
           <div className="rounded-2xl px-8 py-10">
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center">
-              Contact Information
+              {contactData.contact_info_title}
             </h3>
 
             <div className="space-y-6">
@@ -142,11 +142,11 @@ export const Contact = () => {
                     Email
                   </h4>
                   <Link
-                    href="mailto:info@tamamat.com"
+                    href={`mailto:${contactData.email_address}`}
                     style={{color: "#3B82F6"}}
                     className="hover:opacity-80"
                   >
-                    info@tamamat.com
+                    {contactData.email_address}
                   </Link>
                 </div>
               </div>
@@ -161,12 +161,12 @@ export const Contact = () => {
                     Telegram
                   </h4>
                   <Link
-                    href="https://t.me/tamamatinfo"
+                    href={`https://t.me/${contactData.telegram_handle.replace('@', '')}`}
                     className="text-blue-500 hover:text-blue-600 dark:text-blue-400"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    @tamamatinfo
+                    {contactData.telegram_handle}
                   </Link>
                 </div>
               </div>
@@ -181,8 +181,8 @@ export const Contact = () => {
                     Support Hours
                   </h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Monday - Friday<br />
-                    9:00 AM - 5:00 PM
+                    {contactData.support_hours_days}<br />
+                    {contactData.support_hours_time}
                   </p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export const Contact = () => {
         <div className="lg:col-span-1">
           <div className="rounded-2xl px-8 py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
             <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center">
-              Send Us a Message
+              {contactData.form_title}
             </h3>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
@@ -230,7 +230,7 @@ export const Contact = () => {
                   }}
                   onInput={(e) => setFieldValues(prev => ({ ...prev, name: (e.target as HTMLInputElement).value }))}
                   onInvalid={() => setShowValidation(true)}
-                  placeholder="Your name"
+                  placeholder={contactData.name_field_placeholder}
                 />
               </div>
 
@@ -265,7 +265,7 @@ export const Contact = () => {
                   }}
                   onBlur={() => setFocusedField(null)}
                   onInvalid={() => setShowValidation(true)}
-                  placeholder="Your email"
+                  placeholder={contactData.email_field_placeholder}
                 />
               </div>
 
@@ -293,7 +293,7 @@ export const Contact = () => {
                     setFieldValues(prev => ({ ...prev, subject: (e.target as HTMLInputElement).value }));
                   }}
                   onBlur={() => setFocusedField(null)}
-                  placeholder="Email subject"
+                  placeholder={contactData.subject_field_placeholder}
                 />
               </div>
 
@@ -328,7 +328,7 @@ export const Contact = () => {
                   }}
                   onBlur={() => setFocusedField(null)}
                   onInvalid={() => setShowValidation(true)}
-                  placeholder="Tell us more about your question or how we can help..."
+                  placeholder={contactData.message_field_placeholder}
                 />
               </div>
 
@@ -337,7 +337,7 @@ export const Contact = () => {
                 className="w-full px-6 py-3 text-white rounded-lg hover:opacity-90 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 style={{backgroundColor: "#3B82F6"}}
               >
-                Send Message
+                {contactData.submit_button_text}
               </button>
             </form>
           </div>

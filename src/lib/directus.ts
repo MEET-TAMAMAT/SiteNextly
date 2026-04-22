@@ -1,5 +1,5 @@
 import { createDirectus, rest, readItems, readSingleton } from "@directus/sdk";
-import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent, FaqSectionContent, FaqItem } from "@/types";
+import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent, FaqSectionContent, FaqItem, ContactContent } from "@/types";
 
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
@@ -180,5 +180,25 @@ export async function getFaqItems(): Promise<FaqItem[]> {
   } catch (error) {
     console.error("Failed to fetch FAQ items:", error);
     return [];
+  }
+}
+
+// Contact Section Data Fetching Function
+export async function getContactContent(): Promise<ContactContent | null> {
+  try {
+    const response = await directus.request(
+      readSingleton("contact_section" as any, {
+        fields: ["*"],
+        filter: {
+          status: {
+            _eq: "published"
+          }
+        }
+      })
+    );
+    return (response as ContactContent) || null;
+  } catch (error) {
+    console.error("Failed to fetch contact content:", error);
+    return null;
   }
 }

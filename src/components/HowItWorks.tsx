@@ -63,6 +63,7 @@ export const HowItWorks = async () => {
               width={350}
               height={351}
               className="max-w-full h-auto rounded-lg"
+              style={{ width: 'auto', height: 'auto' }}
             />
           </div>
         </div>

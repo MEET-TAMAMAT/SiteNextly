@@ -77,6 +77,7 @@ export const Hero = () => {
                 width={350}
                 height={351}
                 className="max-w-full h-auto object-cover"
+                style={{ width: 'auto', height: 'auto' }}
                 alt={homeContent?.home_title || "Online Teaching Platform for Small Groups"}
                 priority
                 />

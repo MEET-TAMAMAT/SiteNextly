@@ -5,7 +5,7 @@ import { HowItWorks } from "@/components/HowItWorks";
 import { Features } from "@/components/Features";
 import { Pricing } from "@/components/Pricing";
 import { Faq } from "@/components/FaqWrapper";
-import { Contact } from "@/components/Contact";
+import { Contact } from "@/components/ContactWrapper";
 
 
 export default function Home() {
