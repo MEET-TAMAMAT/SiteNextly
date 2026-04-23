@@ -3,6 +3,7 @@ import Image from "next/image";
 import React from "react";
 import { Container } from "@/components/Container";
 import { FooterContent } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 interface FooterProps {
   footerData: FooterContent;
@@ -77,7 +78,11 @@ export function FooterClient({ footerData, isUsingDirectus }: FooterProps) {
             </div>
 
             {/* Copyright on the right */}
-            <div className="text-xs text-gray-600 dark:text-gray-400 text-center mt-2" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
+            <div
+              className="text-xs text-gray-600 dark:text-gray-400 text-center mt-2"
+              style={{fontFamily: "var(--font-nunito), sans-serif"}}
+              {...getEditableAttributes('footer_section', footerData.id, 'copyright_text')}
+            >
               {footerData.copyright_text}
             </div>
           </div>
@@ -95,7 +100,7 @@ const Twitter = ({ size = 30 }) => (
     viewBox="0 0 24 24"
     fill="currentColor"
   >
-    <path d="M24 4.37a9.6 9.6 0 0 1-2.83.8 5.04 5.04 0 0 0 2.17-2.8c-.95.58-2 1-3.13 1.22A4.86 4.86 0 0 0 16.61 2a4.99 4.99 0 0 0-4.79 6.2A13.87 13.87 0 0 1 1.67 2.92 5.12 5.12 0 0 0 3.2 9.67a4.82 4.82 0 0 1-2.23-.64v.07c0 2.44 1.7 4.48 3.95 4.95a4.84 4.84 0 0 1-2.22.08c.63 2.01 2.45 3.47 4.6 3.51A9.72 9.72 0 0 1 0 19.74 13.68 13.68 0 0 0 7.55 22c9.06 0 14-7.7 14-14.37v-.65c.96-.71 1.79-1.6 2.45-2.61z" />
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
   </svg>
 );
 

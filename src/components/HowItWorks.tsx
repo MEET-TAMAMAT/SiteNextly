@@ -3,6 +3,7 @@ import { Container } from "./Container";
 import { SectionTitle } from "./SectionTitle";
 import { PlayCircleIcon } from "@heroicons/react/24/solid";
 import { getHowItWorksContent, getImageUrl } from "@/lib/directus";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 // Helper function to convert markdown-like text to bullet points
 function renderDescription(description: string) {
@@ -46,6 +47,7 @@ export const HowItWorks = async () => {
 
       <SectionTitle
         title={data.main_heading}
+        {...getEditableAttributes('how_it_works', data.id, 'main_heading')}
       >
       </SectionTitle>
 
@@ -73,20 +75,34 @@ export const HowItWorks = async () => {
           <div className="space-y-8">
             {/* Manual Selection Section */}
             <div className="rounded-lg px-6 py-2">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4" style={{color: "#3B82F6"}}>
+              <h3
+                className="text-xl font-bold text-gray-800 dark:text-white mb-4"
+                style={{color: "#3B82F6"}}
+                {...getEditableAttributes('how_it_works', data.id, 'manual_selection_title')}
+              >
                 {data.manual_selection_title}
               </h3>
-              <ul className="space-y-2 text-gray-600 dark:text-gray-300">
+              <ul
+                className="space-y-2 text-gray-600 dark:text-gray-300"
+                {...getEditableAttributes('how_it_works', data.id, 'manual_selection_description')}
+              >
                 {renderDescription(data.manual_selection_description)}
               </ul>
             </div>
 
             {/* Auto Selection Section */}
             <div className="rounded-lg px-6 py-2">
-              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4" style={{color: "#3B82F6"}}>
+              <h3
+                className="text-xl font-bold text-gray-800 dark:text-white mb-4"
+                style={{color: "#3B82F6"}}
+                {...getEditableAttributes('how_it_works', data.id, 'auto_selection_title')}
+              >
                 {data.auto_selection_title}
               </h3>
-              <ul className="space-y-2 text-gray-600 dark:text-gray-300">
+              <ul
+                className="space-y-2 text-gray-600 dark:text-gray-300"
+                {...getEditableAttributes('how_it_works', data.id, 'auto_selection_description')}
+              >
                 {renderDescription(data.auto_selection_description)}
               </ul>
             </div>

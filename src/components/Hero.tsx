@@ -8,6 +8,7 @@ import { PlayCircleIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { getHomeContent, getImageUrl } from "@/lib/directus";
 import { HomeContent } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 export const Hero = () => {
   const [homeContent, setHomeContent] = useState<HomeContent | null>(null);
@@ -38,7 +39,10 @@ export const Hero = () => {
 
       {/* Centered Title Section */}
       <Container className="flex w-full flex-col items-center justify-center text-center mt-1">
-        <h1 className="text-2xl font-bold leading-snug tracking-tight text-gray-800 lg:leading-tight lg:text-4xl xl:text-4xl dark:text-white">
+        <h1
+          className="text-2xl font-bold leading-snug tracking-tight text-gray-800 lg:leading-tight lg:text-4xl xl:text-4xl dark:text-white"
+          {...(homeContent ? getEditableAttributes('tamamat_com_home', homeContent.id, 'home_title') : {})}
+        >
           {homeContent?.home_title || "Loading..."}
         </h1>
       </Container>
@@ -49,7 +53,10 @@ export const Hero = () => {
           {/* Left side - Content (60%) */}
           <div className="lg:col-span-6 order-1 lg:order-1">
             <div className="max-w-2xl lg:max-w-none mb-2 lg:mb-8">
-              <p className="mb-4 lg:mb-6 xl:mb-10 text-base leading-relaxed lg:leading-loose xl:[line-height:2.025] text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300">
+              <p
+                className="mb-4 lg:mb-6 xl:mb-10 text-base leading-relaxed lg:leading-loose xl:[line-height:2.025] text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300"
+                {...(homeContent ? getEditableAttributes('tamamat_com_home', homeContent.id, 'home_description') : {})}
+              >
                 {homeContent?.home_description || "Loading..."}
               </p>
 
@@ -57,6 +64,7 @@ export const Hero = () => {
                 <Link
                   href="#how-it-works"
                   className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8Apx_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center"
+                  {...(homeContent ? getEditableAttributes('tamamat_com_home', homeContent.id, 'home_button') : {})}
                 >
                   {homeContent?.home_button || "Watch Video"}
                   <PlayCircleIcon className="w-4 h-4 ml-2" />

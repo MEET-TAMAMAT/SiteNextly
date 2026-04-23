@@ -8,6 +8,7 @@ import "./globals.css";
 import { DirectusNavbar } from "@/components/DirectusNavbar-Legacy";
 import { Footer } from "@/components/FooterWrapper";
 import { BackToTop } from "@/components/BackToTop";
+import { VisualEditorProvider } from "@/components/VisualEditorProvider";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -47,12 +48,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} ${uncialAntiqua.variable} ${nunito.variable}`}>
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <DirectusNavbar />
-          <div className="pt-28 lg:pb-8">{children}</div>
-          <Footer />
-          <BackToTop />
-        </ThemeProvider>
+        <VisualEditorProvider>
+          <ThemeProvider attribute="class" defaultTheme="light">
+            <DirectusNavbar />
+            <div className="pt-28 lg:pb-8">{children}</div>
+            <Footer />
+            <BackToTop />
+          </ThemeProvider>
+        </VisualEditorProvider>
       </body>
     </html>
   );

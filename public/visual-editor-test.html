@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Visual Editor Test</title>
+    <script src="https://unpkg.com/@directus/visual-editing@latest/dist/index.umd.js"></script>
+</head>
+<body>
+    <h1 data-directus-collection="tamamat_com_home" data-directus-id="1" data-directus-field="home_title">
+        Test Title
+    </h1>
+
+    <p data-directus-collection="tamamat_com_home" data-directus-id="1" data-directus-field="home_description">
+        Test description text.
+    </p>
+
+    <script>
+        console.log('Starting simple Visual Editor test...');
+
+        if (window.DirectusVisualEditing) {
+            console.log('Directus Visual Editing available');
+
+            window.DirectusVisualEditing.apply({
+                directusUrl: 'https://admin.tamamat.com'
+            }).then(instance => {
+                console.log('Visual Editor initialized:', instance);
+                window.__directus_visual_editing = instance;
+                instance.enable();
+            }).catch(err => {
+                console.error('Visual Editor failed:', err);
+            });
+        } else {
+            console.error('Directus Visual Editing not found');
+        }
+    </script>
+</body>
+</html>
