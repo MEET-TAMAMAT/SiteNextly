@@ -77,7 +77,7 @@ export function FooterClient({ footerData, isUsingDirectus }: FooterProps) {
             </div>
 
             {/* Copyright on the right */}
-            <div className="text-sm text-gray-600 dark:text-gray-400 text-center" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
+            <div className="text-xs text-gray-600 dark:text-gray-400 text-center mt-2" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
               {footerData.copyright_text}
             </div>
           </div>
