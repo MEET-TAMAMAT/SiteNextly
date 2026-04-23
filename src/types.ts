@@ -155,9 +155,12 @@ export interface ContactContent {
   contact_info_title: string;
   form_title: string;
   email_address: string;
+  email_label: string;
   telegram_handle: string;
+  telegram_label: string;
   support_hours_days: string;
   support_hours_time: string;
+  support_hours_label: string;
   name_field_label: string;
   name_field_placeholder: string;
   email_field_label: string;
