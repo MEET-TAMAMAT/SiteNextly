@@ -79,3 +79,10 @@ git checkout backup-before-[description]  # to revert
 ---
 *Last Updated: April 14, 2026*
 
+
+
+# 1. Kill the current server
+taskkill /IM "node.exe" /F
+
+# 2. Start it again
+yarn dev
