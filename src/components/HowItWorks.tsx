@@ -26,6 +26,7 @@ export const HowItWorks = async () => {
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
+    id: 1, // Default ID for fallback content
     main_heading: "Teach Faster with Smart Shortcuts",
     manual_selection_title: "Manual Selection",
     manual_selection_description: "- Students are automatically assigned keyboard numbers from [1] to [9]. The button [5] mutes/unmutes all\n\n- The teacher presses a student's number to unmute and highlight them\n\n- A student is ready to answer",
