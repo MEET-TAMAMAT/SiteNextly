@@ -10,6 +10,7 @@ import {
   AdjustmentsHorizontalIcon,
 } from "@heroicons/react/24/solid";
 import { getFeaturesContent, getImageUrl } from "@/lib/directus";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 // Icon mapping object
 const iconMap = {
@@ -22,13 +23,15 @@ const iconMap = {
 };
 
 // Helper function to render a feature block
-function FeatureBlock({ icon, title, description, index }: {
+function FeatureBlock({ icon, title, description, index, dataId }: {
   icon: string;
   title: string;
   description: string;
   index: number;
+  dataId: string | number;
 }) {
   const IconComponent = iconMap[icon as keyof typeof iconMap] || EnvelopeIcon;
+  const featureNumber = index + 1;
 
   return (
     <div className="rounded-lg px-2 py-1" key={index}>
@@ -36,9 +39,19 @@ function FeatureBlock({ icon, title, description, index }: {
         <div className="w-6 h-10 rounded-lg flex items-center justify-center mr-1">
           <IconComponent className="w-8 h-8 text-blue-600" />
         </div>
-        <h3 className="text-xl font-bold text-gray-800 dark:text-white">{title}</h3>
+        <h3
+          className="text-xl font-bold text-gray-800 dark:text-white"
+          {...getEditableAttributes('features', dataId, `feature_${featureNumber}_title`)}
+        >
+          {title}
+        </h3>
       </div>
-      <p className="text-gray-600 dark:text-gray-300 text-base">{description}</p>
+      <p
+        className="text-gray-600 dark:text-gray-300 text-base"
+        {...getEditableAttributes('features', dataId, `feature_${featureNumber}_description`)}
+      >
+        {description}
+      </p>
     </div>
   );
 }
@@ -48,6 +61,7 @@ export const Features = async () => {
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
+    id: 1, // Default ID for fallback content
     main_title: "Built for Small Groups",
     main_image: null,
     feature_1_icon: "EnvelopeIcon",
@@ -90,7 +104,10 @@ export const Features = async () => {
         Features Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
       </div>
 
-      <SectionTitle title={data.main_title}>
+      <SectionTitle
+        title={data.main_title}
+        {...getEditableAttributes('features', data.id, 'main_title')}
+      >
       </SectionTitle>
 
       <div className="grid gap-0 lg:grid-cols-5 items-center">
@@ -104,6 +121,7 @@ export const Features = async () => {
                 title={feature.title}
                 description={feature.description}
                 index={index}
+                dataId={data.id}
               />
             ))}
           </div>

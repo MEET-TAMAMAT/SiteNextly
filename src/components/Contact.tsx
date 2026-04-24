@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { ContactContent } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 interface ContactProps {
   contactData: ContactContent;
@@ -127,7 +128,10 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
         {/* Contact Information */}
         <div className="lg:col-span-1">
           <div className="rounded-2xl px-8 py-10">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center">
+            <h3
+              className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center"
+              {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'contact_info_title') : {})}
+            >
               {contactData.contact_info_title}
             </h3>
 
@@ -138,7 +142,10 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                   <EnvelopeIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1">
+                  <h4
+                    className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1"
+                    {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'email_label') : {})}
+                  >
                     {contactData.email_label}
                   </h4>
                   <Link
@@ -194,7 +201,10 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
         {/* Contact Form */}
         <div className="lg:col-span-1">
           <div className="rounded-2xl px-8 py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
-            <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center">
+            <h3
+              className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center"
+              {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'form_title') : {})}
+            >
               {contactData.form_title}
             </h3>
 
@@ -336,6 +346,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                 type="submit"
                 className="w-full px-6 py-3 text-white rounded-lg hover:opacity-90 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 style={{backgroundColor: "#3B82F6"}}
+                {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'submit_button_text') : {})}
               >
                 {contactData.submit_button_text}
               </button>

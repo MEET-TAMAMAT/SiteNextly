@@ -3,6 +3,7 @@ import { SectionTitle } from "./SectionTitle";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { getPricingContent } from "@/lib/directus";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 // SVG icon components mapping
 const iconMap = {
@@ -25,7 +26,7 @@ const iconMap = {
 };
 
 // Helper function to render a pricing plan
-function PricingPlan({ plan, planNumber }: { plan: any; planNumber: number }) {
+function PricingPlan({ plan, planNumber, dataId }: { plan: any; planNumber: number; dataId: string | number }) {
   const IconComponent = iconMap[plan.icon as keyof typeof iconMap] || iconMap.sparkles;
 
   const features = [
@@ -39,12 +40,20 @@ function PricingPlan({ plan, planNumber }: { plan: any; planNumber: number }) {
   return (
     <div className="flex flex-col justify-between w-full h-full px-8 rounded-2xl py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
       <div>
-        <h3 className="text-2xl font-bold text-center mb-6" style={{ color: plan.color }}>
+        <h3
+          className="text-2xl font-bold text-center mb-6"
+          style={{ color: plan.color }}
+          {...getEditableAttributes('pricing', dataId, `plan_${planNumber}_name`)}
+        >
           {plan.name}
         </h3>
 
         <div className="text-center mb-8">
-          <span className="text-3xl font-bold my-8" style={{ color: plan.color }}>
+          <span
+            className="text-3xl font-bold my-8"
+            style={{ color: plan.color }}
+            {...getEditableAttributes('pricing', dataId, `plan_${planNumber}_price`)}
+          >
             {plan.price}
           </span>
           {plan.price_description && (
@@ -76,6 +85,7 @@ function PricingPlan({ plan, planNumber }: { plan: any; planNumber: number }) {
             ? 'text-[#a855f7] border-[#a855f7] shadow-[0_4px_12px_rgba(168,85,247,0.15)] hover:bg-[#a855f7] hover:shadow-[0_8px_20px_rgba(168,85,247,0.25)]'
             : ''
         }`}
+        {...getEditableAttributes('pricing', dataId, `plan_${planNumber}_button_text`)}
       >
         {plan.button_text}
       </Link>
@@ -88,6 +98,7 @@ export const Pricing = async () => {
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
+    id: 1, // Default ID for fallback content
     main_title: "Pick Your Plan",
     plan_1_name: "Free Plan",
     plan_1_color: "#22c55e",
@@ -183,12 +194,15 @@ export const Pricing = async () => {
         Pricing Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
       </div>
 
-      <SectionTitle title={data.main_title}>
+      <SectionTitle
+        title={data.main_title}
+        {...getEditableAttributes('pricing', data.id, 'main_title')}
+      >
       </SectionTitle>
 
       <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-3">
         {plans.map((plan, index) => (
-          <PricingPlan key={index} plan={plan} planNumber={index + 1} />
+          <PricingPlan key={index} plan={plan} planNumber={index + 1} dataId={data.id} />
         ))}
       </div>
     </Container>

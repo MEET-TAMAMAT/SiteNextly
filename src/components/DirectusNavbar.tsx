@@ -6,6 +6,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { getHeaderConfig, getImageUrl } from "@/lib/directus";
 import { HeaderConfig } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 export const DirectusNavbar = () => {
   const { theme, resolvedTheme } = useTheme();
@@ -205,6 +206,7 @@ export const DirectusNavbar = () => {
             <span
               className="bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-100 bg-clip-text text-transparent"
               style={{ fontFamily: "var(--font-uncial-antiqua)" }}
+              {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'company_title') : {})}
             >
               {companyTitle}
             </span>
@@ -238,6 +240,7 @@ export const DirectusNavbar = () => {
                 <Link
                   href={loginButton.href}
                   className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_10px_20px_rgba(59,130,246,0.4)] whitespace-nowrap"
+                  {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'login_button_text') : {})}
                 >
                   {loginButton.text}
                 </Link>
@@ -299,7 +302,12 @@ export const DirectusNavbar = () => {
                 className="h-7 w-auto"
               />
             </div>
-            <span style={{ fontFamily: "var(--font-uncial-antiqua)" }}>{companyTitle}</span>
+            <span
+              style={{ fontFamily: "var(--font-uncial-antiqua)" }}
+              {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'company_title') : {})}
+            >
+              {companyTitle}
+            </span>
           </Link>
           <button
             onClick={() => setMobileMenuOpen(false)}
@@ -333,6 +341,7 @@ export const DirectusNavbar = () => {
             <Link
               href={loginButton.href}
               className="block w-full bg-white text-[#3B82F6] text-center py-4 rounded-2xl font-semibold text-lg shadow-[0_10px_30px_rgba(255,255,255,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-2px] hover:shadow-[0_15px_40px_rgba(255,255,255,0.4)]"
+              {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'login_button_text') : {})}
             >
               {loginButton.text}
             </Link>
