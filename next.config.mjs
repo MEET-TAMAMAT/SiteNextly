@@ -14,11 +14,26 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'self' https://admin.tamamat.com",
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'ALLOWALL',
+          },
+        ],
+      },
+    ];
+  },
   compiler: {
-    // Enable SWC minification for better backward compatibility
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Ensure proper transpilation for older browsers
   experimental: {
     esmExternals: false,
   },
