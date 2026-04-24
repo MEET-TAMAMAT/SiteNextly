@@ -35,8 +35,6 @@ export function getEditableAttributes(
   field: string
 ) {
   return {
-    'data-directus-collection': collection,
-    'data-directus-item': String(id),
-    'data-directus-field': field,
+    'data-directus': `collection:${collection};item:${String(id)};fields:${field}`,
   };
 }
