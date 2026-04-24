@@ -34,14 +34,9 @@ export function getEditableAttributes(
   id: string | number,
   field: string
 ) {
-  const isDev = process.env.NODE_ENV === 'development';
-  const isVisualEditor = isVisualEditorMode();
-
-  if (!isDev && !isVisualEditor) return {};
-
   return {
     'data-directus-collection': collection,
-    'data-directus-item': String(id),   // ← was data-directus-id
+    'data-directus-item': String(id),
     'data-directus-field': field,
   };
 }
