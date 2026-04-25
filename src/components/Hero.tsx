@@ -41,7 +41,7 @@ export const Hero = () => {
       <Container className="flex w-full flex-col items-center justify-center text-center mt-1">
         <h1
           className="text-2xl font-bold leading-snug tracking-tight text-gray-800 lg:leading-tight lg:text-4xl xl:text-4xl dark:text-white"
-          {...(homeContent ? getEditableAttributes('tamamat_com_home', homeContent.id, 'home_title') : {})}
+          {...getEditableAttributes('tamamat_com_home', '1', 'home_title')}
         >
           {homeContent?.home_title || "Loading..."}
         </h1>
@@ -55,7 +55,7 @@ export const Hero = () => {
             <div className="max-w-2xl lg:max-w-none mb-2 lg:mb-8">
               <p
                 className="mb-4 lg:mb-6 xl:mb-10 text-base leading-relaxed lg:leading-loose xl:[line-height:2.025] text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300"
-                {...(homeContent ? getEditableAttributes('tamamat_com_home', homeContent.id, 'home_description') : {})}
+                {...getEditableAttributes('tamamat_com_home', '1', 'home_description')}
               >
                 {homeContent?.home_description || "Loading..."}
               </p>
@@ -64,7 +64,7 @@ export const Hero = () => {
                 <Link
                   href="#how-it-works"
                   className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8Apx_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center"
-                  {...(homeContent ? getEditableAttributes('tamamat_com_home', homeContent.id, 'home_button') : {})}
+                  {...getEditableAttributes('tamamat_com_home', '1', 'home_button')}
                 >
                   {homeContent?.home_button || "Watch Video"}
                   <PlayCircleIcon className="w-4 h-4 ml-2" />
@@ -78,8 +78,8 @@ export const Hero = () => {
             <div className="relative flex justify-center">
               <Image
                 src={homeContent?.home_image ? getImageUrl(
-                  typeof homeContent.home_image === 'string' 
-                    ? homeContent.home_image 
+                  typeof homeContent.home_image === 'string'
+                    ? homeContent.home_image
                     : homeContent.home_image.id
                 ) : heroImg}
                 width={350}
@@ -88,7 +88,8 @@ export const Hero = () => {
                 style={{ width: 'auto', height: 'auto' }}
                 alt={homeContent?.home_title || "Online Teaching Platform for Small Groups"}
                 priority
-                />
+                {...getEditableAttributes('tamamat_com_home', '1', 'home_image')}
+              />
             </div>
           </div>
         </div>

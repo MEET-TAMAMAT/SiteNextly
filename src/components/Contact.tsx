@@ -31,27 +31,21 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
   const subjectRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
 
-  // Helper function to get theme-aware background colors
   const getBackgroundColors = (hasValue: boolean, isDarkTheme: boolean) => {
     if (isDarkTheme) {
-      return hasValue ? '#4B5563' : '#374151'; // gray-600 : gray-700
+      return hasValue ? '#4B5563' : '#374151';
     } else {
-      return hasValue ? '#f0fdf4' : '#f9fafb'; // light green : light gray
+      return hasValue ? '#f0fdf4' : '#f9fafb';
     }
   };
 
-  // Watch for theme changes
   useEffect(() => {
     const checkTheme = () => {
       if (typeof window !== 'undefined') {
         setIsDark(document.documentElement.classList.contains('dark'));
       }
     };
-
-    // Check theme on mount
     checkTheme();
-
-    // Watch for theme changes using MutationObserver
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -59,14 +53,12 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
         }
       });
     });
-
     if (typeof window !== 'undefined') {
       observer.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['class']
       });
     }
-
     return () => observer.disconnect();
   }, []);
 
@@ -75,7 +67,6 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
     setShowValidation(true);
   };
 
-  // Sync state with actual field values to handle autofill
   useEffect(() => {
     const checkValues = () => {
       const currentValues = {
@@ -84,7 +75,6 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
         subject: subjectRef.current?.value || '',
         message: messageRef.current?.value || ''
       };
-
       setFieldValues(prev => {
         if (
           prev.name !== currentValues.name ||
@@ -97,23 +87,16 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
         return prev;
       });
     };
-
-    // Check immediately and periodically
     checkValues();
-    const interval = setInterval(checkValues, 50); // More frequent checking
-
-    // Also check on various events that might indicate autofill
+    const interval = setInterval(checkValues, 50);
     const handleAutofillEvents = () => {
       setTimeout(checkValues, 0);
       setTimeout(checkValues, 10);
       setTimeout(checkValues, 100);
     };
-
-    // Add event listeners to detect autofill
     document.addEventListener('focus', handleAutofillEvents);
     document.addEventListener('click', handleAutofillEvents);
     window.addEventListener('pageshow', handleAutofillEvents);
-
     return () => {
       clearInterval(interval);
       document.removeEventListener('focus', handleAutofillEvents);
@@ -130,7 +113,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
           <div className="rounded-2xl px-8 py-10">
             <h3
               className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center"
-              {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'contact_info_title') : {})}
+              {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'contact_info_title') : {})}
             >
               {contactData.contact_info_title}
             </h3>
@@ -144,7 +127,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                 <div>
                   <h4
                     className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1"
-                    {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'email_label') : {})}
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'email_label') : {})}
                   >
                     {contactData.email_label}
                   </h4>
@@ -152,6 +135,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                     href={`mailto:${contactData.email_address}`}
                     style={{color: "#3B82F6"}}
                     className="hover:opacity-80"
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'email_address') : {})}
                   >
                     {contactData.email_address}
                   </Link>
@@ -164,7 +148,10 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                   <ChatBubbleLeftRightIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1">
+                  <h4
+                    className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1"
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'telegram_label') : {})}
+                  >
                     {contactData.telegram_label}
                   </h4>
                   <Link
@@ -172,6 +159,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                     className="text-blue-500 hover:text-blue-600 dark:text-blue-400"
                     target="_blank"
                     rel="noopener noreferrer"
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'telegram_handle') : {})}
                   >
                     {contactData.telegram_handle}
                   </Link>
@@ -184,17 +172,29 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                   <ClockIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1">
+                  <h4
+                    className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1"
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'support_hours_label') : {})}
+                  >
                     {contactData.support_hours_label}
                   </h4>
                   <p className="text-gray-600 dark:text-gray-300">
-                    {contactData.support_hours_days}<br />
-                    {contactData.support_hours_time}
+                    <span
+                      className="block"
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'support_hours_days') : {})}
+                    >
+                      {contactData.support_hours_days}
+                    </span>
+                    <span
+                      className="block"
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'support_hours_time') : {})}
+                    >
+                      {contactData.support_hours_time}
+                    </span>
                   </p>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -203,7 +203,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
           <div className="rounded-2xl px-8 py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
             <h3
               className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center"
-              {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'form_title') : {})}
+              {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'form_title') : {})}
             >
               {contactData.form_title}
             </h3>
@@ -241,6 +241,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                   onInput={(e) => setFieldValues(prev => ({ ...prev, name: (e.target as HTMLInputElement).value }))}
                   onInvalid={() => setShowValidation(true)}
                   placeholder={contactData.name_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'name_field_placeholder') : {})}
                 />
               </div>
 
@@ -276,6 +277,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                   onBlur={() => setFocusedField(null)}
                   onInvalid={() => setShowValidation(true)}
                   placeholder={contactData.email_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'email_field_placeholder') : {})}
                 />
               </div>
 
@@ -304,6 +306,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                   }}
                   onBlur={() => setFocusedField(null)}
                   placeholder={contactData.subject_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'subject_field_placeholder') : {})}
                 />
               </div>
 
@@ -339,6 +342,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                   onBlur={() => setFocusedField(null)}
                   onInvalid={() => setShowValidation(true)}
                   placeholder={contactData.message_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'message_field_placeholder') : {})}
                 />
               </div>
 
@@ -346,7 +350,7 @@ export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) =>
                 type="submit"
                 className="w-full px-6 py-3 text-white rounded-lg hover:opacity-90 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium"
                 style={{backgroundColor: "#3B82F6"}}
-                {...(contactData.id ? getEditableAttributes('contact', contactData.id, 'submit_button_text') : {})}
+                {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'submit_button_text') : {})}
               >
                 {contactData.submit_button_text}
               </button>

@@ -4,6 +4,7 @@ import { Container } from "@/components/Container";
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/24/solid";
 import { FaqItem } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 interface FaqProps {
   faqData: FaqItem[];
@@ -22,7 +23,12 @@ export const FaqClient = ({ faqData, isUsingDirectus }: FaqProps) => {
                 {({ open }) => (
                   <>
                     <DisclosureButton className="flex items-center justify-between w-full px-4 py-4 text-xl font-semibold text-left text-gray-800 rounded-lg focus:outline-none focus-visible:ring focus-visible:ring-blue-100 focus-visible:ring-opacity-75 dark:text-gray-200">
-                      <span style={{color: "#3B82F6"}}>{item.question}</span>
+                      <span
+                        style={{color: "#3B82F6"}}
+                        {...getEditableAttributes('faq_items', item.id, 'question')}
+                      >
+                        {item.question}
+                      </span>
                       <ChevronUpIcon
                         className={`${
                           open ? "transform rotate-180" : ""
@@ -31,7 +37,12 @@ export const FaqClient = ({ faqData, isUsingDirectus }: FaqProps) => {
                         style={{ minWidth: '28px', minHeight: '28px' }}
                       />
                     </DisclosureButton>
-                    <DisclosurePanel className="px-4 pt-2 pb-2 text-base text-gray-500 dark:text-gray-300" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
+                    <DisclosurePanel
+                      unmount={false}
+                      className="px-4 pt-2 pb-2 text-base text-gray-500 dark:text-gray-300"
+                      style={{fontFamily: "var(--font-nunito), sans-serif"}}
+                      {...getEditableAttributes('faq_items', item.id, 'answer')}
+                    >
                       {item.answer}
                     </DisclosurePanel>
                   </>
@@ -49,7 +60,12 @@ export const FaqClient = ({ faqData, isUsingDirectus }: FaqProps) => {
                 {({ open }) => (
                   <>
                     <DisclosureButton className="flex items-center justify-between w-full px-4 py-4 text-xl font-semibold text-left text-gray-800 rounded-lg focus:outline-none focus-visible:ring focus-visible:ring-blue-100 focus-visible:ring-opacity-75 dark:text-gray-200">
-                      <span style={{color: "#3B82F6"}}>{item.question}</span>
+                      <span
+                        style={{color: "#3B82F6"}}
+                        {...getEditableAttributes('faq_items', item.id, 'question')}
+                      >
+                        {item.question}
+                      </span>
                       <ChevronUpIcon
                         className={`${
                           open ? "transform rotate-180" : ""
@@ -58,7 +74,12 @@ export const FaqClient = ({ faqData, isUsingDirectus }: FaqProps) => {
                         style={{ minWidth: '28px', minHeight: '28px' }}
                       />
                     </DisclosureButton>
-                    <DisclosurePanel className="px-4 pt-2 pb-2 text-base text-gray-500 dark:text-gray-300" style={{fontFamily: "var(--font-nunito), sans-serif"}}>
+                    <DisclosurePanel
+                      unmount={false}
+                      className="px-4 pt-2 pb-2 text-base text-gray-500 dark:text-gray-300"
+                      style={{fontFamily: "var(--font-nunito), sans-serif"}}
+                      {...getEditableAttributes('faq_items', item.id, 'answer')}
+                    >
                       {item.answer}
                     </DisclosurePanel>
                   </>

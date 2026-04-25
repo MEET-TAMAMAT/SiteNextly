@@ -189,4 +189,6 @@ export interface FooterContent {
   linkedin_enabled: boolean;
   youtube_url: string;
   youtube_enabled: boolean;
+  tiktok_url?: string;
+  tiktok_enabled?: boolean;
 }

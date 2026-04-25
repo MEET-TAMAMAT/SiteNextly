@@ -41,14 +41,14 @@ function FeatureBlock({ icon, title, description, index, dataId }: {
         </div>
         <h3
           className="text-xl font-bold text-gray-800 dark:text-white"
-          {...getEditableAttributes('features', dataId, `feature_${featureNumber}_title`)}
+          {...getEditableAttributes('features_section', dataId, `feature_${featureNumber}_title`)}
         >
           {title}
         </h3>
       </div>
       <p
         className="text-gray-600 dark:text-gray-300 text-base"
-        {...getEditableAttributes('features', dataId, `feature_${featureNumber}_description`)}
+        {...getEditableAttributes('features_section', dataId, `feature_${featureNumber}_description`)}
       >
         {description}
       </p>
@@ -61,7 +61,7 @@ export const Features = async () => {
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
-    id: 1, // Default ID for fallback content
+    id: 1,
     main_title: "Built for Small Groups",
     main_image: null,
     feature_1_icon: "EnvelopeIcon",
@@ -106,7 +106,7 @@ export const Features = async () => {
 
       <SectionTitle
         title={data.main_title}
-        {...getEditableAttributes('features', data.id, 'main_title')}
+        {...getEditableAttributes('features_section', data.id, 'main_title')}
       >
       </SectionTitle>
 
@@ -141,6 +141,7 @@ export const Features = async () => {
               height={351}
               className="max-w-full h-auto rounded-lg"
               style={{ width: 'auto', height: 'auto' }}
+              {...getEditableAttributes('features_section', data.id, 'main_image')}
             />
           </div>
         </div>

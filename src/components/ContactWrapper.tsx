@@ -2,12 +2,11 @@ import { getContactContent } from "@/lib/directus";
 import { ContactClient } from "./Contact";
 import { SectionTitle } from "./SectionTitle";
 import { ContactContent } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 export const Contact = async () => {
-  // Fetch contact content from Directus
   const contactContent = await getContactContent();
 
-  // Fallback contact data if Directus fetch fails
   const fallbackContactData: ContactContent = {
     id: "fallback",
     status: "published",
@@ -33,7 +32,6 @@ export const Contact = async () => {
     success_message: "Thank you for your message! We'll get back to you soon."
   };
 
-  // Use Directus data if available, otherwise fallback
   const contactData = contactContent || fallbackContactData;
   const isUsingDirectus = !!contactContent;
 
@@ -43,7 +41,10 @@ export const Contact = async () => {
       <div className="text-xs text-center mb-4 opacity-50">
         Contact Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
       </div>
-      <SectionTitle title={contactData.main_title} />
+      <SectionTitle
+        title={contactData.main_title}
+        {...getEditableAttributes('contact_section', contactData.id, 'main_title')}
+      />
       <ContactClient contactData={contactData} isUsingDirectus={isUsingDirectus} />
     </>
   );

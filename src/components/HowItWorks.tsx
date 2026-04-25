@@ -26,7 +26,7 @@ export const HowItWorks = async () => {
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
-    id: 1, // Default ID for fallback content
+    id: 1,
     main_heading: "Teach Faster with Smart Shortcuts",
     manual_selection_title: "Manual Selection",
     manual_selection_description: "- Students are automatically assigned keyboard numbers from [1] to [9]. The button [5] mutes/unmutes all\n\n- The teacher presses a student's number to unmute and highlight them\n\n- A student is ready to answer",
@@ -67,6 +67,7 @@ export const HowItWorks = async () => {
               height={351}
               className="max-w-full h-auto rounded-lg"
               style={{ width: 'auto', height: 'auto' }}
+              {...getEditableAttributes('how_it_works', data.id, 'main_illustration')}
             />
           </div>
         </div>
@@ -110,7 +111,10 @@ export const HowItWorks = async () => {
 
             {/* Button */}
             <div className="pt-4 flex justify-center">
-              <button className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center">
+              <button
+                className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center"
+                {...getEditableAttributes('how_it_works', data.id, 'video_button_text')}
+              >
                 {data.video_button_text}
                 <PlayCircleIcon className="w-4 h-4 ml-2" />
               </button>

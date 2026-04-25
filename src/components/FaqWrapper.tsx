@@ -2,18 +2,16 @@ import { getFaqSectionContent, getFaqItems } from "@/lib/directus";
 import { FaqClient } from "./Faq";
 import { SectionTitle } from "./SectionTitle";
 import { FaqItem } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
 
 export const Faq = async () => {
-  // Fetch both FAQ section and FAQ items
   const [faqSectionContent, faqItemsData] = await Promise.all([
     getFaqSectionContent(),
     getFaqItems()
   ]);
 
-  // Fallback FAQ section title
   const faqTitle = faqSectionContent?.main_title || "Frequently Asked Questions";
 
-  // Fallback FAQ data if Directus fetch fails
   const fallbackFaqData: FaqItem[] = [
     {
       id: "1",
@@ -81,7 +79,6 @@ export const Faq = async () => {
     },
   ];
 
-  // Use Directus data if available, otherwise fallback
   const faqData = faqItemsData.length > 0 ? faqItemsData : fallbackFaqData;
   const isUsingDirectus = faqItemsData.length > 0 && !!faqSectionContent;
 
@@ -91,7 +88,10 @@ export const Faq = async () => {
       <div className="text-xs text-center mb-4 opacity-50">
         FAQ Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
       </div>
-      <SectionTitle title={faqTitle} />
+      <SectionTitle
+        title={faqTitle}
+        {...getEditableAttributes('faq_section', faqSectionContent?.id || 1, 'main_title')}
+      />
       <FaqClient faqData={faqData} isUsingDirectus={isUsingDirectus} />
     </>
   );

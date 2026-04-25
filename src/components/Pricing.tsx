@@ -30,11 +30,11 @@ function PricingPlan({ plan, planNumber, dataId }: { plan: any; planNumber: numb
   const IconComponent = iconMap[plan.icon as keyof typeof iconMap] || iconMap.sparkles;
 
   const features = [
-    plan[`feature_${planNumber}`] || plan.feature_1,
-    plan[`feature_${planNumber}_2`] || plan.feature_2,
-    plan[`feature_${planNumber}_3`] || plan.feature_3,
-    plan[`feature_${planNumber}_4`] || plan.feature_4,
-    plan[`feature_${planNumber}_5`] || plan.feature_5,
+    plan.feature_1,
+    plan.feature_2,
+    plan.feature_3,
+    plan.feature_4,
+    plan.feature_5,
   ].filter(Boolean);
 
   return (
@@ -43,7 +43,7 @@ function PricingPlan({ plan, planNumber, dataId }: { plan: any; planNumber: numb
         <h3
           className="text-2xl font-bold text-center mb-6"
           style={{ color: plan.color }}
-          {...getEditableAttributes('pricing', dataId, `plan_${planNumber}_name`)}
+          {...getEditableAttributes('pricing_section', dataId, `plan_${planNumber}_name`)}
         >
           {plan.name}
         </h3>
@@ -52,12 +52,17 @@ function PricingPlan({ plan, planNumber, dataId }: { plan: any; planNumber: numb
           <span
             className="text-3xl font-bold my-8"
             style={{ color: plan.color }}
-            {...getEditableAttributes('pricing', dataId, `plan_${planNumber}_price`)}
+            {...getEditableAttributes('pricing_section', dataId, `plan_${planNumber}_price`)}
           >
             {plan.price}
           </span>
           {plan.price_description && (
-            <span className="text-gray-500 dark:text-gray-400">{plan.price_description}</span>
+            <span
+              className="text-gray-500 dark:text-gray-400"
+              {...getEditableAttributes('pricing_section', dataId, `plan_${planNumber}_price_description`)}
+            >
+              {plan.price_description}
+            </span>
           )}
           <div className="flex justify-center mt-6" style={{ color: plan.color }}>
             <IconComponent />
@@ -66,7 +71,11 @@ function PricingPlan({ plan, planNumber, dataId }: { plan: any; planNumber: numb
 
         <ul className="space-y-3 mb-8">
           {features.map((feature: string, index: number) => (
-            <li key={index} className="flex items-center">
+            <li
+              key={index}
+              className="flex items-center"
+              {...getEditableAttributes('pricing_section', dataId, `plan_${planNumber}_feature_${index + 1}`)}
+            >
               <CheckIcon className="w-7 h-7 mr-3" style={{ color: plan.color }} />
               <span className="text-gray-700 dark:text-gray-300">{feature}</span>
             </li>
@@ -85,7 +94,7 @@ function PricingPlan({ plan, planNumber, dataId }: { plan: any; planNumber: numb
             ? 'text-[#a855f7] border-[#a855f7] shadow-[0_4px_12px_rgba(168,85,247,0.15)] hover:bg-[#a855f7] hover:shadow-[0_8px_20px_rgba(168,85,247,0.25)]'
             : ''
         }`}
-        {...getEditableAttributes('pricing', dataId, `plan_${planNumber}_button_text`)}
+        {...getEditableAttributes('pricing_section', dataId, `plan_${planNumber}_button_text`)}
       >
         {plan.button_text}
       </Link>
@@ -98,7 +107,7 @@ export const Pricing = async () => {
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
-    id: 1, // Default ID for fallback content
+    id: 1,
     main_title: "Pick Your Plan",
     plan_1_name: "Free Plan",
     plan_1_color: "#22c55e",
@@ -196,7 +205,7 @@ export const Pricing = async () => {
 
       <SectionTitle
         title={data.main_title}
-        {...getEditableAttributes('pricing', data.id, 'main_title')}
+        {...getEditableAttributes('pricing_section', data.id, 'main_title')}
       >
       </SectionTitle>
 
