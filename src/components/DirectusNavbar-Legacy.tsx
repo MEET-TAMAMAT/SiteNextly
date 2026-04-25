@@ -5,7 +5,9 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { getHeaderConfig, getImageUrl } from "@/lib/directus";
-import { HeaderConfig } from "@/types";
+import { HeaderConfig, NavigationItem } from "@/types";
+import { getEditableAttributes } from "@/lib/visual-editor";
+import { apply, remove } from "@directus/visual-editing";
 
 export const DirectusNavbar = () => {
   const { theme, resolvedTheme } = useTheme();
@@ -18,14 +20,13 @@ export const DirectusNavbar = () => {
   const [currentTheme, setCurrentTheme] = useState<string>('light');
   const isUsingDirectus = !!headerConfig;
 
-  // Fallback navigation for when Directus is unavailable
-  const fallbackNavigation = [
-    "Home",
-    "How it Works",
-    "Features",
-    "Pricing",
-    "FAQ",
-    "Contact",
+  const fallbackNavigation: NavigationItem[] = [
+    { id: "fallback-1", label: "Home", href: "/", sort: 1, is_active: true },
+    { id: "fallback-2", label: "How it Works", href: "#how-it-works", sort: 2, is_active: true },
+    { id: "fallback-3", label: "Features", href: "#features", sort: 3, is_active: true },
+    { id: "fallback-4", label: "Pricing", href: "#pricing", sort: 4, is_active: true },
+    { id: "fallback-5", label: "FAQ", href: "#faq", sort: 5, is_active: true },
+    { id: "fallback-6", label: "Contact", href: "#contact", sort: 6, is_active: true },
   ];
 
   useEffect(() => {
@@ -33,34 +34,46 @@ export const DirectusNavbar = () => {
     loadHeaderConfig();
   }, []);
 
-  // Enhanced theme tracking for older browsers
+  // Re-apply visual editor after headerConfig loads so it picks up
+  // the data-directus attributes added to nav items after Directus data arrives
+  useEffect(() => {
+    if (!headerConfig) return;
+    if (typeof window === 'undefined') return;
+    if (window.parent === window) return; // Only in Visual Editor iframe
+
+    const reapply = async () => {
+      try {
+        remove();
+        await apply({
+          directusUrl: process.env.NEXT_PUBLIC_DIRECTUS_URL as string,
+          onSaved: () => window.location.reload(),
+        });
+      } catch (e) {
+        // Silently ignore — visual editor may not always be active
+      }
+    };
+
+    reapply();
+  }, [headerConfig, currentTheme]); // re-applies on theme switch too
+
   useEffect(() => {
     if (mounted) {
       const detectTheme = () => {
-        // Check multiple sources for theme
         const htmlElement = document.documentElement;
         const hasThemeClass = htmlElement.classList.contains('dark');
         const bodyHasTheme = document.body.classList.contains('dark');
         const themeValue = resolvedTheme || theme;
-
-        // Force theme application if not properly applied
         const isDark = hasThemeClass || bodyHasTheme || themeValue === 'dark';
         setCurrentTheme(isDark ? 'dark' : 'light');
-
-        // Ensure theme class is applied to html element
         if (isDark && !hasThemeClass) {
           htmlElement.classList.add('dark');
         } else if (!isDark && hasThemeClass) {
           htmlElement.classList.remove('dark');
         }
       };
-
       detectTheme();
-
-      // Re-check theme every 100ms for the first 2 seconds (older browser compatibility)
       const themeCheckInterval = setInterval(detectTheme, 100);
       setTimeout(() => clearInterval(themeCheckInterval), 2000);
-
       return () => clearInterval(themeCheckInterval);
     }
   }, [mounted, theme, resolvedTheme]);
@@ -80,8 +93,6 @@ export const DirectusNavbar = () => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       setIsScrolled(scrollTop > 10);
-
-      // Update active link based on scroll position
       const sections = [
         { name: 'Contact', element: document.getElementById('contact') },
         { name: 'FAQ', element: document.getElementById('faq') },
@@ -89,11 +100,8 @@ export const DirectusNavbar = () => {
         { name: 'Features', element: document.getElementById('features') },
         { name: 'How it Works', element: document.getElementById('how-it-works') }
       ];
-
-      const offset = 200; // Account for navbar height
+      const offset = 200;
       let currentActive = 'Home';
-
-      // Check sections from bottom to top
       for (const section of sections) {
         if (section.element) {
           const rect = section.element.getBoundingClientRect();
@@ -103,59 +111,49 @@ export const DirectusNavbar = () => {
           }
         }
       }
-
       setActiveLink(currentActive);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Get navigation items from Directus or fallback (using legacy syntax)
-  const navigation = (headerConfig && headerConfig.navigation_items)
+  // Keep full navigation item objects (preserves id for visual editor)
+  const navigationItems: NavigationItem[] = (headerConfig && headerConfig.navigation_items)
     ? headerConfig.navigation_items
         .filter(item => item.is_active)
         .sort((a, b) => a.sort - b.sort)
-        .map(item => item.label)
     : fallbackNavigation;
 
-  // Get logo source (using legacy syntax and reliable theme detection)
   const getLogoSource = () => {
     if (!mounted) return "/img/TAMAMAT-logo-200x122-Light-Theme.svg";
-
     if (headerConfig && headerConfig.logo) {
       const isDark = currentTheme === 'dark';
       const logoFile = isDark ? headerConfig.logo.dark_theme_logo : headerConfig.logo.light_theme_logo;
       let logoFileId;
-
       if (typeof logoFile === 'string') {
         logoFileId = logoFile;
       } else if (logoFile && logoFile.id) {
         logoFileId = logoFile.id;
       }
-
-      if (logoFileId) {
-        return getImageUrl(logoFileId);
-      }
+      if (logoFileId) return getImageUrl(logoFileId);
     }
-
-    // Fallback using currentTheme
     return currentTheme === 'dark'
       ? "/img/TAMAMAT-logo-200x122-Dark-Theme.svg"
       : "/img/TAMAMAT-logo-200x122-Light-Theme.svg";
   };
 
-  // Get company title (using legacy syntax)
-  const companyTitle = (headerConfig && headerConfig.company_title) ? headerConfig.company_title : "TAMAMAT";
+  const getLogoEditableAttributes = () => {
+    if (!headerConfig?.logo?.id) return {};
+    const field = currentTheme === 'dark' ? 'dark_theme_logo' : 'light_theme_logo';
+    return getEditableAttributes('header_logos', headerConfig.logo.id, field);
+  };
 
-  // Get login button config (using legacy syntax)
+  const companyTitle = (headerConfig && headerConfig.company_title) ? headerConfig.company_title : "TAMAMAT";
   const loginButton = (headerConfig && headerConfig.login_button) ? headerConfig.login_button : {
     text: "Login",
     href: "/",
     enabled: true
   };
-
-  // Check if theme toggle is enabled (using legacy syntax)
   const themeToggleEnabled = !(headerConfig && headerConfig.theme_toggle_enabled === false);
 
   const getHref = (menuItem: string) => {
@@ -163,8 +161,6 @@ export const DirectusNavbar = () => {
       const navItem = headerConfig.navigation_items.find(item => item.label === menuItem);
       if (navItem) return navItem.href;
     }
-
-    // Fallback href logic
     switch(menuItem) {
       case "Home": return "/";
       case "How it Works": return "#how-it-works";
@@ -179,15 +175,11 @@ export const DirectusNavbar = () => {
   const handleLinkClick = (item: string) => {
     setActiveLink(item);
     setMobileMenuOpen(false);
-
-    // Navigate to the section
     if (item !== "Home") {
       const href = getHref(item);
       if (href.indexOf('#') === 0) {
         const element = document.querySelector(href);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
+        if (element) element.scrollIntoView({ behavior: 'smooth' });
       } else {
         window.location.href = href;
       }
@@ -196,31 +188,8 @@ export const DirectusNavbar = () => {
     }
   };
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
-  if (loading) {
-    return (
-      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-60px)] container xl:px-8">
-        <div className="navbar bg-white/80 dark:bg-black/10 backdrop-blur-[20px] border border-gray-200/50 dark:border-white/10 rounded-[50px] px-6 py-3 h-[60px] animate-pulse">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-700 rounded"></div>
-              <div className="w-24 h-6 bg-gray-300 dark:bg-gray-700 rounded"></div>
-            </div>
-            <div className="hidden lg:flex items-center gap-4">
-              {[1,2,3,4,5,6].map(i => (
-                <div key={i} className="w-16 h-6 bg-gray-300 dark:bg-gray-700 rounded"></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Get logo dimensions safely
   const logoWidth = (headerConfig && headerConfig.logo && headerConfig.logo.width) ? headerConfig.logo.width : 50;
   const logoHeight = (headerConfig && headerConfig.logo && headerConfig.logo.height) ? headerConfig.logo.height : 31;
   const logoAlt = (headerConfig && headerConfig.logo && headerConfig.logo.alt_text) ? headerConfig.logo.alt_text : "TAMAMAT Logo";
@@ -235,7 +204,6 @@ export const DirectusNavbar = () => {
       {/* Floating Navigation Container */}
       <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-60px)] container xl:px-8 transition-all duration-400">
         <nav className="navbar bg-white/80 dark:bg-black/10 backdrop-blur-[20px] border border-gray-200/50 dark:border-white/10 rounded-[50px] px-6 py-3 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-400 relative overflow-hidden">
-          {/* Shimmer Effect */}
           <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-800 group-hover:left-full"></div>
 
           {/* Logo Section */}
@@ -246,6 +214,7 @@ export const DirectusNavbar = () => {
               height={logoHeight}
               alt={logoAlt}
               className="h-8 w-auto"
+              {...getLogoEditableAttributes()}
             />
             <span
               className="company-title mt-3"
@@ -254,6 +223,7 @@ export const DirectusNavbar = () => {
                 color: currentTheme === 'dark' ? '#ffffff' : '#1f2937',
                 fontWeight: 'bold'
               }}
+              {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'company_title') : {})}
             >
               {companyTitle}
             </span>
@@ -261,17 +231,18 @@ export const DirectusNavbar = () => {
 
           {/* Desktop Navigation */}
           <ul className="hidden lg:flex items-center gap-1 list-none z-10 relative">
-            {navigation.map((item) => (
-              <li key={item}>
+            {navigationItems.map((item) => (
+              <li key={item.id}>
                 <button
-                  onClick={() => handleLinkClick(item)}
-                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-[25px] transition-all duration-300 relative overflow-hidden ${
-                    activeLink === item
+                  onClick={() => handleLinkClick(item.label)}
+                  className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-[25px] transition-all duration-300 relative ${
+                    activeLink === item.label
                       ? 'bg-white/20 dark:bg-white/5 text-gray-800 dark:text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_4px_12px_rgba(255,255,255,0.02)]'
                       : 'text-gray-700 dark:text-white/90 hover:text-gray-900 dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10 hover:transform hover:translate-y-[-2px] hover:shadow-[0_8px_20px_rgba(0,0,0,0.15)]'
                   }`}
+                  {...(isUsingDirectus ? getEditableAttributes('navigation_items', item.id, 'label') : {})}
                 >
-                  <span>{item}</span>
+                  <span>{item.label}</span>
                 </button>
               </li>
             ))}
@@ -287,6 +258,7 @@ export const DirectusNavbar = () => {
                 <Link
                   href={loginButton.href}
                   className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_10px_20px_rgba(59,130,246,0.4)] whitespace-nowrap"
+                  {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'login_button') : {})}
                 >
                   {loginButton.text}
                 </Link>
@@ -296,30 +268,19 @@ export const DirectusNavbar = () => {
 
           {/* Mobile Controls Group */}
           <div className="lg:hidden flex items-center gap-2">
-            {/* Mobile Theme Toggle */}
             {themeToggleEnabled && (
               <div className="text-gray-700 dark:text-white">
                 <ThemeChanger />
               </div>
             )}
-
-            {/* Mobile Menu Button */}
             <button
               onClick={toggleMobileMenu}
-              className={`flex flex-col gap-1 w-6 h-4 cursor-pointer z-50 transition-all duration-300 ${
-                mobileMenuOpen ? 'active' : ''
-              }`}
+              className={`flex flex-col gap-1 w-6 h-4 cursor-pointer z-50 transition-all duration-300 ${mobileMenuOpen ? 'active' : ''}`}
             >
-            <span className={`w-6 h-0.5 bg-gray-800 dark:bg-white rounded transition-all duration-300 ${
-              mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''
-            }`}></span>
-            <span className={`w-6 h-0.5 bg-gray-800 dark:bg-white rounded transition-all duration-300 ${
-              mobileMenuOpen ? 'opacity-0 translate-x-[-20px]' : ''
-            }`}></span>
-            <span className={`w-6 h-0.5 bg-gray-800 dark:bg-white rounded transition-all duration-300 ${
-              mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''
-            }`}></span>
-          </button>
+              <span className={`w-6 h-0.5 bg-gray-800 dark:bg-white rounded transition-all duration-300 ${mobileMenuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-gray-800 dark:bg-white rounded transition-all duration-300 ${mobileMenuOpen ? 'opacity-0 translate-x-[-20px]' : ''}`}></span>
+              <span className={`w-6 h-0.5 bg-gray-800 dark:bg-white rounded transition-all duration-300 ${mobileMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
+            </button>
           </div>
         </nav>
       </div>
@@ -346,14 +307,12 @@ export const DirectusNavbar = () => {
                 height={(headerConfig && headerConfig.logo && headerConfig.logo.height) ? headerConfig.logo.height : 28}
                 alt={logoAlt}
                 className="h-7 w-auto"
+                {...getLogoEditableAttributes()}
               />
             </div>
             <span
-              style={{
-                fontFamily: "'Uncial Antiqua', serif",
-                color: '#ffffff',
-                fontWeight: 'bold'
-              }}
+              style={{ fontFamily: "'Uncial Antiqua', serif", color: '#ffffff', fontWeight: 'bold' }}
+              {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'company_title') : {})}
             >
               {companyTitle}
             </span>
@@ -368,17 +327,18 @@ export const DirectusNavbar = () => {
 
         {/* Mobile Menu Navigation */}
         <ul className="p-8 space-y-2">
-          {navigation.map((item) => (
-            <li key={item}>
+          {navigationItems.map((item) => (
+            <li key={item.id}>
               <button
-                onClick={() => handleLinkClick(item)}
+                onClick={() => handleLinkClick(item.label)}
                 className={`flex items-center gap-4 p-5 text-lg font-medium rounded-2xl transition-all duration-300 border w-full text-left ${
-                  activeLink === item
+                  activeLink === item.label
                     ? 'bg-black/25 text-white border-white/20 shadow-lg'
                     : 'text-white/90 hover:text-white hover:bg-white/10 hover:transform hover:translate-x-2 border-white/10 bg-white/5'
                 }`}
+                {...(isUsingDirectus ? getEditableAttributes('navigation_items', item.id, 'label') : {})}
               >
-                <span>{item}</span>
+                <span>{item.label}</span>
               </button>
             </li>
           ))}
@@ -390,6 +350,7 @@ export const DirectusNavbar = () => {
             <Link
               href={loginButton.href}
               className="block w-full bg-white text-[#3B82F6] text-center py-4 rounded-2xl font-semibold text-lg shadow-[0_10px_30px_rgba(255,255,255,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-2px] hover:shadow-[0_15px_40px_rgba(255,255,255,0.4)]"
+              {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'login_button') : {})}
             >
               {loginButton.text}
             </Link>
@@ -397,196 +358,44 @@ export const DirectusNavbar = () => {
         )}
       </div>
 
-      {/* Add custom styles with better browser compatibility */}
       <style jsx global>{`
-        /* Force dark theme background for older browsers */
-        html.dark,
-        html.dark body {
-          background-color: #0f172a !important;
-          color: #ffffff !important;
-        }
-
-        /* Light theme background */
-        html:not(.dark),
-        html:not(.dark) body {
-          background-color: #ffffff !important;
-          color: #1f2937 !important;
-        }
-
-        /* Enhanced theme support for older browsers */
-        html.dark body {
-          --tw-bg-opacity: 1;
-        }
-
-        /* Force navbar transparency with backdrop-blur support */
-        html.dark .navbar {
-          background: rgba(0, 0, 0, 0.1) !important;
-          backdrop-filter: blur(20px) !important;
-          -webkit-backdrop-filter: blur(20px) !important;
-          border-color: rgba(255, 255, 255, 0.1) !important;
-        }
-
-        html:not(.dark) .navbar {
-          background: rgba(255, 255, 255, 0.8) !important;
-          backdrop-filter: blur(20px) !important;
-          -webkit-backdrop-filter: blur(20px) !important;
-          border-color: rgba(229, 231, 235, 0.5) !important;
-        }
-
-        /* Company title styling */
-        html.dark .company-title {
-          color: #ffffff !important;
-        }
-
-        html:not(.dark) .company-title {
-          color: #1f2937 !important;
-        }
-
-        /* Fix heading colors - always blue regardless of theme - HIGHEST SPECIFICITY */
-        html h1,
-        html h2,
-        html h3,
-        html.dark h1,
-        html.dark h2,
-        html.dark h3,
-        html:not(.dark) h1,
-        html:not(.dark) h2,
-        html:not(.dark) h3,
-        body h1,
-        body h2,
-        body h3,
-        html body h1,
-        html body h2,
-        html body h3,
-        html.dark body h1,
-        html.dark body h2,
-        html.dark body h3 {
-          color: #3B82F6 !important;
-        }
-
-        /* Also target headings with specific text classes */
-        html h1.text-gray-800,
-        html h2.text-gray-800,
-        html h3.text-gray-800,
-        html h1.text-gray-700,
-        html h2.text-gray-700,
-        html h3.text-gray-700,
-        html.dark h1.text-gray-800,
-        html.dark h2.text-gray-800,
-        html.dark h3.text-gray-800,
-        html.dark h1.text-white,
-        html.dark h2.text-white,
-        html.dark h3.text-white {
-          color: #3B82F6 !important;
-        }
-
-        /* Theme-specific text colors (excluding headings) */
-        html.dark .text-gray-800:not(h1):not(h2):not(h3) {
-          color: rgba(255, 255, 255, 1) !important;
-        }
-
-        html.dark .text-gray-700:not(h1):not(h2):not(h3) {
-          color: rgba(255, 255, 255, 0.9) !important;
-        }
-
-        html:not(.dark) .text-gray-800:not(h1):not(h2):not(h3) {
-          color: rgba(31, 41, 55, 1) !important;
-        }
-
-        html:not(.dark) .text-gray-700:not(h1):not(h2):not(h3) {
-          color: rgba(55, 65, 81, 1) !important;
-        }
-
-        /* Force dark background for all major containers */
-        html.dark main,
-        html.dark section,
-        html.dark div.bg-white {
-          background-color: #0f172a !important;
-        }
-
-        /* Fix specific section backgrounds in dark mode - TARGETED APPROACH */
-
-        /* HowItWorks: Manual/Auto Selection blocks - preserve transparency */
-        html.dark .bg-gray-100.dark\\:bg-gray-800\\/20 {
-          background-color: rgba(55, 65, 81, 0.2) !important;
-        }
-
-        /* Pricing: Only solid white cards, not semi-transparent ones */
-        html.dark .bg-white:not([class*="/80"]):not([class*="backdrop-blur"]) {
-          background-color: #171717 !important;
-        }
-
-        /* FAQ: Question disclosure buttons only */
-        html.dark .bg-gray-50[class*="DisclosureButton"] {
-          background-color: #374151 !important;
-        }
-
-        html.dark .hover\\:bg-gray-100:hover {
-          background-color: #4b5563 !important;
-        }
-
-        /* Contact: Only non-blurred gray backgrounds */
-        html.dark .bg-gray-100:not([class*="backdrop-blur"]):not([class*="/80"]) {
-          background-color: #374151 !important;
-        }
-
-        /* Contact form inputs */
-        html.dark input,
-        html.dark textarea,
-        html.dark select {
-          background-color: #374151 !important;
-          border-color: #4b5563 !important;
-          color: #ffffff !important;
-        }
-
-        /* Pricing card specific overrides */
-        html.dark .shadow-lg {
-          box-shadow: 0 10px 40px rgba(255,255,255,0.1) !important;
-        }
-
-        /* Button and interactive element colors */
-        html.dark button {
-          color: rgba(255, 255, 255, 0.9) !important;
-        }
-
-        html.dark button:hover {
-          color: rgba(255, 255, 255, 1) !important;
-        }
-
-        /* Navbar animations */
-        .navbar:hover::before {
-          left: 100% !important;
-        }
-        .navbar::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-          transition: left 0.8s ease;
-        }
-        .navbar:hover::before {
-          left: 100%;
-        }
-        .navbar:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 25px 50px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
-        }
-
-        @media (max-width: 1024px) {
-          .fixed.top-8 {
-            top: 20px;
-            width: calc(100% - 30px);
-          }
-        }
-        @media (max-width: 768px) {
-          .fixed.top-8 {
-            top: 15px;
-            width: calc(100% - 20px);
-          }
-        }
+        html.dark, html.dark body { background-color: #0f172a !important; color: #ffffff !important; }
+        html:not(.dark), html:not(.dark) body { background-color: #ffffff !important; color: #1f2937 !important; }
+        html.dark body { --tw-bg-opacity: 1; }
+        html.dark .navbar { background: rgba(0, 0, 0, 0.1) !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+        html:not(.dark) .navbar { background: rgba(255, 255, 255, 0.8) !important; backdrop-filter: blur(20px) !important; -webkit-backdrop-filter: blur(20px) !important; border-color: rgba(229, 231, 235, 0.5) !important; }
+        html.dark .company-title { color: #ffffff !important; }
+        html:not(.dark) .company-title { color: #1f2937 !important; }
+        html h1, html h2, html h3,
+        html.dark h1, html.dark h2, html.dark h3,
+        html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3,
+        body h1, body h2, body h3,
+        html body h1, html body h2, html body h3,
+        html.dark body h1, html.dark body h2, html.dark body h3 { color: #3B82F6 !important; }
+        html h1.text-gray-800, html h2.text-gray-800, html h3.text-gray-800,
+        html h1.text-gray-700, html h2.text-gray-700, html h3.text-gray-700,
+        html.dark h1.text-gray-800, html.dark h2.text-gray-800, html.dark h3.text-gray-800,
+        html.dark h1.text-white, html.dark h2.text-white, html.dark h3.text-white { color: #3B82F6 !important; }
+        html.dark .text-gray-800:not(h1):not(h2):not(h3) { color: rgba(255, 255, 255, 1) !important; }
+        html.dark .text-gray-700:not(h1):not(h2):not(h3) { color: rgba(255, 255, 255, 0.9) !important; }
+        html:not(.dark) .text-gray-800:not(h1):not(h2):not(h3) { color: rgba(31, 41, 55, 1) !important; }
+        html:not(.dark) .text-gray-700:not(h1):not(h2):not(h3) { color: rgba(55, 65, 81, 1) !important; }
+        html.dark main, html.dark section, html.dark div.bg-white { background-color: #0f172a !important; }
+        html.dark .bg-gray-100.dark\\:bg-gray-800\\/20 { background-color: rgba(55, 65, 81, 0.2) !important; }
+        html.dark .bg-white:not([class*="/80"]):not([class*="backdrop-blur"]) { background-color: #171717 !important; }
+        html.dark .bg-gray-50[class*="DisclosureButton"] { background-color: #374151 !important; }
+        html.dark .hover\\:bg-gray-100:hover { background-color: #4b5563 !important; }
+        html.dark .bg-gray-100:not([class*="backdrop-blur"]):not([class*="/80"]) { background-color: #374151 !important; }
+        html.dark input, html.dark textarea, html.dark select { background-color: #374151 !important; border-color: #4b5563 !important; color: #ffffff !important; }
+        html.dark .shadow-lg { box-shadow: 0 10px 40px rgba(255,255,255,0.1) !important; }
+        html.dark button { color: rgba(255, 255, 255, 0.9) !important; }
+        html.dark button:hover { color: rgba(255, 255, 255, 1) !important; }
+        .navbar:hover::before { left: 100% !important; }
+        .navbar::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.8s ease; }
+        .navbar:hover::before { left: 100%; }
+        .navbar:hover { transform: translateY(-2px); box-shadow: 0 25px 50px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3); }
+        @media (max-width: 1024px) { .fixed.top-8 { top: 20px; width: calc(100% - 30px); } }
+        @media (max-width: 768px) { .fixed.top-8 { top: 15px; width: calc(100% - 20px); } }
       `}</style>
     </>
   );
