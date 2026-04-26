@@ -29,11 +29,11 @@ export const HowItWorks = () => {
   const [loading, setLoading] = useState(true);
 
   // Animation refs
-  const titleRef = useScrollAnimation({ threshold: 0.3 });
-  const imageRef = useScrollAnimation({ threshold: 0.3, delay: 200 });
-  const manualRef = useScrollAnimation({ threshold: 0.3, delay: 300 });
-  const autoRef = useScrollAnimation({ threshold: 0.3, delay: 400 });
-  const buttonRef = useScrollAnimation({ threshold: 0.3, delay: 500 });
+  const titleRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3 });
+  const imageRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3, delay: 200 });
+  const manualRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3, delay: 300 });
+  const autoRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3, delay: 400 });
+  const buttonRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3, delay: 500 });
 
   useEffect(() => {
     const loadContent = async () => {

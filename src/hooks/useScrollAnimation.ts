@@ -7,8 +7,8 @@ interface UseScrollAnimationOptions {
   delay?: number;
 }
 
-export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
-  const elementRef = useRef<HTMLElement>(null);
+export const useScrollAnimation = <T extends HTMLElement = HTMLElement>(options: UseScrollAnimationOptions = {}) => {
+  const elementRef = useRef<T>(null);
 
   const {
     threshold = 0.1,
@@ -58,11 +58,11 @@ export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
 };
 
 // Hook for staggered animations (multiple elements)
-export const useStaggeredAnimation = (
+export const useStaggeredAnimation = <T extends HTMLElement = HTMLElement>(
   itemsCount: number,
   options: UseScrollAnimationOptions & { staggerDelay?: number } = {}
 ) => {
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<T>(null);
 
   const {
     threshold = 0.1,
@@ -115,8 +115,8 @@ export const useStaggeredAnimation = (
 };
 
 // Hook for hero animations (triggers on mount)
-export const useHeroAnimation = () => {
-  const heroRef = useRef<HTMLElement>(null);
+export const useHeroAnimation = <T extends HTMLElement = HTMLElement>() => {
+  const heroRef = useRef<T>(null);
 
   useEffect(() => {
     const hero = heroRef.current;

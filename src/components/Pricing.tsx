@@ -110,8 +110,8 @@ export const Pricing = () => {
   const [loading, setLoading] = useState(true);
 
   // Animation refs
-  const titleRef = useScrollAnimation({ threshold: 0.3 });
-  const pricingRef = useStaggeredAnimation(3, { threshold: 0.2, staggerDelay: 200 });
+  const titleRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3 });
+  const pricingRef = useStaggeredAnimation<HTMLDivElement>(3, { threshold: 0.2, staggerDelay: 200 });
 
   useEffect(() => {
     const loadContent = async () => {

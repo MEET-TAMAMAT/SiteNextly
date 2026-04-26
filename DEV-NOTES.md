@@ -86,3 +86,9 @@ taskkill /IM "node.exe" /F
 
 # 2. Start it again
 yarn dev
+
+
+DETERMIN THE ORIGIN OF THE CURRENT FOLDER IN GITHUB REPOSITORY
+
+git remote get-url origin
+git config --get remote.origin.url
