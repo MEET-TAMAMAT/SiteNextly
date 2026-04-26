@@ -17,6 +17,7 @@ interface ContactProps {
 }
 
 export const ContactClient = ({ contactData, isUsingDirectus }: ContactProps) => {
+  // Fixed subject_field_placeholder issue
   const [showValidation, setShowValidation] = useState(false);
   const [fieldValues, setFieldValues] = useState({
     name: '',
