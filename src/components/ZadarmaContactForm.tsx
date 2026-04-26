@@ -17,67 +17,204 @@ interface ZadarmaContactProps {
   isUsingDirectus: boolean;
 }
 
-// Country list without Russia
+// Comprehensive country list (alphabetical, excluding Russia and North Korea)
 const COUNTRIES = [
+  { code: "AF", name: "Afghanistan" },
+  { code: "AL", name: "Albania" },
+  { code: "DZ", name: "Algeria" },
+  { code: "AD", name: "Andorra" },
+  { code: "AO", name: "Angola" },
+  { code: "AG", name: "Antigua and Barbuda" },
+  { code: "AR", name: "Argentina" },
+  { code: "AM", name: "Armenia" },
+  { code: "AU", name: "Australia" },
+  { code: "AT", name: "Austria" },
+  { code: "AZ", name: "Azerbaijan" },
+  { code: "BS", name: "Bahamas" },
+  { code: "BH", name: "Bahrain" },
+  { code: "BD", name: "Bangladesh" },
+  { code: "BB", name: "Barbados" },
+  { code: "BY", name: "Belarus" },
+  { code: "BE", name: "Belgium" },
+  { code: "BZ", name: "Belize" },
+  { code: "BJ", name: "Benin" },
+  { code: "BT", name: "Bhutan" },
+  { code: "BO", name: "Bolivia" },
+  { code: "BA", name: "Bosnia and Herzegovina" },
+  { code: "BW", name: "Botswana" },
+  { code: "BR", name: "Brazil" },
+  { code: "BN", name: "Brunei" },
+  { code: "BG", name: "Bulgaria" },
+  { code: "BF", name: "Burkina Faso" },
+  { code: "BI", name: "Burundi" },
+  { code: "CV", name: "Cabo Verde" },
+  { code: "KH", name: "Cambodia" },
+  { code: "CM", name: "Cameroon" },
+  { code: "CA", name: "Canada" },
+  { code: "CF", name: "Central African Republic" },
+  { code: "TD", name: "Chad" },
+  { code: "CL", name: "Chile" },
+  { code: "CN", name: "China" },
+  { code: "CO", name: "Colombia" },
+  { code: "KM", name: "Comoros" },
+  { code: "CG", name: "Congo" },
+  { code: "CR", name: "Costa Rica" },
+  { code: "CI", name: "Côte d'Ivoire" },
+  { code: "HR", name: "Croatia" },
+  { code: "CU", name: "Cuba" },
+  { code: "CY", name: "Cyprus" },
+  { code: "CZ", name: "Czech Republic" },
+  { code: "CD", name: "Democratic Republic of the Congo" },
+  { code: "DK", name: "Denmark" },
+  { code: "DJ", name: "Djibouti" },
+  { code: "DM", name: "Dominica" },
+  { code: "DO", name: "Dominican Republic" },
+  { code: "EC", name: "Ecuador" },
+  { code: "EG", name: "Egypt" },
+  { code: "SV", name: "El Salvador" },
+  { code: "GQ", name: "Equatorial Guinea" },
+  { code: "ER", name: "Eritrea" },
+  { code: "EE", name: "Estonia" },
+  { code: "SZ", name: "Eswatini" },
+  { code: "ET", name: "Ethiopia" },
+  { code: "FJ", name: "Fiji" },
+  { code: "FI", name: "Finland" },
+  { code: "FR", name: "France" },
+  { code: "GA", name: "Gabon" },
+  { code: "GM", name: "Gambia" },
+  { code: "GE", name: "Georgia" },
+  { code: "DE", name: "Germany" },
+  { code: "GH", name: "Ghana" },
+  { code: "GR", name: "Greece" },
+  { code: "GD", name: "Grenada" },
+  { code: "GT", name: "Guatemala" },
+  { code: "GN", name: "Guinea" },
+  { code: "GW", name: "Guinea-Bissau" },
+  { code: "GY", name: "Guyana" },
+  { code: "HT", name: "Haiti" },
+  { code: "HN", name: "Honduras" },
+  { code: "HK", name: "Hong Kong" },
+  { code: "HU", name: "Hungary" },
+  { code: "IS", name: "Iceland" },
+  { code: "IN", name: "India" },
+  { code: "ID", name: "Indonesia" },
+  { code: "IR", name: "Iran" },
+  { code: "IQ", name: "Iraq" },
+  { code: "IE", name: "Ireland" },
+  { code: "IL", name: "Israel" },
+  { code: "IT", name: "Italy" },
+  { code: "JM", name: "Jamaica" },
+  { code: "JP", name: "Japan" },
+  { code: "JO", name: "Jordan" },
+  { code: "KZ", name: "Kazakhstan" },
+  { code: "KE", name: "Kenya" },
+  { code: "KI", name: "Kiribati" },
+  { code: "KW", name: "Kuwait" },
+  { code: "KG", name: "Kyrgyzstan" },
+  { code: "LA", name: "Laos" },
+  { code: "LV", name: "Latvia" },
+  { code: "LB", name: "Lebanon" },
+  { code: "LS", name: "Lesotho" },
+  { code: "LR", name: "Liberia" },
+  { code: "LY", name: "Libya" },
+  { code: "LI", name: "Liechtenstein" },
+  { code: "LT", name: "Lithuania" },
+  { code: "LU", name: "Luxembourg" },
+  { code: "MO", name: "Macao" },
+  { code: "MG", name: "Madagascar" },
+  { code: "MW", name: "Malawi" },
+  { code: "MY", name: "Malaysia" },
+  { code: "MV", name: "Maldives" },
+  { code: "ML", name: "Mali" },
+  { code: "MT", name: "Malta" },
+  { code: "MH", name: "Marshall Islands" },
+  { code: "MR", name: "Mauritania" },
+  { code: "MU", name: "Mauritius" },
+  { code: "MX", name: "Mexico" },
+  { code: "FM", name: "Micronesia" },
+  { code: "MD", name: "Moldova" },
+  { code: "MC", name: "Monaco" },
+  { code: "MN", name: "Mongolia" },
+  { code: "ME", name: "Montenegro" },
+  { code: "MA", name: "Morocco" },
+  { code: "MZ", name: "Mozambique" },
+  { code: "MM", name: "Myanmar" },
+  { code: "NA", name: "Namibia" },
+  { code: "NR", name: "Nauru" },
+  { code: "NP", name: "Nepal" },
+  { code: "NL", name: "Netherlands" },
+  { code: "NZ", name: "New Zealand" },
+  { code: "NI", name: "Nicaragua" },
+  { code: "NE", name: "Niger" },
+  { code: "NG", name: "Nigeria" },
+  { code: "MK", name: "North Macedonia" },
+  { code: "NO", name: "Norway" },
+  { code: "OM", name: "Oman" },
+  { code: "PK", name: "Pakistan" },
+  { code: "PW", name: "Palau" },
+  { code: "PS", name: "Palestine" },
+  { code: "PA", name: "Panama" },
+  { code: "PG", name: "Papua New Guinea" },
+  { code: "PY", name: "Paraguay" },
+  { code: "PE", name: "Peru" },
+  { code: "PH", name: "Philippines" },
+  { code: "PL", name: "Poland" },
+  { code: "PT", name: "Portugal" },
+  { code: "QA", name: "Qatar" },
+  { code: "RO", name: "Romania" },
+  { code: "RW", name: "Rwanda" },
+  { code: "KN", name: "Saint Kitts and Nevis" },
+  { code: "LC", name: "Saint Lucia" },
+  { code: "VC", name: "Saint Vincent and the Grenadines" },
+  { code: "WS", name: "Samoa" },
+  { code: "SM", name: "San Marino" },
+  { code: "ST", name: "São Tomé and Príncipe" },
+  { code: "SA", name: "Saudi Arabia" },
+  { code: "SN", name: "Senegal" },
+  { code: "RS", name: "Serbia" },
+  { code: "SC", name: "Seychelles" },
+  { code: "SL", name: "Sierra Leone" },
+  { code: "SG", name: "Singapore" },
+  { code: "SK", name: "Slovakia" },
+  { code: "SI", name: "Slovenia" },
+  { code: "SB", name: "Solomon Islands" },
+  { code: "SO", name: "Somalia" },
+  { code: "ZA", name: "South Africa" },
+  { code: "KR", name: "South Korea" },
+  { code: "SS", name: "South Sudan" },
+  { code: "ES", name: "Spain" },
+  { code: "LK", name: "Sri Lanka" },
+  { code: "SD", name: "Sudan" },
+  { code: "SR", name: "Suriname" },
+  { code: "SE", name: "Sweden" },
+  { code: "CH", name: "Switzerland" },
+  { code: "SY", name: "Syria" },
+  { code: "TW", name: "Taiwan" },
+  { code: "TJ", name: "Tajikistan" },
+  { code: "TZ", name: "Tanzania" },
+  { code: "TH", name: "Thailand" },
+  { code: "TL", name: "Timor-Leste" },
+  { code: "TG", name: "Togo" },
+  { code: "TO", name: "Tonga" },
+  { code: "TT", name: "Trinidad and Tobago" },
+  { code: "TN", name: "Tunisia" },
+  { code: "TR", name: "Turkey" },
+  { code: "TM", name: "Turkmenistan" },
+  { code: "TV", name: "Tuvalu" },
+  { code: "UG", name: "Uganda" },
   { code: "UA", name: "Ukraine" },
+  { code: "AE", name: "United Arab Emirates" },
   { code: "GB", name: "United Kingdom" },
   { code: "US", name: "United States" },
-  { code: "DE", name: "Germany" },
-  { code: "FR", name: "France" },
-  { code: "IT", name: "Italy" },
-  { code: "ES", name: "Spain" },
-  { code: "PL", name: "Poland" },
-  { code: "NL", name: "Netherlands" },
-  { code: "BE", name: "Belgium" },
-  { code: "AT", name: "Austria" },
-  { code: "CH", name: "Switzerland" },
-  { code: "SE", name: "Sweden" },
-  { code: "NO", name: "Norway" },
-  { code: "DK", name: "Denmark" },
-  { code: "FI", name: "Finland" },
-  { code: "CZ", name: "Czech Republic" },
-  { code: "SK", name: "Slovakia" },
-  { code: "HU", name: "Hungary" },
-  { code: "RO", name: "Romania" },
-  { code: "BG", name: "Bulgaria" },
-  { code: "HR", name: "Croatia" },
-  { code: "SI", name: "Slovenia" },
-  { code: "LT", name: "Lithuania" },
-  { code: "LV", name: "Latvia" },
-  { code: "EE", name: "Estonia" },
-  { code: "IE", name: "Ireland" },
-  { code: "PT", name: "Portugal" },
-  { code: "GR", name: "Greece" },
-  { code: "CY", name: "Cyprus" },
-  { code: "MT", name: "Malta" },
-  { code: "LU", name: "Luxembourg" },
-  { code: "CA", name: "Canada" },
-  { code: "AU", name: "Australia" },
-  { code: "NZ", name: "New Zealand" },
-  { code: "JP", name: "Japan" },
-  { code: "KR", name: "South Korea" },
-  { code: "SG", name: "Singapore" },
-  { code: "HK", name: "Hong Kong" },
-  { code: "TW", name: "Taiwan" },
-  { code: "IL", name: "Israel" },
-  { code: "AE", name: "UAE" },
-  { code: "SA", name: "Saudi Arabia" },
-  { code: "TR", name: "Turkey" },
-  { code: "EG", name: "Egypt" },
-  { code: "ZA", name: "South Africa" },
-  { code: "BR", name: "Brazil" },
-  { code: "MX", name: "Mexico" },
-  { code: "AR", name: "Argentina" },
-  { code: "CL", name: "Chile" },
-  { code: "CO", name: "Colombia" },
-  { code: "PE", name: "Peru" },
-  { code: "IN", name: "India" },
-  { code: "CN", name: "China" },
-  { code: "TH", name: "Thailand" },
+  { code: "UY", name: "Uruguay" },
+  { code: "UZ", name: "Uzbekistan" },
+  { code: "VU", name: "Vanuatu" },
+  { code: "VA", name: "Vatican City" },
+  { code: "VE", name: "Venezuela" },
   { code: "VN", name: "Vietnam" },
-  { code: "PH", name: "Philippines" },
-  { code: "MY", name: "Malaysia" },
-  { code: "ID", name: "Indonesia" }
+  { code: "YE", name: "Yemen" },
+  { code: "ZM", name: "Zambia" },
+  { code: "ZW", name: "Zimbabwe" }
 ];
 
 const PHONE_TYPES = [
@@ -94,18 +231,22 @@ const EMAIL_TYPES = [
 ];
 
 const CONTACT_TYPES = [
-  { value: "skype", label: "Skype" },
-  { value: "telegram", label: "Telegram" },
+  { value: "", label: "Specify your favorite messenger" },
   { value: "whatsapp", label: "WhatsApp" },
+  { value: "telegram", label: "Telegram" },
+  { value: "facebook", label: "Facebook Messenger" },
+  { value: "instagram", label: "Instagram" },
   { value: "viber", label: "Viber" },
-  { value: "facebook", label: "Facebook" },
-  { value: "vk", label: "VK" },
+  { value: "signal", label: "Signal" },
+  { value: "line", label: "LINE" },
+  { value: "wechat", label: "WeChat" },
+  { value: "skype", label: "Skype" },
   { value: "other", label: "Other" }
 ];
 
 const LEAD_STATUS_OPTIONS = [
-  { value: "person", label: "Individual Teacher" },
-  { value: "company", label: "School/Company" }
+  { value: "person", label: "Teacher" },
+  { value: "company", label: "School" }
 ];
 
 export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaContactProps) => {
@@ -121,9 +262,9 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
     message: ''
   });
   const [fieldTypes, setFieldTypes] = useState({
-    emailType: 'email_work',
-    phoneType: 'mobile',
-    messengerType: 'telegram'
+    emailType: 'email_work', // Fixed to work email
+    phoneType: 'mobile', // Fixed to mobile
+    messengerType: ''
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
@@ -204,7 +345,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
       setFieldTypes({
         emailType: 'email_work',
         phoneType: 'mobile',
-        messengerType: 'telegram'
+        messengerType: ''
       });
 
       // Clear form inputs
@@ -226,15 +367,24 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
         name: nameRef.current?.value || '',
         email: emailRef.current?.value || '',
         phone: phoneRef.current?.value || '',
-        status: '',
+        status: fieldValues.status, // Keep existing status value from state
         messengerValue: messengerRef.current?.value || '',
-        country: '',
+        country: fieldValues.country, // Keep existing country value from state
         website: websiteRef.current?.value || '',
         message: messageRef.current?.value || ''
       };
       setFieldValues(prev => {
-        if (JSON.stringify(prev) !== JSON.stringify(currentValues)) {
-          return currentValues;
+        // Only update if the input fields changed, preserve select/radio state
+        const hasInputChanges =
+          prev.name !== currentValues.name ||
+          prev.email !== currentValues.email ||
+          prev.phone !== currentValues.phone ||
+          prev.messengerValue !== currentValues.messengerValue ||
+          prev.website !== currentValues.website ||
+          prev.message !== currentValues.message;
+
+        if (hasInputChanges) {
+          return { ...prev, ...currentValues };
         }
         return prev;
       });
@@ -255,7 +405,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
       document.removeEventListener('click', handleAutofillEvents);
       window.removeEventListener('pageshow', handleAutofillEvents);
     };
-  }, []);
+  }, [fieldValues.status, fieldValues.country]);
 
   const getFieldStyle = (fieldName: string, hasValue: boolean, isRequired = false) => {
     const isError = showValidation && isRequired && !hasValue;
@@ -406,105 +556,99 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                 />
               </div>
 
-              {/* Field 2: Email (required) with type selection */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
-                  <input
-                    ref={emailRef}
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    {...getFieldStyle('email', fieldValues.email.trim() !== '', true)}
-                    onChange={(e) => {
-                      setFieldValues(prev => ({ ...prev, email: e.target.value }));
-                      showValidation && setShowValidation(false);
-                    }}
-                    onInput={(e) => setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }))}
-                    onFocus={(e) => {
-                      setFocusedField('email');
-                      setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }));
-                    }}
-                    onBlur={() => setFocusedField(null)}
-                    onInvalid={() => setShowValidation(true)}
-                    placeholder="Your email"
-                  />
-                </div>
-                <div>
-                  <select
-                    value={fieldTypes.emailType}
-                    onChange={(e) => setFieldTypes(prev => ({ ...prev, emailType: e.target.value }))}
-                    className="w-full px-3 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 border-gray-300 dark:border-gray-600"
-                    style={{
-                      backgroundColor: getBackgroundColors(true, isDark)
-                    }}
-                  >
-                    {EMAIL_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Field 3: Phone (required) with type selection */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
-                  <input
-                    ref={phoneRef}
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    required
-                    {...getFieldStyle('phone', fieldValues.phone.trim() !== '', true)}
-                    onChange={(e) => {
-                      setFieldValues(prev => ({ ...prev, phone: e.target.value }));
-                      showValidation && setShowValidation(false);
-                    }}
-                    onInput={(e) => setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }))}
-                    onFocus={(e) => {
-                      setFocusedField('phone');
-                      setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }));
-                    }}
-                    onBlur={() => setFocusedField(null)}
-                    onInvalid={() => setShowValidation(true)}
-                    placeholder="Your phone in international format e.g. +380XXXXXXXXX"
-                  />
-                </div>
-                <div>
-                  <select
-                    value={fieldTypes.phoneType}
-                    onChange={(e) => setFieldTypes(prev => ({ ...prev, phoneType: e.target.value }))}
-                    className="w-full px-3 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 border-gray-300 dark:border-gray-600"
-                    style={{
-                      backgroundColor: getBackgroundColors(true, isDark)
-                    }}
-                  >
-                    {PHONE_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Field 4: Status (not required) */}
+              {/* Field 2: Email (required) */}
               <div>
-                <select
-                  value={fieldValues.status}
-                  onChange={(e) => setFieldValues(prev => ({ ...prev, status: e.target.value }))}
-                  {...getFieldStyle('status', fieldValues.status !== '', false)}
-                  onFocus={() => setFocusedField('status')}
+                <input
+                  ref={emailRef}
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  {...getFieldStyle('email', fieldValues.email.trim() !== '', true)}
+                  onChange={(e) => {
+                    setFieldValues(prev => ({ ...prev, email: e.target.value }));
+                    showValidation && setShowValidation(false);
+                  }}
+                  onInput={(e) => setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }))}
+                  onFocus={(e) => {
+                    setFocusedField('email');
+                    setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }));
+                  }}
                   onBlur={() => setFocusedField(null)}
-                >
-                  <option value="">Select type (optional)</option>
-                  {LEAD_STATUS_OPTIONS.map(option => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
+                  onInvalid={() => setShowValidation(true)}
+                  placeholder="Your email"
+                />
+              </div>
+
+              {/* Field 3: Phone (required) */}
+              <div>
+                <input
+                  ref={phoneRef}
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  required
+                  {...getFieldStyle('phone', fieldValues.phone.trim() !== '', true)}
+                  onChange={(e) => {
+                    setFieldValues(prev => ({ ...prev, phone: e.target.value }));
+                    showValidation && setShowValidation(false);
+                  }}
+                  onInput={(e) => setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }))}
+                  onFocus={(e) => {
+                    setFocusedField('phone');
+                    setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }));
+                  }}
+                  onBlur={() => setFocusedField(null)}
+                  onInvalid={() => setShowValidation(true)}
+                  placeholder="Your phone in international format e.g. +380XXXXXXXXX"
+                />
+              </div>
+
+              {/* Field 4: Status (not required) - Radio buttons */}
+              <div className="flex justify-center gap-8">
+                {LEAD_STATUS_OPTIONS.map(option => (
+                  <label key={option.value} className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="status"
+                      value={option.value}
+                      checked={fieldValues.status === option.value}
+                      onChange={(e) => setFieldValues(prev => ({ ...prev, status: e.target.value }))}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <span className="ml-2 text-base font-medium text-gray-500 dark:text-gray-400">
+                      {option.label}
+                    </span>
+                  </label>
+                ))}
               </div>
 
               {/* Field 5: Messenger/Social (not required) with type selection */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="col-span-2">
+              <div className="space-y-3">
+                <div>
+                  <select
+                    value={fieldTypes.messengerType}
+                    onChange={(e) => setFieldTypes(prev => ({ ...prev, messengerType: e.target.value }))}
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-500 dark:text-gray-400 placeholder-gray-500 dark:placeholder-gray-400 ${
+                      focusedField === 'messengerType'
+                        ? 'border-green-500 dark:border-green-400 border-2'
+                        : 'border-gray-300 dark:border-gray-600'
+                    }`}
+                    style={{
+                      backgroundColor: getBackgroundColors(fieldTypes.messengerType !== '', isDark),
+                      boxShadow: focusedField === 'messengerType'
+                        ? `inset 0 0 0 1000px ${getBackgroundColors(fieldTypes.messengerType !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                        : `inset 0 0 0 1000px ${getBackgroundColors(fieldTypes.messengerType !== '', isDark)}`
+                    }}
+                    onFocus={() => setFocusedField('messengerType')}
+                    onBlur={() => setFocusedField(null)}
+                  >
+                    {CONTACT_TYPES.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
                   <input
                     ref={messengerRef}
                     type="text"
@@ -518,22 +662,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                       setFieldValues(prev => ({ ...prev, messengerValue: (e.target as HTMLInputElement).value }));
                     }}
                     onBlur={() => setFocusedField(null)}
-                    placeholder="Messenger handle or social profile (optional)"
+                    placeholder="Username or phone number associated with the messenger"
                   />
-                </div>
-                <div>
-                  <select
-                    value={fieldTypes.messengerType}
-                    onChange={(e) => setFieldTypes(prev => ({ ...prev, messengerType: e.target.value }))}
-                    className="w-full px-3 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 border-gray-300 dark:border-gray-600"
-                    style={{
-                      backgroundColor: getBackgroundColors(true, isDark)
-                    }}
-                  >
-                    {CONTACT_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
                 </div>
               </div>
 
@@ -542,7 +672,17 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                 <select
                   value={fieldValues.country}
                   onChange={(e) => setFieldValues(prev => ({ ...prev, country: e.target.value }))}
-                  {...getFieldStyle('country', fieldValues.country !== '', false)}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-500 dark:text-gray-400 placeholder-gray-500 dark:placeholder-gray-400 ${
+                    focusedField === 'country'
+                      ? 'border-green-500 dark:border-green-400 border-2'
+                      : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                  style={{
+                    backgroundColor: getBackgroundColors(fieldValues.country !== '', isDark),
+                    boxShadow: focusedField === 'country'
+                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.country !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.country !== '', isDark)}`
+                  }}
                   onFocus={() => setFocusedField('country')}
                   onBlur={() => setFocusedField(null)}
                 >
@@ -579,16 +719,31 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   id="message"
                   name="message"
                   rows={3}
-                  {...getFieldStyle('message', fieldValues.message.trim() !== '', false)}
-                  onChange={(e) => setFieldValues(prev => ({ ...prev, message: e.target.value }))}
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none ${
+                    showValidation && fieldValues.message.trim() === ''
+                      ? 'border-red-500 dark:border-red-400 border-2'
+                      : focusedField === 'message'
+                        ? 'border-green-500 dark:border-green-400 border-2'
+                        : 'border-gray-300 dark:border-gray-600'
+                  }`}
+                  style={{
+                    backgroundColor: getBackgroundColors(fieldValues.message.trim() !== '', isDark),
+                    boxShadow: focusedField === 'message'
+                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.message.trim() !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.message.trim() !== '', isDark)}`
+                  }}
+                  onChange={(e) => {
+                    setFieldValues(prev => ({ ...prev, message: e.target.value }));
+                    showValidation && setShowValidation(false);
+                  }}
                   onInput={(e) => setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }))}
                   onFocus={(e) => {
                     setFocusedField('message');
                     setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }));
                   }}
                   onBlur={() => setFocusedField(null)}
+                  onInvalid={() => setShowValidation(true)}
                   placeholder="Tell us more about your question or how we can help..."
-                  className="resize-none"
                 />
               </div>
 
