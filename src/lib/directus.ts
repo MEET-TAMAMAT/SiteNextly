@@ -1,16 +1,11 @@
 import { createDirectus, rest, readItems, readSingleton } from "@directus/sdk";
 import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesContent, PricingContent, FaqSectionContent, FaqItem, ContactContent, FooterContent } from "@/types";
 
-// Custom fetch function that disables caching
-const customFetch = (input: RequestInfo | URL, init?: RequestInit) => {
-  return fetch(input, { ...init, cache: 'no-store' });
-};
-
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
 ).with(rest({
-  fetch: customFetch
-} as any));
+  onRequest: (options) => ({ ...options, cache: 'no-store' }),
+}));
 
 // Header Data Fetching Functions
 export async function getHeaderConfig(): Promise<HeaderConfig | null> {
