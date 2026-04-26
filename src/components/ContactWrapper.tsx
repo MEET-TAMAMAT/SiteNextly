@@ -20,16 +20,21 @@ export const Contact = async () => {
     support_hours_days: "Monday - Friday",
     support_hours_time: "9:00 AM - 5:00 PM",
     support_hours_label: "Support Hours",
-    name_field_label: "Name",
     name_field_placeholder: "Your name",
-    email_field_label: "Email",
     email_field_placeholder: "Your email",
-    subject_field_label: "Subject",
-    subject_field_placeholder: "Email subject",
-    message_field_label: "Message",
     message_field_placeholder: "Tell us more about your question or how we can help...",
     submit_button_text: "Send Message",
-    success_message: "Thank you for your message! We'll get back to you soon."
+    success_message: "Thank you for your message! We'll get back to you soon.",
+    // New Zadarma fields
+    phone_field_placeholder: "Your phone in international format e.g. +380XXXXXXXXX",
+    lead_status_teacher_label: "Teacher",
+    lead_status_school_label: "School",
+    messenger_dropdown_placeholder: "Specify your favorite messenger",
+    messenger_field_placeholder: "Username or phone number associated with the messenger",
+    country_field_placeholder: "Select Your Country (optional)",
+    website_field_placeholder: "Company or personal website (optional)",
+    error_message: "Sorry, there was an error sending your message. Please try again.",
+    validation_missing_fields_message: "Please fill in all required fields before submitting."
   };
 
   const contactData = contactContent || fallbackContactData;

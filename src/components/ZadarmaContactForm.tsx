@@ -231,7 +231,6 @@ const EMAIL_TYPES = [
 ];
 
 const CONTACT_TYPES = [
-  { value: "", label: "Specify your favorite messenger" },
   { value: "whatsapp", label: "WhatsApp" },
   { value: "telegram", label: "Telegram" },
   { value: "facebook", label: "Facebook Messenger" },
@@ -244,12 +243,12 @@ const CONTACT_TYPES = [
   { value: "other", label: "Other" }
 ];
 
-const LEAD_STATUS_OPTIONS = [
-  { value: "person", label: "Teacher" },
-  { value: "company", label: "School" }
-];
-
 export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaContactProps) => {
+  // Dynamic status options from Directus
+  const LEAD_STATUS_OPTIONS = [
+    { value: "person", label: contactData.lead_status_teacher_label },
+    { value: "company", label: contactData.lead_status_school_label }
+  ];
   const [showValidation, setShowValidation] = useState(false);
   const [fieldValues, setFieldValues] = useState({
     name: '',
@@ -552,7 +551,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   }}
                   onInput={(e) => setFieldValues(prev => ({ ...prev, name: (e.target as HTMLInputElement).value }))}
                   onInvalid={() => setShowValidation(true)}
-                  placeholder="Your name"
+                  placeholder={contactData.name_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'name_field_placeholder') : {})}
                 />
               </div>
 
@@ -576,7 +576,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   }}
                   onBlur={() => setFocusedField(null)}
                   onInvalid={() => setShowValidation(true)}
-                  placeholder="Your email"
+                  placeholder={contactData.email_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'email_field_placeholder') : {})}
                 />
               </div>
 
@@ -600,7 +601,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   }}
                   onBlur={() => setFocusedField(null)}
                   onInvalid={() => setShowValidation(true)}
-                  placeholder="Your phone in international format e.g. +380XXXXXXXXX"
+                  placeholder={contactData.phone_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'phone_field_placeholder') : {})}
                 />
               </div>
 
@@ -616,7 +618,10 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                       onChange={(e) => setFieldValues(prev => ({ ...prev, status: e.target.value }))}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
-                    <span className="ml-2 text-base font-medium text-gray-500 dark:text-gray-400">
+                    <span
+                      className="ml-2 text-base font-medium text-gray-500 dark:text-gray-400"
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, option.value === 'person' ? 'lead_status_teacher_label' : 'lead_status_school_label') : {})}
+                    >
                       {option.label}
                     </span>
                   </label>
@@ -642,7 +647,9 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                     }}
                     onFocus={() => setFocusedField('messengerType')}
                     onBlur={() => setFocusedField(null)}
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'messenger_dropdown_placeholder') : {})}
                   >
+                    <option value="">{contactData.messenger_dropdown_placeholder}</option>
                     {CONTACT_TYPES.map(type => (
                       <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
@@ -662,7 +669,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                       setFieldValues(prev => ({ ...prev, messengerValue: (e.target as HTMLInputElement).value }));
                     }}
                     onBlur={() => setFocusedField(null)}
-                    placeholder="Username or phone number associated with the messenger"
+                    placeholder={contactData.messenger_field_placeholder}
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'messenger_field_placeholder') : {})}
                   />
                 </div>
               </div>
@@ -685,8 +693,9 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   }}
                   onFocus={() => setFocusedField('country')}
                   onBlur={() => setFocusedField(null)}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'country_field_placeholder') : {})}
                 >
-                  <option value="">Select Your Country (optional)</option>
+                  <option value="">{contactData.country_field_placeholder}</option>
                   {COUNTRIES.map(country => (
                     <option key={country.code} value={country.code}>{country.name}</option>
                   ))}
@@ -708,7 +717,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                     setFieldValues(prev => ({ ...prev, website: (e.target as HTMLInputElement).value }));
                   }}
                   onBlur={() => setFocusedField(null)}
-                  placeholder="Company or personal website (optional)"
+                  placeholder={contactData.website_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'website_field_placeholder') : {})}
                 />
               </div>
 
@@ -743,7 +753,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   }}
                   onBlur={() => setFocusedField(null)}
                   onInvalid={() => setShowValidation(true)}
-                  placeholder="Tell us more about your question or how we can help..."
+                  placeholder={contactData.message_field_placeholder}
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'message_field_placeholder') : {})}
                 />
               </div>
 
@@ -753,6 +764,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                 disabled={isSubmitting}
                 className="w-full px-6 py-3 text-white rounded-lg hover:opacity-90 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{backgroundColor: "#3B82F6"}}
+                {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'submit_button_text') : {})}
               >
                 {isSubmitting ? 'Sending...' : (contactData.submit_button_text || 'Send Message')}
               </button>
@@ -764,7 +776,27 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                     ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
                     : 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
                 }`}>
-                  {submitMessage}
+                  <span
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id,
+                      submitMessage.includes('error') || submitMessage.includes('Sorry') ? 'error_message' : 'success_message'
+                    ) : {})}
+                  >
+                    {submitMessage.includes('error') || submitMessage.includes('Sorry')
+                      ? contactData.error_message
+                      : contactData.success_message
+                    }
+                  </span>
+                </div>
+              )}
+
+              {/* Validation Message */}
+              {showValidation && (
+                <div className="text-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
+                  <span
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'validation_missing_fields_message') : {})}
+                  >
+                    {contactData.validation_missing_fields_message}
+                  </span>
                 </div>
               )}
             </form>

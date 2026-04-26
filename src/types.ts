@@ -161,16 +161,21 @@ export interface ContactContent {
   support_hours_days: string;
   support_hours_time: string;
   support_hours_label: string;
-  name_field_label: string;
   name_field_placeholder: string;
-  email_field_label: string;
   email_field_placeholder: string;
-  subject_field_label: string;
-  subject_field_placeholder: string;
-  message_field_label: string;
   message_field_placeholder: string;
   submit_button_text: string;
   success_message: string;
+  // New Zadarma fields
+  phone_field_placeholder: string;
+  lead_status_teacher_label: string;
+  lead_status_school_label: string;
+  messenger_dropdown_placeholder: string;
+  messenger_field_placeholder: string;
+  country_field_placeholder: string;
+  website_field_placeholder: string;
+  error_message: string;
+  validation_missing_fields_message: string;
 }
 
 // Directus Footer Section Configuration

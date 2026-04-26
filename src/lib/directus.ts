@@ -3,7 +3,11 @@ import { HeaderConfig, NavigationItem, HomeContent, HowItWorksContent, FeaturesC
 
 const directus = createDirectus(
   process.env.NEXT_PUBLIC_DIRECTUS_URL as string
-).with(rest());
+).with(rest({
+  globals: {
+    fetch: (url: string, opts: any) => fetch(url, { ...opts, cache: 'no-store' })
+  }
+}));
 
 // Header Data Fetching Functions
 export async function getHeaderConfig(): Promise<HeaderConfig | null> {
