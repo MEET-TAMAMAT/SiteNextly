@@ -21,11 +21,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://admin.tamamat.com",
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'ALLOWALL',
+            value: "frame-ancestors 'self' https://admin.tamamat.com https://directus-production-d4f6.up.railway.app",
           },
         ],
       },
