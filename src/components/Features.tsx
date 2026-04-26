@@ -1,3 +1,5 @@
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Container } from "./Container";
 import { SectionTitle } from "./SectionTitle";
@@ -11,6 +13,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { getFeaturesContent, getImageUrl } from "@/lib/directus";
 import { getEditableAttributes } from "@/lib/visual-editor";
+import { useScrollAnimation, useStaggeredAnimation } from "@/hooks/useScrollAnimation";
 
 // Icon mapping object
 const iconMap = {
@@ -56,8 +59,29 @@ function FeatureBlock({ icon, title, description, index, dataId }: {
   );
 }
 
-export const Features = async () => {
-  const content = await getFeaturesContent();
+export const Features = () => {
+  const [content, setContent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Animation refs
+  const titleRef = useScrollAnimation({ threshold: 0.3 });
+  const featuresRef = useStaggeredAnimation(6, { threshold: 0.2, staggerDelay: 150 });
+  const imageRef = useScrollAnimation({ threshold: 0.3, delay: 400 });
+
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const data = await getFeaturesContent();
+        setContent(data);
+      } catch (error) {
+        console.error("Failed to load content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadContent();
+  }, []);
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
@@ -99,37 +123,34 @@ export const Features = async () => {
 
   return (
     <Container className="px-4 lg:px-8">
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-4 opacity-50">
-        Features Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
+      <div ref={titleRef} className="section-title">
+        <SectionTitle
+          title={data.main_title}
+          {...getEditableAttributes('features_section', data.id, 'main_title')}
+        />
       </div>
-
-      <SectionTitle
-        title={data.main_title}
-        {...getEditableAttributes('features_section', data.id, 'main_title')}
-      >
-      </SectionTitle>
 
       <div className="grid gap-0 lg:grid-cols-5 items-center">
         {/* Left side - Feature blocks */}
         <div className="lg:col-span-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div ref={featuresRef} className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {features.map((feature, index) => (
-              <FeatureBlock
-                key={index}
-                icon={feature.icon}
-                title={feature.title}
-                description={feature.description}
-                index={index}
-                dataId={data.id}
-              />
+              <div key={index} className="feature-card">
+                <FeatureBlock
+                  icon={feature.icon}
+                  title={feature.title}
+                  description={feature.description}
+                  index={index}
+                  dataId={data.id}
+                />
+              </div>
             ))}
           </div>
         </div>
 
         {/* Right side - Image */}
         <div className="lg:col-span-2">
-          <div className="relative flex justify-center">
+          <div ref={imageRef} className="slide-right relative flex justify-center">
             <Image
               src={
                 data.main_image && typeof data.main_image === 'object' && 'id' in data.main_image

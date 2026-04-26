@@ -196,10 +196,6 @@ export const DirectusNavbar = () => {
 
   return (
     <>
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-2 opacity-50">
-        Navigation Data (Legacy): {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
-      </div>
 
       {/* Floating Navigation Container */}
       <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-60px)] container xl:px-8 transition-all duration-400">

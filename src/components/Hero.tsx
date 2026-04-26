@@ -32,15 +32,11 @@ export const Hero = () => {
 
   return (
     <div>
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-2 opacity-50">
-        Hero Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
-      </div>
 
       {/* Centered Title Section */}
       <Container className="flex w-full flex-col items-center justify-center text-center mt-1">
         <h1
-          className="text-2xl font-bold leading-snug tracking-tight text-gray-800 lg:leading-tight lg:text-4xl xl:text-4xl dark:text-white"
+          className="hero-title text-2xl font-bold leading-snug tracking-tight text-gray-800 lg:leading-tight lg:text-4xl xl:text-4xl dark:text-white"
           {...getEditableAttributes('tamamat_com_home', '1', 'home_title')}
         >
           {homeContent?.home_title || "Loading..."}
@@ -54,16 +50,16 @@ export const Hero = () => {
           <div className="lg:col-span-6 order-1 lg:order-1">
             <div className="max-w-2xl lg:max-w-none mb-2 lg:mb-8">
               <p
-                className="mb-4 lg:mb-6 xl:mb-10 text-base leading-relaxed lg:leading-loose xl:[line-height:2.025] text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300"
+                className="hero-description mb-4 lg:mb-6 xl:mb-10 text-base leading-relaxed lg:leading-loose xl:[line-height:2.025] text-gray-500 lg:text-xl xl:text-2xl dark:text-gray-300"
                 {...getEditableAttributes('tamamat_com_home', '1', 'home_description')}
               >
                 {homeContent?.home_description || "Loading..."}
               </p>
 
-              <div className="flex flex-row items-center justify-center">
+              <div className="hero-buttons flex flex-row items-center justify-center">
                 <Link
                   href="#how-it-works"
-                  className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8Apx_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center"
+                  className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8Apx_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:transform hover:scale-105 transition-transform duration-200"
                   {...getEditableAttributes('tamamat_com_home', '1', 'home_button')}
                 >
                   {homeContent?.home_button || "Watch Video"}
@@ -84,7 +80,7 @@ export const Hero = () => {
                 ) : heroImg}
                 width={350}
                 height={351}
-                className="max-w-full h-auto object-cover"
+                className="hero-image max-w-full h-auto object-cover"
                 style={{ width: 'auto', height: 'auto' }}
                 alt={homeContent?.home_title || "Online Teaching Platform for Small Groups"}
                 priority

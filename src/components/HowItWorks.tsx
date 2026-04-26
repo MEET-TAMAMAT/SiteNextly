@@ -1,9 +1,12 @@
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Container } from "./Container";
 import { SectionTitle } from "./SectionTitle";
 import { PlayCircleIcon } from "@heroicons/react/24/solid";
 import { getHowItWorksContent, getImageUrl } from "@/lib/directus";
 import { getEditableAttributes } from "@/lib/visual-editor";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 // Helper function to convert markdown-like text to bullet points
 function renderDescription(description: string) {
@@ -21,8 +24,31 @@ function renderDescription(description: string) {
     });
 }
 
-export const HowItWorks = async () => {
-  const content = await getHowItWorksContent();
+export const HowItWorks = () => {
+  const [content, setContent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Animation refs
+  const titleRef = useScrollAnimation({ threshold: 0.3 });
+  const imageRef = useScrollAnimation({ threshold: 0.3, delay: 200 });
+  const manualRef = useScrollAnimation({ threshold: 0.3, delay: 300 });
+  const autoRef = useScrollAnimation({ threshold: 0.3, delay: 400 });
+  const buttonRef = useScrollAnimation({ threshold: 0.3, delay: 500 });
+
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const data = await getHowItWorksContent();
+        setContent(data);
+      } catch (error) {
+        console.error("Failed to load content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadContent();
+  }, []);
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
@@ -41,21 +67,17 @@ export const HowItWorks = async () => {
 
   return (
     <Container className="px-4 lg:px-8">
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-4 opacity-50">
-        Data source: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
+      <div ref={titleRef} className="section-title">
+        <SectionTitle
+          title={data.main_heading}
+          {...getEditableAttributes('how_it_works', data.id, 'main_heading')}
+        />
       </div>
-
-      <SectionTitle
-        title={data.main_heading}
-        {...getEditableAttributes('how_it_works', data.id, 'main_heading')}
-      >
-      </SectionTitle>
 
       <div className="grid gap-12 lg:grid-cols-10 items-center">
         {/* Left side - Image */}
         <div className="lg:col-span-4 order-2 lg:order-1">
-          <div className="relative flex justify-center">
+          <div ref={imageRef} className="slide-left relative flex justify-center">
             <Image
               src={
                 data.main_illustration && typeof data.main_illustration === 'object' && 'id' in data.main_illustration
@@ -76,7 +98,7 @@ export const HowItWorks = async () => {
         <div className="lg:col-span-6 order-1 lg:order-2">
           <div className="space-y-8">
             {/* Manual Selection Section */}
-            <div className="rounded-lg px-6 py-2">
+            <div ref={manualRef} className="slide-right rounded-lg px-6 py-2">
               <h3
                 className="text-xl font-bold text-gray-800 dark:text-white mb-4"
                 style={{color: "#3B82F6"}}
@@ -93,7 +115,7 @@ export const HowItWorks = async () => {
             </div>
 
             {/* Auto Selection Section */}
-            <div className="rounded-lg px-6 py-2">
+            <div ref={autoRef} className="slide-right rounded-lg px-6 py-2">
               <h3
                 className="text-xl font-bold text-gray-800 dark:text-white mb-4"
                 style={{color: "#3B82F6"}}
@@ -110,9 +132,9 @@ export const HowItWorks = async () => {
             </div>
 
             {/* Button */}
-            <div className="pt-4 flex justify-center">
+            <div ref={buttonRef} className="scale-in pt-4 flex justify-center">
               <button
-                className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center"
+                className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:transform hover:scale-105 transition-transform duration-200"
                 {...getEditableAttributes('how_it_works', data.id, 'video_button_text')}
               >
                 {data.video_button_text}

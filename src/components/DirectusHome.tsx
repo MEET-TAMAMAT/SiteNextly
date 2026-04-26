@@ -33,10 +33,6 @@ export const DirectusHome = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-4 opacity-50">
-        DirectusHome Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
-      </div>
 
       <h1>{homeContent.home_title}</h1>
       <p>{homeContent.home_description}</p>

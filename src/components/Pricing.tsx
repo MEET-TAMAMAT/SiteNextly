@@ -1,9 +1,12 @@
+"use client";
+import { useState, useEffect } from "react";
 import { Container } from "./Container";
 import { SectionTitle } from "./SectionTitle";
 import { CheckIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { getPricingContent } from "@/lib/directus";
 import { getEditableAttributes } from "@/lib/visual-editor";
+import { useScrollAnimation, useStaggeredAnimation } from "@/hooks/useScrollAnimation";
 
 // SVG icon components mapping
 const iconMap = {
@@ -102,8 +105,28 @@ function PricingPlan({ plan, planNumber, dataId }: { plan: any; planNumber: numb
   );
 }
 
-export const Pricing = async () => {
-  const content = await getPricingContent();
+export const Pricing = () => {
+  const [content, setContent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Animation refs
+  const titleRef = useScrollAnimation({ threshold: 0.3 });
+  const pricingRef = useStaggeredAnimation(3, { threshold: 0.2, staggerDelay: 200 });
+
+  useEffect(() => {
+    const loadContent = async () => {
+      try {
+        const data = await getPricingContent();
+        setContent(data);
+      } catch (error) {
+        console.error("Failed to load content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadContent();
+  }, []);
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
@@ -198,20 +221,18 @@ export const Pricing = async () => {
 
   return (
     <Container className="px-4 lg:px-8">
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-4 opacity-50">
-        Pricing Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
+      <div ref={titleRef} className="section-title">
+        <SectionTitle
+          title={data.main_title}
+          {...getEditableAttributes('pricing_section', data.id, 'main_title')}
+        />
       </div>
 
-      <SectionTitle
-        title={data.main_title}
-        {...getEditableAttributes('pricing_section', data.id, 'main_title')}
-      >
-      </SectionTitle>
-
-      <div className="grid gap-8 lg:grid-cols-3 xl:grid-cols-3">
+      <div ref={pricingRef} className="grid gap-8 lg:grid-cols-3 xl:grid-cols-3">
         {plans.map((plan, index) => (
-          <PricingPlan key={index} plan={plan} planNumber={index + 1} dataId={data.id} />
+          <div key={index} className="pricing-card">
+            <PricingPlan plan={plan} planNumber={index + 1} dataId={data.id} />
+          </div>
         ))}
       </div>
     </Container>

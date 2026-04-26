@@ -37,10 +37,6 @@ export const Contact = async () => {
 
   return (
     <>
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-4 opacity-50">
-        Contact Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
-      </div>
       <SectionTitle
         title={contactData.main_title}
         {...getEditableAttributes('contact_section', contactData.id, 'main_title')}

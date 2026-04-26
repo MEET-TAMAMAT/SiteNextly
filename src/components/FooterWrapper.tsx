@@ -30,10 +30,6 @@ export const Footer = async () => {
 
   return (
     <>
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-4 opacity-50">
-        Footer Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
-      </div>
       <FooterClient footerData={footerData} isUsingDirectus={isUsingDirectus} />
     </>
   );

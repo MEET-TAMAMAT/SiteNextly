@@ -4,6 +4,7 @@ import { Uncial_Antiqua } from "next/font/google";
 import { Nunito } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
+import "../styles/animations.css";
 
 import { DirectusNavbar } from "@/components/DirectusNavbar-Legacy";
 import { Footer } from "@/components/FooterWrapper";

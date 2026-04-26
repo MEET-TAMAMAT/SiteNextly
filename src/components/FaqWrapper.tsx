@@ -84,10 +84,6 @@ export const Faq = async () => {
 
   return (
     <>
-      {/* Debug indicator */}
-      <div className="text-xs text-center mb-4 opacity-50">
-        FAQ Data: {isUsingDirectus ? '🟢 Directus CMS' : '🔴 Fallback (hardcoded)'}
-      </div>
       <SectionTitle
         title={faqTitle}
         {...getEditableAttributes('faq_section', faqSectionContent?.id || 1, 'main_title')}
