@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Container } from "./Container";
 import { SectionTitle } from "./SectionTitle";
@@ -64,9 +64,9 @@ export const Features = () => {
   const [loading, setLoading] = useState(true);
 
   // Animation refs
-  const titleRef = useRef<HTMLDivElement>(null);
-  const featuresRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
+  const titleRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3 });
+  const featuresRef = useStaggeredAnimation<HTMLDivElement>(6, { threshold: 0.2, staggerDelay: 150 });
+  const imageRef = useScrollAnimation<HTMLDivElement>({ threshold: 0.3, delay: 400 });
 
   useEffect(() => {
     const loadContent = async () => {
@@ -82,29 +82,6 @@ export const Features = () => {
 
     loadContent();
   }, []);
-
-  // Animation effects
-  useEffect(() => {
-    const elements = [titleRef.current, featuresRef.current, imageRef.current].filter(Boolean);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animated');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-
-    elements.forEach((element) => {
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, [content]);
 
   // Fallback content if Directus fetch fails
   const fallbackContent = {
