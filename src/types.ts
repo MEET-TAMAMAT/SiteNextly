@@ -163,7 +163,6 @@ export interface ContactContent {
   support_hours_label: string;
   name_field_placeholder: string;
   email_field_placeholder: string;
-  subject_field_placeholder: string;
   message_field_placeholder: string;
   submit_button_text: string;
   success_message: string;

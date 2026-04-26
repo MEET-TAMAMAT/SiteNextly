@@ -22,7 +22,6 @@ export const Contact = async () => {
     support_hours_label: "Support Hours",
     name_field_placeholder: "Your name",
     email_field_placeholder: "Your email",
-    subject_field_placeholder: "Subject (optional)",
     message_field_placeholder: "Tell us more about your question or how we can help...",
     submit_button_text: "Send Message",
     success_message: "Thank you for your message! We'll get back to you soon.",
