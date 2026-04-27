@@ -10,7 +10,6 @@ import {
 import Link from "next/link";
 import { ContactContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
-import { useZadarmaForm } from "@/hooks/useZadarmaForm";
 
 interface ZadarmaContactProps {
   contactData: ContactContent;
@@ -217,19 +216,6 @@ const COUNTRIES = [
   { code: "ZW", name: "Zimbabwe" }
 ];
 
-const PHONE_TYPES = [
-  { value: "mobile", label: "Mobile" },
-  { value: "work", label: "Work" },
-  { value: "home", label: "Home" },
-  { value: "fax", label: "Fax" },
-  { value: "other", label: "Other" }
-];
-
-const EMAIL_TYPES = [
-  { value: "email_work", label: "Work Email" },
-  { value: "email_personal", label: "Personal Email" }
-];
-
 const CONTACT_TYPES = [
   { value: "whatsapp", label: "WhatsApp" },
   { value: "telegram", label: "Telegram" },
@@ -249,7 +235,12 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
     { value: "person", label: contactData.lead_status_teacher_label },
     { value: "company", label: contactData.lead_status_school_label }
   ];
+
   const [showValidation, setShowValidation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+
   const [fieldValues, setFieldValues] = useState({
     name: '',
     email: '',
@@ -261,15 +252,32 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
     message: ''
   });
   const [fieldTypes, setFieldTypes] = useState({
-    emailType: 'email_work', // Fixed to work email
-    phoneType: 'mobile', // Fixed to mobile
+    emailType: 'email_work',
+    phoneType: 'mobile',
     messengerType: ''
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
 
-  // Use the custom Zadarma hook
-  const { isSubmitting, submitMessage, submitToZadarma, clearMessage } = useZadarmaForm();
+  // UTM params — read from URL on mount
+  const [utmParams, setUtmParams] = useState({
+    utm_source:   'direct',
+    utm_medium:   'none',
+    utm_campaign: 'none',
+    utm_content:  'none',
+    utm_term:     'none',
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setUtmParams({
+      utm_source:   params.get('utm_source')   || 'direct',
+      utm_medium:   params.get('utm_medium')   || 'none',
+      utm_campaign: params.get('utm_campaign') || 'none',
+      utm_content:  params.get('utm_content')  || 'none',
+      utm_term:     params.get('utm_term')     || 'none',
+    });
+  }, []);
 
   // Refs for form fields
   const nameRef = useRef<HTMLInputElement>(null);
@@ -286,7 +294,6 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
       return hasValue ? '#f0fdf4' : '#f9fafb';
     }
   };
-
 
   useEffect(() => {
     const checkTheme = () => {
@@ -316,21 +323,44 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
 
     // Validate required fields
     const requiredFields = ['name', 'email', 'phone'];
-    const missingFields = requiredFields.filter(field => !fieldValues[field as keyof typeof fieldValues].trim());
+    const missingFields = requiredFields.filter(
+      field => !fieldValues[field as keyof typeof fieldValues].trim()
+    );
 
     if (missingFields.length > 0) {
       setShowValidation(true);
       return;
     }
 
-    // Clear any previous messages
-    clearMessage();
+    setIsSubmitting(true);
+    setIsSuccess(false);
+    setIsError(false);
 
-    // Submit using the custom hook
-    const result = await submitToZadarma(fieldValues, fieldTypes);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:             fieldValues.name,
+          email:            fieldValues.email,
+          phone:            fieldValues.phone            || null,
+          lead_type:        fieldValues.status           || null, // 'person' or 'company'
+          messenger_type:   fieldTypes.messengerType     || null,
+          messenger_handle: fieldValues.messengerValue   || null,
+          country:          fieldValues.country          || null,
+          website:          fieldValues.website          || null,
+          message:          fieldValues.message          || null,
+          ...utmParams,
+        }),
+      });
 
-    if (result.success) {
-      // Reset form on success
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Submission failed');
+
+      setIsSuccess(true);
+
+      // Reset form
       setFieldValues({
         name: '',
         email: '',
@@ -347,7 +377,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
         messengerType: ''
       });
 
-      // Clear form inputs
+      // Clear DOM refs
       if (nameRef.current) nameRef.current.value = '';
       if (emailRef.current) emailRef.current.value = '';
       if (phoneRef.current) phoneRef.current.value = '';
@@ -356,24 +386,29 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
       if (messageRef.current) messageRef.current.value = '';
 
       setShowValidation(false);
+
+    } catch (err) {
+      console.error('Form submission error:', err);
+      setIsError(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Field value tracking
+  // Field value tracking (autofill detection)
   useEffect(() => {
     const checkValues = () => {
       const currentValues = {
         name: nameRef.current?.value || '',
         email: emailRef.current?.value || '',
         phone: phoneRef.current?.value || '',
-        status: fieldValues.status, // Keep existing status value from state
+        status: fieldValues.status,
         messengerValue: messengerRef.current?.value || '',
-        country: fieldValues.country, // Keep existing country value from state
+        country: fieldValues.country,
         website: websiteRef.current?.value || '',
         message: messageRef.current?.value || ''
       };
       setFieldValues(prev => {
-        // Only update if the input fields changed, preserve select/radio state
         const hasInputChanges =
           prev.name !== currentValues.name ||
           prev.email !== currentValues.email ||
@@ -722,7 +757,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                 />
               </div>
 
-              {/* Field 9: Comment/Message (not required) */}
+              {/* Field 8: Comment/Message (not required) */}
               <div>
                 <textarea
                   ref={messageRef}
@@ -730,11 +765,9 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   name="message"
                   rows={3}
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none ${
-                    showValidation && fieldValues.message.trim() === ''
-                      ? 'border-red-500 dark:border-red-400 border-2'
-                      : focusedField === 'message'
-                        ? 'border-green-500 dark:border-green-400 border-2'
-                        : 'border-gray-300 dark:border-gray-600'
+                    focusedField === 'message'
+                      ? 'border-green-500 dark:border-green-400 border-2'
+                      : 'border-gray-300 dark:border-gray-600'
                   }`}
                   style={{
                     backgroundColor: getBackgroundColors(fieldValues.message.trim() !== '', isDark),
@@ -752,7 +785,6 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                     setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }));
                   }}
                   onBlur={() => setFocusedField(null)}
-                  onInvalid={() => setShowValidation(true)}
                   placeholder={contactData.message_field_placeholder}
                   {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'message_field_placeholder') : {})}
                 />
@@ -769,22 +801,24 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                 {isSubmitting ? 'Sending...' : (contactData.submit_button_text || 'Send Message')}
               </button>
 
-              {/* Submit Message */}
-              {submitMessage && (
-                <div className={`text-center p-3 rounded-lg ${
-                  submitMessage.includes('error') || submitMessage.includes('Sorry')
-                    ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400'
-                    : 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                }`}>
+              {/* Success Message */}
+              {isSuccess && (
+                <div className="text-center p-3 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
                   <span
-                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id,
-                      submitMessage.includes('error') || submitMessage.includes('Sorry') ? 'error_message' : 'success_message'
-                    ) : {})}
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'success_message') : {})}
                   >
-                    {submitMessage.includes('error') || submitMessage.includes('Sorry')
-                      ? contactData.error_message
-                      : contactData.success_message
-                    }
+                    {contactData.success_message}
+                  </span>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {isError && (
+                <div className="text-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
+                  <span
+                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'error_message') : {})}
+                  >
+                    {contactData.error_message}
                   </span>
                 </div>
               )}
