@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   try {
     // Verify request comes from Directus
     const authHeader = request.headers.get('authorization')
-    const expectedToken = process.env.DIRECTUS_TOKEN
+    const expectedToken = process.env.WEBHOOK_SECRET
     if (!authHeader || authHeader !== `Bearer ${expectedToken}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
