@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
+// PHP-compatible URL encoding (spaces become + like PHP's urlencode)
+function phpUrlencode(str: string): string {
+  return encodeURIComponent(str)
+    .replace(/%20/g, '+')
+    .replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
+}
+
 function signZadarma(
   method: string,
   params: Record<string, string>,
@@ -8,7 +15,7 @@ function signZadarma(
 ): string {
   const sortedKeys = Object.keys(params).sort()
   const queryString = sortedKeys
-    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .map(k => `${phpUrlencode(k)}=${phpUrlencode(params[k])}`)
     .join('&')
   const md5Hash = crypto.createHash('md5').update(queryString).digest('hex')
   const toSign = method + queryString + md5Hash
@@ -25,7 +32,7 @@ async function postTimelineNote(
     const method = `/v1/zcrm/customers/${leadId}/feed`
     const params: Record<string, string> = { content: message }
     const sortedKeys = Object.keys(params).sort()
-    const queryString = sortedKeys.map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`).join('&')
+    const queryString = sortedKeys.map(k => `${phpUrlencode(k)}=${phpUrlencode(params[k])}`).join('&')
     const md5Hash = crypto.createHash('md5').update(queryString).digest('hex')
     const toSign = method + queryString + md5Hash
     const signature = crypto.createHmac('sha1', secret).update(toSign).digest('base64')
