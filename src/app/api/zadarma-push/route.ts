@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
     const zadarmaData = await zadarmaRes.json()
 
     if (!zadarmaRes.ok || zadarmaData.status !== 'success') {
-      console.error('Zadarma API error:', zadarmaData)
+      console.log('ZADARMA_ERROR:', JSON.stringify(zadarmaData))
       return NextResponse.json(
         { error: 'Zadarma API error', details: zadarmaData },
         { status: 500 }
@@ -127,7 +127,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, zadarma_lead_id: zadarmaLeadId })
 
   } catch (error) {
-    console.error('Zadarma push error:', error)
+    console.log('ZADARMA_EXCEPTION:', String(error))
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
