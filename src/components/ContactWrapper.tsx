@@ -1,5 +1,5 @@
 import { getContactContent } from "@/lib/directus";
-import { ZadarmaContactForm } from "./ZadarmaContactForm";
+import { ZadarmaContactForm } from "./Contact";
 import { SectionTitle } from "./SectionTitle";
 import { ContactContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
