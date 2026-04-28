@@ -3,58 +3,80 @@ const crypto = require('crypto')
 const USER_KEY = '4834f629119e881ff982'
 const SECRET = '821fadcf62c76e7c4440'
 
-
-function sign(method, params, secret) {
-  const sortedKeys = Object.keys(params).sort()
-  const queryString = sortedKeys.map(k => `${k}=${params[k]}`).join('&')
-  const md5 = crypto.createHash('md5').update(queryString).digest('hex')
-  const toSign = method + queryString + md5
-  return {
-    signature: crypto.createHmac('sha1', secret).update(toSign).digest('base64'),
-    queryString
-  }
+// Exact PHP urlencode equivalent
+function phpEncode(str) {
+  return encodeURIComponent(String(str))
+    .replace(/%20/g, '+')
+    .replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
+    .replace(/%2B/g, '+')
 }
 
-async function test(label, method, params, url) {
-  const { signature } = sign(method, params, SECRET)
-  const sortedKeys = Object.keys(params).sort()
-  const body = sortedKeys.map(k => `${k}=${encodeURIComponent(params[k])}`).join('&')
-  console.log(`\n--- ${label} ---`)
-  const res = await fetch(url, {
-    method: 'POST',
+function buildParamString(params) {
+  return Object.keys(params)
+    .sort()
+    .map(k => `${phpEncode(k)}=${phpEncode(params[k])}`)
+    .join('&')
+}
+
+// Zadarma signing: base64(hex(hmac_sha1))
+function sign(method, paramString, secret) {
+  const md5Hex = crypto.createHash('md5').update(paramString).digest('hex')
+  const toSign = method + paramString + md5Hex
+  const hmacHex = crypto.createHmac('sha1', secret).update(toSign).digest('hex')
+  return Buffer.from(hmacHex).toString('base64')
+}
+
+async function callZadarma(method, params, apiMethod = 'POST') {
+  const paramString = buildParamString(params)
+  const signature = sign(method, paramString, SECRET)
+  console.log('Param string:', paramString)
+  console.log('Signature:', signature)
+  const res = await fetch('https://api.zadarma.com' + method, {
+    method: apiMethod,
     headers: {
       'Authorization': `${USER_KEY}:${signature}`,
       'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': 'NodeScript'
     },
-    body,
+    body: apiMethod === 'POST' ? paramString : undefined,
   })
-  const data = await res.json()
-  console.log('Status:', res.status)
-  console.log('Result:', JSON.stringify(data, null, 2))
+  return res.json()
 }
 
 async function run() {
-  // Test 1: Account balance - simplest possible API call, no CRM needed
-  const balanceMethod = '/v1/info/balance'
-  const balanceSig = sign(balanceMethod, {}, SECRET)
-  console.log('\n--- BALANCE (no params) ---')
-  const r = await fetch('https://api.zadarma.com/v1/info/balance', {
+  // Test 1: Balance (no params, GET)
+  console.log('\n=== BALANCE ===')
+  const balanceSig = sign('/v1/info/balance/', '', SECRET)
+  const r = await fetch('https://api.zadarma.com/v1/info/balance/', {
     method: 'GET',
-    headers: { 'Authorization': `${USER_KEY}:${balanceSig.signature}` }
+    headers: { 'Authorization': `${USER_KEY}:${balanceSig}`, 'User-Agent': 'NodeScript' }
   })
-  console.log('Status:', r.status)
-  console.log('Result:', JSON.stringify(await r.json(), null, 2))
+  console.log(JSON.stringify(await r.json()))
 
-  // Test 2: CRM leads list - GET request, no params needed
-  const listMethod = '/v1/zcrm/leads'
-  const listSig = sign(listMethod, {}, SECRET)
-  console.log('\n--- GET CRM LEADS LIST ---')
+  // Test 2: Exact params from Zadarma support example
+  console.log('\n=== EXACT ZADARMA EXAMPLE ===')
+  const exactParamString = 'lead%5Bname%5D=John+Doe&lead%5Bcountry%5D=US'
+  const exactSig = sign('/v1/zcrm/leads', exactParamString, SECRET)
   const r2 = await fetch('https://api.zadarma.com/v1/zcrm/leads', {
-    method: 'GET',
-    headers: { 'Authorization': `${USER_KEY}:${listSig.signature}` }
+    method: 'POST',
+    headers: {
+      'Authorization': `${USER_KEY}:${exactSig}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': 'NodeScript'
+    },
+    body: exactParamString
   })
-  console.log('Status:', r2.status)
-  console.log('Result:', JSON.stringify(await r2.json(), null, 2))
+  console.log(JSON.stringify(await r2.json()))
+
+  // Test 3: Dynamic params
+  console.log('\n=== DYNAMIC PARAMS ===')
+  const r3 = await callZadarma('/v1/zcrm/leads', {
+    'lead[name]': 'Test Node',
+    'lead[lead_source]': 'form',
+    'lead[phones][0][phone]': '+380935225757',
+    'lead[phones][0][type]': 'mobile',
+  })
+  console.log(JSON.stringify(r3))
 }
 
 run().catch(console.error)

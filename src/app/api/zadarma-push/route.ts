@@ -1,25 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
-// PHP-compatible URL encoding (spaces become + like PHP's urlencode)
-function phpUrlencode(str: string): string {
-  return encodeURIComponent(str)
+function phpEncode(str: string): string {
+  return encodeURIComponent(String(str))
     .replace(/%20/g, '+')
     .replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
 }
 
-function signZadarma(
-  method: string,
-  params: Record<string, string>,
-  secret: string
-): string {
-  const sortedKeys = Object.keys(params).sort()
-  const queryString = sortedKeys
-    .map(k => `${phpUrlencode(k)}=${phpUrlencode(params[k])}`)
+function buildParamString(params: Record<string, string>): string {
+  return Object.keys(params)
+    .sort()
+    .map(k => `${phpEncode(k)}=${phpEncode(params[k])}`)
     .join('&')
-  const md5Hash = crypto.createHash('md5').update(queryString).digest('hex')
-  const toSign = method + queryString + md5Hash
-  return crypto.createHmac('sha1', secret).update(toSign).digest('base64')
+}
+
+// Zadarma signing: base64(hex(hmac_sha1(method + paramString + md5(paramString))))
+function signZadarma(method: string, paramString: string, secret: string): string {
+  const md5Hex = crypto.createHash('md5').update(paramString).digest('hex')
+  const toSign = method + paramString + md5Hex
+  const hmacHex = crypto.createHmac('sha1', secret).update(toSign).digest('hex')
+  return Buffer.from(hmacHex).toString('base64')
 }
 
 async function postTimelineNote(
@@ -31,30 +31,24 @@ async function postTimelineNote(
   try {
     const method = `/v1/zcrm/customers/${leadId}/feed`
     const params: Record<string, string> = { content: message }
-    const sortedKeys = Object.keys(params).sort()
-    const queryString = sortedKeys.map(k => `${phpUrlencode(k)}=${phpUrlencode(params[k])}`).join('&')
-    const md5Hash = crypto.createHash('md5').update(queryString).digest('hex')
-    const toSign = method + queryString + md5Hash
-    const signature = crypto.createHmac('sha1', secret).update(toSign).digest('base64')
-    const formBody = sortedKeys
-      .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
-      .join('&')
+    const paramString = buildParamString(params)
+    const signature = signZadarma(method, paramString, secret)
     await fetch(`https://api.zadarma.com${method}`, {
       method: 'POST',
       headers: {
         'Authorization': `${userKey}:${signature}`,
         'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'NodeScript',
       },
-      body: formBody,
+      body: paramString,
     })
   } catch (err) {
-    console.error('Timeline note failed (non-fatal):', err)
+    console.log('Timeline note failed (non-fatal):', String(err))
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-
     const lead = await request.json()
 
     const userKey = process.env.ZADARMA_USER_KEY!
@@ -67,7 +61,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Build Zadarma params
     const params: Record<string, string> = {}
 
     if (lead.name)      params['lead[name]']      = lead.name
@@ -99,26 +92,23 @@ export async function POST(request: NextRequest) {
     if (lead.utm_term     && lead.utm_term     !== 'none')   params['lead[utms][utm_term]']     = lead.utm_term
 
     const method = '/v1/zcrm/leads'
-    const signature = signZadarma(method, params, secret)
-
-    const sortedKeys = Object.keys(params).sort()
-    const formBody = sortedKeys
-      .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
-      .join('&')
+    const paramString = buildParamString(params)
+    const signature = signZadarma(method, paramString, secret)
 
     const zadarmaRes = await fetch('https://api.zadarma.com/v1/zcrm/leads', {
       method: 'POST',
       headers: {
         'Authorization': `${userKey}:${signature}`,
         'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'NodeScript',
       },
-      body: formBody,
+      body: paramString,
     })
 
     const zadarmaData = await zadarmaRes.json()
+    console.log('ZADARMA_RESPONSE:', JSON.stringify(zadarmaData))
 
     if (!zadarmaRes.ok || zadarmaData.status !== 'success') {
-      console.log('ZADARMA_ERROR:', JSON.stringify(zadarmaData))
       return NextResponse.json(
         { error: 'Zadarma API error', details: zadarmaData },
         { status: 500 }
@@ -126,7 +116,7 @@ export async function POST(request: NextRequest) {
     }
 
     const zadarmaLeadId = String(
-      zadarmaData.id ?? zadarmaData.crmid ?? zadarmaData.data?.id ?? ''
+      zadarmaData.data?.id ?? zadarmaData.id ?? ''
     )
 
     if (lead.message?.trim() && zadarmaLeadId) {
