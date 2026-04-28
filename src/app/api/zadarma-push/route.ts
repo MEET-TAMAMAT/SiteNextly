@@ -14,7 +14,6 @@ function buildParamString(params: Record<string, string>): string {
     .join('&')
 }
 
-// Zadarma signing: base64(hex(hmac_sha1(method + paramString + md5(paramString))))
 function signZadarma(method: string, paramString: string, secret: string): string {
   const md5Hex = crypto.createHash('md5').update(paramString).digest('hex')
   const toSign = method + paramString + md5Hex
@@ -63,8 +62,8 @@ export async function POST(request: NextRequest) {
 
     const params: Record<string, string> = {}
 
-    // ── Core fields ──────────────────────────────────────────────
-    if (lead.name) params['lead[name]'] = lead.name
+    // ── Core fields ───────────────────────────────────────────────
+    if (lead.name)    params['lead[name]']    = lead.name
     if (lead.country) params['lead[country]'] = lead.country
     if (lead.website) params['lead[website]'] = lead.website
     params['lead[lead_source]'] = 'form'
@@ -74,13 +73,13 @@ export async function POST(request: NextRequest) {
       params['lead[status]'] = lead.lead_type === 'company' ? 'company' : 'person'
     }
 
-    // ── Phone ────────────────────────────────────────────────────
+    // ── Phone ─────────────────────────────────────────────────────
     if (lead.phone) {
       params['lead[phones][0][phone]'] = lead.phone
       params['lead[phones][0][type]']  = 'work'
     }
 
-    // ── Email ────────────────────────────────────────────────────
+    // ── Email ─────────────────────────────────────────────────────
     let ci = 0
     if (lead.email) {
       params[`lead[contacts][${ci}][value]`] = lead.email
@@ -88,73 +87,50 @@ export async function POST(request: NextRequest) {
       ci++
     }
 
-    // ── Messenger mapping ─────────────────────────────────────────
-    // Native Zadarma contact types
+    // ── Messenger — native Zadarma types only ─────────────────────
+    // Supported: whatsapp, telegram, viber, skype, facebook
+    // Non-native (instagram, signal, line, wechat) — pending format
+    // confirmation with Zadarma before adding as custom properties
     const nativeMessengers = ['whatsapp', 'telegram', 'viber', 'skype', 'facebook']
-
-    // Custom property IDs (created in Teamsale → Settings → Custom properties)
-    const customPropertyMap: Record<string, string> = {
-      'instagram': '12646',
-      'youtube':   '12647',
-      'tiktok':    '12648',
-      'linkedin':  '12649',
-      'signal':    '12937',
-      'line':      '12938',
-      'wechat':    '12939',
-    }
-
     if (lead.messenger_handle && lead.messenger_type) {
       if (nativeMessengers.includes(lead.messenger_type)) {
         params[`lead[contacts][${ci}][value]`] = lead.messenger_handle
         params[`lead[contacts][${ci}][type]`]  = lead.messenger_type
-      } else if (customPropertyMap[lead.messenger_type]) {
-        params['lead[custom_properties][0][id]']    = customPropertyMap[lead.messenger_type]
-        params['lead[custom_properties][0][value]'] = String(lead.messenger_handle)
-      } else {
-        // Fallback for 'other'
-        params[`lead[contacts][${ci}][value]`] = lead.messenger_handle
-        params[`lead[contacts][${ci}][type]`]  = 'other'
       }
+      // Other messenger types stored in Directus only for now
     }
 
-    // ── UTM params ───────────────────────────────────────────────
+    // ── UTM params ────────────────────────────────────────────────
     if (lead.utm_source   && lead.utm_source   !== 'direct') params['lead[utms][utm_source]']   = lead.utm_source
     if (lead.utm_medium   && lead.utm_medium   !== 'none')   params['lead[utms][utm_medium]']   = lead.utm_medium
     if (lead.utm_campaign && lead.utm_campaign !== 'none')   params['lead[utms][utm_campaign]'] = lead.utm_campaign
     if (lead.utm_content  && lead.utm_content  !== 'none')   params['lead[utms][utm_content]']  = lead.utm_content
     if (lead.utm_term     && lead.utm_term     !== 'none')   params['lead[utms][utm_term]']     = lead.utm_term
 
-    // ── Label (tag) mapping ───────────────────────────────────────
-    // Maps lead_type to Zadarma label IDs
-    const labelMap: Record<string, string> = {
-      'person':  '349392', // Teacher
-      'company': '337789', // School
-      'coach':   '337790', // Coach / Репетитори
-    }
-    if (lead.lead_type && labelMap[lead.lead_type]) {
-      params['lead[labels][]'] = labelMap[lead.lead_type]
-    }
-
     // ── Source tag mapping ────────────────────────────────────────
     // Maps utm_source to Zadarma source tag IDs
-    // Add new IDs here as you create source tags in Teamsale
+    // Add remaining IDs once confirmed from Zadarma
     const sourceTagMap: Record<string, string> = {
-      'facebook':       '120860',
-      'google':         '120911',
-      // 'instagram':   'ID',
-      // 'linkedin':    'ID',
-      // 'tiktok':      'ID',
-      // 'youtube':     'ID',
-      // 'x':           'ID',
+      'facebook': '120860',
+      'google':   '120911',
+      // 'instagram':      'ID',
+      // 'linkedin':       'ID',
+      // 'tiktok':         'ID',
+      // 'youtube':        'ID',
+      // 'x':              'ID',
       // 'google_organic': 'ID',
-      // 'phone':       'ID',
-      // 'direct':      'ID',
-      // 'email':       'ID',
-      // 'referral':    'ID',
+      // 'phone':          'ID',
+      // 'direct':         'ID',
+      // 'email':          'ID',
+      // 'referral':       'ID',
     }
     if (lead.utm_source && sourceTagMap[lead.utm_source]) {
       params['lead[source_tag_id]'] = sourceTagMap[lead.utm_source]
     }
+
+    // ── Labels (Teacher/School/Coach tags) ────────────────────────
+    // TODO: Add once correct array notation is confirmed with Zadarma
+    // test-zadarma.js needed to verify label format before adding here
 
     // ── Sign and send ─────────────────────────────────────────────
     const method = '/v1/zcrm/leads'
