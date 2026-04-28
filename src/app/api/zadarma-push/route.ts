@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (lead.phone) {
       params['lead[phones][0][phone]'] = lead.phone
-      params['lead[phones][0][type]']  = 'mobile'
+      params['lead[phones][0][type]']  = 'work'
     }
 
     let ci = 0
