@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
         params[`lead[contacts][${ci}][type]`]  = lead.messenger_type
       } else if (customPropertyMap[lead.messenger_type]) {
         params['lead[custom_properties][0][id]']    = customPropertyMap[lead.messenger_type]
-        params['lead[custom_properties][0][value]'] = lead.messenger_handle
+        params['lead[custom_properties][0][value]'] = String(lead.messenger_handle)
       } else {
         // Fallback for 'other'
         params[`lead[contacts][${ci}][value]`] = lead.messenger_handle
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
       'coach':   '337790', // Coach / Репетитори
     }
     if (lead.lead_type && labelMap[lead.lead_type]) {
-      params['lead[labels][0]'] = labelMap[lead.lead_type]
+      params['lead[labels][]'] = labelMap[lead.lead_type]
     }
 
     // ── Source tag mapping ────────────────────────────────────────
