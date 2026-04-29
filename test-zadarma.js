@@ -44,39 +44,48 @@ async function callZadarma(method, params, apiMethod = 'POST') {
 }
 
 async function run() {
-  // Test 1: Balance (no params, GET)
-  console.log('\n=== BALANCE ===')
-  const balanceSig = sign('/v1/info/balance/', '', SECRET)
-  const r = await fetch('https://api.zadarma.com/v1/info/balance/', {
-    method: 'GET',
-    headers: { 'Authorization': `${USER_KEY}:${balanceSig}`, 'User-Agent': 'NodeScript' }
-  })
-  console.log(JSON.stringify(await r.json()))
-
-  // Test 2: Exact params from Zadarma support example
-  console.log('\n=== EXACT ZADARMA EXAMPLE ===')
-  const exactParamString = 'lead%5Bname%5D=John+Doe&lead%5Bcountry%5D=US'
-  const exactSig = sign('/v1/zcrm/leads', exactParamString, SECRET)
-  const r2 = await fetch('https://api.zadarma.com/v1/zcrm/leads', {
+  // Test: lead[labels][] notation + lead[comment]
+  console.log('\n=== TEST: labels[] notation + comment ===')
+  const params = {
+    'lead[name]': 'Test Labels Array',
+    'lead[lead_source]': 'form',
+    'lead[phones][0][phone]': '+380991000097',
+    'lead[phones][0][type]': 'work',
+    'lead[comment]': 'Test comment from form.',
+    'lead[labels][]': '337789',
+  }
+  const method = '/v1/zcrm/leads'
+  const sorted = Object.keys(params).sort()
+  const qs = sorted.map(k => `${phpEncode(k)}=${phpEncode(params[k])}`).join('&')
+  const md5 = crypto.createHash('md5').update(qs).digest('hex')
+  const sig = Buffer.from(
+    crypto.createHmac('sha1', SECRET).update(method + qs + md5).digest('hex')
+  ).toString('base64')
+  console.log('Param string:', qs)
+  const r = await fetch('https://api.zadarma.com/v1/zcrm/leads', {
     method: 'POST',
     headers: {
-      'Authorization': `${USER_KEY}:${exactSig}`,
+      'Authorization': `${USER_KEY}:${sig}`,
       'Content-Type': 'application/x-www-form-urlencoded',
       'User-Agent': 'NodeScript'
     },
-    body: exactParamString
+    body: qs
   })
-  console.log(JSON.stringify(await r2.json()))
+  console.log('Result:', JSON.stringify(await r.json(), null, 2))
 
-  // Test 3: Dynamic params
-  console.log('\n=== DYNAMIC PARAMS ===')
-  const r3 = await callZadarma('/v1/zcrm/leads', {
-    'lead[name]': 'Test Node',
-    'lead[lead_source]': 'form',
-    'lead[phones][0][phone]': '+380935225757',
-    'lead[phones][0][type]': 'mobile',
+  console.log('\n=== TEST: labels via localhost route ===')
+  const r3 = await fetch('http://localhost:3000/api/zadarma-push', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: 'Test Label School Local',
+      email: 'test-label-local@example.com',
+      phone: '+380991000070',
+      lead_type: 'company',
+      message: 'Testing school label via localhost.',
+    })
   })
-  console.log(JSON.stringify(r3))
+  console.log('Result:', JSON.stringify(await r3.json(), null, 2))
 }
 
 run().catch(console.error)

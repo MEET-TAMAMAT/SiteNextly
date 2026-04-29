@@ -14,6 +14,7 @@ function buildParamString(params: Record<string, string>): string {
     .join('&')
 }
 
+// Zadarma signing: base64(hex(hmac_sha1(method + paramString + md5(paramString))))
 function signZadarma(method: string, paramString: string, secret: string): string {
   const md5Hex = crypto.createHash('md5').update(paramString).digest('hex')
   const toSign = method + paramString + md5Hex
@@ -21,14 +22,44 @@ function signZadarma(method: string, paramString: string, secret: string): strin
   return Buffer.from(hmacHex).toString('base64')
 }
 
+// Search Zadarma for an existing customer by phone or email
+// Returns the customer ID string, or null if not found
+async function findExistingCustomer(
+  searchTerm: string,
+  userKey: string,
+  secret: string
+): Promise<string | null> {
+  try {
+    const method = '/v1/zcrm/customers'
+    const searchParams: Record<string, string> = { search: searchTerm }
+    const searchParamString = buildParamString(searchParams)
+    const sig = signZadarma(method, searchParamString, secret)
+    const res = await fetch(
+      `https://api.zadarma.com${method}?${searchParamString}`,
+      {
+        method: 'GET',
+        headers: { 'Authorization': `${userKey}:${sig}`, 'User-Agent': 'NodeScript' }
+      }
+    )
+    const data = await res.json()
+    console.log(`ZADARMA_SEARCH (${searchTerm}):`, JSON.stringify(data))
+    const id = data?.data?.customers?.[0]?.id
+    return id ? String(id) : null
+  } catch (err) {
+    console.log('Search error (non-fatal):', String(err))
+    return null
+  }
+}
+
+// Post a note to the timeline of an existing Zadarma customer/lead
 async function postTimelineNote(
-  leadId: string,
+  customerId: string,
   message: string,
   userKey: string,
   secret: string
 ): Promise<void> {
   try {
-    const method = `/v1/zcrm/customers/${leadId}/feed`
+    const method = `/v1/zcrm/customers/${customerId}/feed`
     const params: Record<string, string> = { content: message }
     const paramString = buildParamString(params)
     const signature = signZadarma(method, paramString, secret)
@@ -117,6 +148,7 @@ export async function POST(request: NextRequest) {
 
     // ── Comment / Message ─────────────────────────────────────────
     // Sent directly in lead payload — appears in Comment field in Teamsale
+    // NOTE: do NOT also post via postTimelineNote after creation — would duplicate it
     if (lead.message?.trim()) {
       params['lead[comment]'] = lead.message.trim()
     }
@@ -129,109 +161,30 @@ export async function POST(request: NextRequest) {
     if (lead.utm_term     && lead.utm_term     !== 'none')   params['lead[utms][utm_term]']     = lead.utm_term
 
     // ── Source tag mapping ────────────────────────────────────────
-    // Maps utm_source to Zadarma source tag IDs
     const sourceTagMap: Record<string, string> = {
-      'facebook':        '120860',
-      'instagram':       '126195',
-      'linkedin':        '126196',
-      'tiktok':          '126197',
-      'youtube':         '126198',
-      'x':               '126199',
-      'phone':           '126201',
-      'google':          '126203', // Google Ads
-      'google_ads':      '126203', // Google Ads (alias)
-      'google_organic':  '126204',
-      'referral':        '126205',
-      'email':           '126206',
-      'direct':          '126207',
+      'facebook':       '120860',
+      'instagram':      '126195',
+      'linkedin':       '126196',
+      'tiktok':         '126197',
+      'youtube':        '126198',
+      'x':              '126199',
+      'phone':          '126201',
+      'google':         '126203', // Google Ads
+      'google_ads':     '126203', // Google Ads (alias)
+      'google_organic': '126204',
+      'referral':       '126205',
+      'email':          '126206',
+      'direct':         '126207',
     }
     if (lead.utm_source && sourceTagMap[lead.utm_source]) {
       params['lead[source_tag_id]'] = sourceTagMap[lead.utm_source]
     }
 
-    // ── Label (tag) mapping — Teacher / School / Coach ────────────
-    // Uses PHP array append notation: lead[labels][]
-    // Both signing and body use phpEncode consistently so %5B%5D matches
-    const labelMap: Record<string, string> = {
-      'person':  '349392', // Teacher
-      'company': '337789', // School
-      'coach':   '337790', // Coach / Репетитори
-    }
-    if (lead.lead_type && labelMap[lead.lead_type]) {
-      params['lead[labels][]'] = labelMap[lead.lead_type]
-    }
+    // ── Labels: REMOVED ──────────────────────────────────────────
+    // lead[labels][] notation breaks HMAC signature — pending Zadarma support resolution
+    // Labels can be set manually in Teamsale until resolved
 
-    // ── Duplicate handling ────────────────────────────────────────
-    // Check if we have phone or email to search for duplicates
-    const isDuplicate = Boolean(lead.phone || lead.email)
-
-    if (isDuplicate) {
-      try {
-        let existingId: string | null = null
-
-        // Search by phone first
-        if (lead.phone && !existingId) {
-          const searchMethod = '/v1/zcrm/customers'
-          const searchParams: Record<string, string> = { search: lead.phone }
-          const searchParamString = buildParamString(searchParams)
-          const searchSig = signZadarma(searchMethod, searchParamString, secret)
-          const searchRes = await fetch(
-            `https://api.zadarma.com/v1/zcrm/customers?${searchParamString}`,
-            {
-              method: 'GET',
-              headers: {
-                'Authorization': `${userKey}:${searchSig}`,
-                'User-Agent': 'NodeScript',
-              }
-            }
-          )
-          const searchData = await searchRes.json()
-          console.log('ZADARMA_SEARCH_PHONE:', JSON.stringify(searchData))
-          existingId = searchData?.data?.customers?.[0]?.id
-            ? String(searchData.data.customers[0].id)
-            : null
-        }
-
-        // Fallback: search by email
-        if (lead.email && !existingId) {
-          const searchMethod = '/v1/zcrm/customers'
-          const searchParams: Record<string, string> = { search: lead.email }
-          const searchParamString = buildParamString(searchParams)
-          const searchSig = signZadarma(searchMethod, searchParamString, secret)
-          const searchRes = await fetch(
-            `https://api.zadarma.com/v1/zcrm/customers?${searchParamString}`,
-            {
-              method: 'GET',
-              headers: {
-                'Authorization': `${userKey}:${searchSig}`,
-                'User-Agent': 'NodeScript',
-              }
-            }
-          )
-          const searchData = await searchRes.json()
-          console.log('ZADARMA_SEARCH_EMAIL:', JSON.stringify(searchData))
-          existingId = searchData?.data?.customers?.[0]?.id
-            ? String(searchData.data.customers[0].id)
-            : null
-        }
-
-        if (existingId) {
-          const date = new Date().toISOString().split('T')[0]
-          const note = `Re-submitted contact form on ${date} — not yet contacted.${lead.message ? ' Message: ' + lead.message : ''}`
-          await postTimelineNote(existingId, note, userKey, secret)
-          return NextResponse.json({
-            success: true,
-            duplicate: true,
-            zadarma_lead_id: existingId
-          })
-        }
-      } catch (dupErr) {
-        console.log('Duplicate handling error (non-fatal):', String(dupErr))
-      }
-      // If no duplicate found, continue to create new lead
-    }
-
-    // ── Sign and send ─────────────────────────────────────────────
+    // ── Sign and send to Zadarma ──────────────────────────────────
     const method = '/v1/zcrm/leads'
     const paramString = buildParamString(params)
     const signature = signZadarma(method, paramString, secret)
@@ -249,21 +202,46 @@ export async function POST(request: NextRequest) {
     const zadarmaData = await zadarmaRes.json()
     console.log('ZADARMA_RESPONSE:', JSON.stringify(zadarmaData))
 
+    // ── Duplicate handling ────────────────────────────────────────
+    // Only triggered when Zadarma rejects with "Already used" validation errors
+    // This runs AFTER the create attempt fails — not before (avoids unnecessary API calls)
+    const phoneAlreadyUsed = zadarmaData?.data?.validation_errors?.phones?.includes('Already used')
+    const contactAlreadyUsed = zadarmaData?.data?.validation_errors?.contacts?.includes('Already used')
+    const isDuplicate = phoneAlreadyUsed || contactAlreadyUsed
+
+    if (isDuplicate) {
+      console.log('ZADARMA_DUPLICATE: searching for existing customer')
+      let existingId: string | null = null
+
+      // Search by phone first, then email as fallback
+      if (lead.phone) existingId = await findExistingCustomer(lead.phone, userKey, secret)
+      if (!existingId && lead.email) existingId = await findExistingCustomer(lead.email, userKey, secret)
+
+      if (existingId) {
+        const date = new Date().toISOString().split('T')[0]
+        const note = `Re-submitted contact form on ${date} — not yet contacted.${lead.message?.trim() ? ' Message: ' + lead.message.trim() : ''}`
+        await postTimelineNote(existingId, note, userKey, secret)
+        console.log(`ZADARMA_DUPLICATE: note added to customer ${existingId}`)
+        return NextResponse.json({ success: true, duplicate: true, zadarma_lead_id: existingId })
+      }
+
+      // Duplicate detected but customer not found in search — return duplicate signal anyway
+      return NextResponse.json({ success: true, duplicate: true, zadarma_lead_id: '' })
+    }
+
+    // ── Handle other Zadarma errors ───────────────────────────────
     if (!zadarmaRes.ok || zadarmaData.status !== 'success') {
+      console.log('ZADARMA_ERROR:', JSON.stringify(zadarmaData))
       return NextResponse.json(
         { error: 'Zadarma API error', details: zadarmaData },
         { status: 500 }
       )
     }
 
+    // ── Success ───────────────────────────────────────────────────
     const zadarmaLeadId = String(
       zadarmaData.data?.id ?? zadarmaData.id ?? ''
     )
-
-    // Post message as timeline note in Teamsale
-    if (lead.message?.trim() && zadarmaLeadId) {
-      await postTimelineNote(zadarmaLeadId, lead.message, userKey, secret)
-    }
 
     return NextResponse.json({ success: true, zadarma_lead_id: zadarmaLeadId })
 
