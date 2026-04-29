@@ -100,6 +100,12 @@ export async function POST(request: NextRequest) {
       // Other messenger types stored in Directus only for now
     }
 
+    // ── Comment / Message ─────────────────────────────────────────
+    // Sent directly in lead payload — appears in Comment field in Teamsale
+    if (lead.message?.trim()) {
+      params['lead[comment]'] = lead.message.trim()
+    }
+
     // ── UTM params ────────────────────────────────────────────────
     if (lead.utm_source   && lead.utm_source   !== 'direct') params['lead[utms][utm_source]']   = lead.utm_source
     if (lead.utm_medium   && lead.utm_medium   !== 'none')   params['lead[utms][utm_medium]']   = lead.utm_medium
