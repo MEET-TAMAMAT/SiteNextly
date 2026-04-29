@@ -83,12 +83,20 @@ git checkout backup-before-[description]  # to revert
 
 # 1. Kill the current server
 taskkill /IM "node.exe" /F
+or
+netstat -ano | findstr :3000
+# it then gives something like: TCP   0.0.0.0:3000   0.0.0.0:0   LISTENING   12345
+# then kill it by replacing the numbers 12345
+taskkill /PID 12345 /F
+
 
 # 2. Start it again
 yarn dev
+
 
 
 DETERMIN THE ORIGIN OF THE CURRENT FOLDER IN GITHUB REPOSITORY
 
 git remote get-url origin
 git config --get remote.origin.url
+
