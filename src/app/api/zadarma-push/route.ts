@@ -87,17 +87,32 @@ export async function POST(request: NextRequest) {
       ci++
     }
 
-    // ── Messenger — native Zadarma types only ─────────────────────
-    // Supported: whatsapp, telegram, viber, skype, facebook
-    // Non-native (instagram, signal, line, wechat) — pending format
-    // confirmation with Zadarma before adding as custom properties
+    // ── Messenger mapping ─────────────────────────────────────────
+    // Native Zadarma contact types
     const nativeMessengers = ['whatsapp', 'telegram', 'viber', 'skype', 'facebook']
+
+    // Custom property IDs from Teamsale Settings → Custom Properties
+    const customPropertyMap: Record<string, string> = {
+      'instagram': '12646',
+      'youtube':   '12647',
+      'tiktok':    '12648',
+      'linkedin':  '12649',
+      'signal':    '12937',
+      'line':      '12938',
+      'wechat':    '12939',
+    }
+
     if (lead.messenger_handle && lead.messenger_type) {
       if (nativeMessengers.includes(lead.messenger_type)) {
+        // Send as native Zadarma contact type
         params[`lead[contacts][${ci}][value]`] = lead.messenger_handle
         params[`lead[contacts][${ci}][type]`]  = lead.messenger_type
+      } else if (customPropertyMap[lead.messenger_type]) {
+        // Send as custom property
+        params['lead[custom_properties][0][id]']    = customPropertyMap[lead.messenger_type]
+        params['lead[custom_properties][0][value]'] = lead.messenger_handle
       }
-      // Other messenger types stored in Directus only for now
+      // 'other' type — stored in Directus only, not sent to Zadarma
     }
 
     // ── Comment / Message ─────────────────────────────────────────
