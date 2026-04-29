@@ -246,10 +246,20 @@ export async function POST(request: NextRequest) {
       params['lead[source_tag_id]'] = sourceTagMap[utmSource]
     }
 
-    // ── Labels: REMOVED ──────────────────────────────────────────
-    // lead[labels][] notation breaks HMAC signature due to empty bracket encoding
-    // Pending resolution with Zadarma support
-    // Labels (Teacher/School/Coach tags) must be set manually in Teamsale for now
+    // ── Lead type tags: Teacher / School ──────────────────────────
+    // Maps the frontend/Directus radio value to the regular Zadarma Tags field.
+    // Confirmed tag IDs from Zadarma/Teamsale UI:
+    //   Teacher = 349392
+    //   School  = 337789
+    // IMPORTANT: use indexed brackets, not empty [] brackets, to avoid signature issues.
+    const leadTypeTagMap: Record<string, string> = {
+      'person':  '349392', // Teacher
+      'company': '337789', // School
+    }
+
+    if (leadType && leadTypeTagMap[leadType]) {
+      params['lead[tags][0]'] = leadTypeTagMap[leadType]
+    }
 
     // ── UTMs: REMOVED ────────────────────────────────────────────
     // lead[utms][utm_source] etc. cause PHP error "Cannot access offset of type string on string"
@@ -259,6 +269,11 @@ export async function POST(request: NextRequest) {
     // ── Sign and send to Zadarma ──────────────────────────────────
     const method      = '/v1/zcrm/leads'
     const paramString = buildParamString(params)
+
+    // Temporary troubleshooting logs — remove or comment out after the tag field is confirmed working.
+    console.log('ZADARMA_PARAMS:', params)
+    console.log('ZADARMA_PARAM_STRING:', paramString)
+
     const signature   = signZadarma(method, paramString, secret)
 
     const zadarmaRes = await fetch('https://api.zadarma.com/v1/zcrm/leads', {
