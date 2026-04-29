@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
+// ── Encoding helpers ───────────────────────────────────────────
+
+// PHP-compatible URL encoding (spaces → +, brackets encoded)
 function phpEncode(str: string): string {
   return encodeURIComponent(String(str))
     .replace(/%20/g, '+')
     .replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase())
 }
 
+// Build sorted, encoded query string from params object
 function buildParamString(params: Record<string, string>): string {
   return Object.keys(params)
     .sort()
@@ -14,7 +18,19 @@ function buildParamString(params: Record<string, string>): string {
     .join('&')
 }
 
-// Zadarma signing: base64(hex(hmac_sha1(method + paramString + md5(paramString))))
+// Safely extract a string value — treats "null", "undefined", "" as empty
+// Needed because Directus Flow templates render null as the string "null"
+function safe(val: unknown): string | null {
+  if (val === null || val === undefined) return null
+  const str = String(val).trim()
+  if (str === '' || str === 'null' || str === 'undefined') return null
+  return str
+}
+
+// ── Zadarma signing ────────────────────────────────────────────
+
+// Signing algorithm: base64(hex(hmac_sha1(method + paramString + md5(paramString))))
+// Confirmed correct by Zadarma support
 function signZadarma(method: string, paramString: string, secret: string): string {
   const md5Hex = crypto.createHash('md5').update(paramString).digest('hex')
   const toSign = method + paramString + md5Hex
@@ -22,8 +38,10 @@ function signZadarma(method: string, paramString: string, secret: string): strin
   return Buffer.from(hmacHex).toString('base64')
 }
 
-// Search Zadarma for an existing customer by phone or email
-// Returns the customer ID string, or null if not found
+// ── Zadarma helpers ────────────────────────────────────────────
+
+// Search for an existing Zadarma customer by phone or email
+// Returns the customer ID as a string, or null if not found
 async function findExistingCustomer(
   searchTerm: string,
   userKey: string,
@@ -38,7 +56,10 @@ async function findExistingCustomer(
       `https://api.zadarma.com${method}?${searchParamString}`,
       {
         method: 'GET',
-        headers: { 'Authorization': `${userKey}:${sig}`, 'User-Agent': 'NodeScript' }
+        headers: {
+          'Authorization': `${userKey}:${sig}`,
+          'User-Agent': 'NodeScript',
+        }
       }
     )
     const data = await res.json()
@@ -51,7 +72,7 @@ async function findExistingCustomer(
   }
 }
 
-// Post a note to the timeline of an existing Zadarma customer/lead
+// Post a note to the activity timeline of an existing Zadarma customer
 async function postTimelineNote(
   customerId: string,
   message: string,
@@ -77,12 +98,14 @@ async function postTimelineNote(
   }
 }
 
+// ── Main handler ───────────────────────────────────────────────
+
 export async function POST(request: NextRequest) {
   try {
     const lead = await request.json()
 
     const userKey = process.env.ZADARMA_USER_KEY!
-    const secret = process.env.ZADARMA_SECRET_KEY!
+    const secret  = process.env.ZADARMA_SECRET_KEY!
 
     if (!userKey || !secret) {
       return NextResponse.json(
@@ -91,29 +114,46 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // ── Safely extract all lead fields ───────────────────────────
+    // safe() handles null, "null", undefined, "" from Directus Flow templates
+    const name            = safe(lead.name)
+    const email           = safe(lead.email)
+    const phone           = safe(lead.phone)
+    const leadType        = safe(lead.lead_type)
+    const country         = safe(lead.country)
+    const website         = safe(lead.website)
+    const message         = safe(lead.message)
+    const messengerType   = safe(lead.messenger_type)
+    const messengerHandle = safe(lead.messenger_handle)
+    const utmSource       = safe(lead.utm_source)
+    const utmMedium       = safe(lead.utm_medium)
+    const utmCampaign     = safe(lead.utm_campaign)
+    const utmContent      = safe(lead.utm_content)
+    const utmTerm         = safe(lead.utm_term)
+
     const params: Record<string, string> = {}
 
     // ── Core fields ───────────────────────────────────────────────
-    if (lead.name)    params['lead[name]']    = lead.name
-    if (lead.country) params['lead[country]'] = lead.country
-    if (lead.website) params['lead[website]'] = lead.website
+    if (name)    params['lead[name]']    = name
+    if (country) params['lead[country]'] = country
+    if (website) params['lead[website]'] = website
     params['lead[lead_source]'] = 'form'
 
     // Coach and Teacher are both individuals → 'person' in Zadarma
-    if (lead.lead_type) {
-      params['lead[status]'] = lead.lead_type === 'company' ? 'company' : 'person'
+    if (leadType) {
+      params['lead[status]'] = leadType === 'company' ? 'company' : 'person'
     }
 
     // ── Phone ─────────────────────────────────────────────────────
-    if (lead.phone) {
-      params['lead[phones][0][phone]'] = lead.phone
+    if (phone) {
+      params['lead[phones][0][phone]'] = phone
       params['lead[phones][0][type]']  = 'work'
     }
 
     // ── Email ─────────────────────────────────────────────────────
     let ci = 0
-    if (lead.email) {
-      params[`lead[contacts][${ci}][value]`] = lead.email
+    if (email) {
+      params[`lead[contacts][${ci}][value]`] = email
       params[`lead[contacts][${ci}][type]`]  = 'email_work'
       ci++
     }
@@ -122,7 +162,7 @@ export async function POST(request: NextRequest) {
     // Native Zadarma contact types
     const nativeMessengers = ['whatsapp', 'telegram', 'viber', 'skype', 'facebook']
 
-    // Custom property IDs from Teamsale Settings → Custom Properties
+    // Custom property IDs defined in Teamsale → Settings → Custom Properties
     const customPropertyMap: Record<string, string> = {
       'instagram': '12646',
       'youtube':   '12647',
@@ -133,34 +173,35 @@ export async function POST(request: NextRequest) {
       'wechat':    '12939',
     }
 
-    if (lead.messenger_handle && lead.messenger_type) {
-      if (nativeMessengers.includes(lead.messenger_type)) {
+    if (messengerHandle && messengerType) {
+      if (nativeMessengers.includes(messengerType)) {
         // Send as native Zadarma contact type
-        params[`lead[contacts][${ci}][value]`] = lead.messenger_handle
-        params[`lead[contacts][${ci}][type]`]  = lead.messenger_type
-      } else if (customPropertyMap[lead.messenger_type]) {
-        // Send as custom property
-        params['lead[custom_properties][0][id]']    = customPropertyMap[lead.messenger_type]
-        params['lead[custom_properties][0][value]'] = lead.messenger_handle
+        params[`lead[contacts][${ci}][value]`] = messengerHandle
+        params[`lead[contacts][${ci}][type]`]  = messengerType
+      } else if (customPropertyMap[messengerType]) {
+        // Send as Teamsale custom property
+        params['lead[custom_properties][0][id]']    = customPropertyMap[messengerType]
+        params['lead[custom_properties][0][value]'] = messengerHandle
       }
-      // 'other' type — stored in Directus only, not sent to Zadarma
+      // 'other' type: stored in Directus only, not forwarded to Zadarma
     }
 
     // ── Comment / Message ─────────────────────────────────────────
-    // Sent directly in lead payload — appears in Comment field in Teamsale
-    // NOTE: do NOT also post via postTimelineNote after creation — would duplicate it
-    if (lead.message?.trim()) {
-      params['lead[comment]'] = lead.message.trim()
+    // Sent in the lead creation payload → appears in Comment field in Teamsale
+    // NOTE: do NOT also call postTimelineNote for new leads — that would duplicate the message
+    if (message) {
+      params['lead[comment]'] = message
     }
 
     // ── UTM params ────────────────────────────────────────────────
-    if (lead.utm_source   && lead.utm_source   !== 'direct') params['lead[utms][utm_source]']   = lead.utm_source
-    if (lead.utm_medium   && lead.utm_medium   !== 'none')   params['lead[utms][utm_medium]']   = lead.utm_medium
-    if (lead.utm_campaign && lead.utm_campaign !== 'none')   params['lead[utms][utm_campaign]'] = lead.utm_campaign
-    if (lead.utm_content  && lead.utm_content  !== 'none')   params['lead[utms][utm_content]']  = lead.utm_content
-    if (lead.utm_term     && lead.utm_term     !== 'none')   params['lead[utms][utm_term]']     = lead.utm_term
+    if (utmSource   && utmSource   !== 'direct') params['lead[utms][utm_source]']   = utmSource
+    if (utmMedium   && utmMedium   !== 'none')   params['lead[utms][utm_medium]']   = utmMedium
+    if (utmCampaign && utmCampaign !== 'none')   params['lead[utms][utm_campaign]'] = utmCampaign
+    if (utmContent  && utmContent  !== 'none')   params['lead[utms][utm_content]']  = utmContent
+    if (utmTerm     && utmTerm     !== 'none')   params['lead[utms][utm_term]']     = utmTerm
 
     // ── Source tag mapping ────────────────────────────────────────
+    // Maps utm_source values to Zadarma source tag IDs (created in Teamsale)
     const sourceTagMap: Record<string, string> = {
       'facebook':       '120860',
       'instagram':      '126195',
@@ -176,18 +217,19 @@ export async function POST(request: NextRequest) {
       'email':          '126206',
       'direct':         '126207',
     }
-    if (lead.utm_source && sourceTagMap[lead.utm_source]) {
-      params['lead[source_tag_id]'] = sourceTagMap[lead.utm_source]
+    if (utmSource && sourceTagMap[utmSource]) {
+      params['lead[source_tag_id]'] = sourceTagMap[utmSource]
     }
 
     // ── Labels: REMOVED ──────────────────────────────────────────
-    // lead[labels][] notation breaks HMAC signature — pending Zadarma support resolution
-    // Labels can be set manually in Teamsale until resolved
+    // lead[labels][] notation breaks HMAC signature due to empty bracket encoding
+    // Pending resolution with Zadarma support
+    // Labels (Teacher/School/Coach tags) must be set manually in Teamsale for now
 
     // ── Sign and send to Zadarma ──────────────────────────────────
-    const method = '/v1/zcrm/leads'
+    const method      = '/v1/zcrm/leads'
     const paramString = buildParamString(params)
-    const signature = signZadarma(method, paramString, secret)
+    const signature   = signZadarma(method, paramString, secret)
 
     const zadarmaRes = await fetch('https://api.zadarma.com/v1/zcrm/leads', {
       method: 'POST',
@@ -203,29 +245,29 @@ export async function POST(request: NextRequest) {
     console.log('ZADARMA_RESPONSE:', JSON.stringify(zadarmaData))
 
     // ── Duplicate handling ────────────────────────────────────────
-    // Only triggered when Zadarma rejects with "Already used" validation errors
-    // This runs AFTER the create attempt fails — not before (avoids unnecessary API calls)
-    const phoneAlreadyUsed = zadarmaData?.data?.validation_errors?.phones?.includes('Already used')
+    // Triggered ONLY when Zadarma rejects with "Already used" validation errors
+    // Correct order: try CREATE first → if duplicate error → search + add timeline note
+    const phoneAlreadyUsed   = zadarmaData?.data?.validation_errors?.phones?.includes('Already used')
     const contactAlreadyUsed = zadarmaData?.data?.validation_errors?.contacts?.includes('Already used')
-    const isDuplicate = phoneAlreadyUsed || contactAlreadyUsed
+    const isDuplicate        = phoneAlreadyUsed || contactAlreadyUsed
 
     if (isDuplicate) {
-      console.log('ZADARMA_DUPLICATE: searching for existing customer')
+      console.log('ZADARMA_DUPLICATE: existing contact detected, searching...')
       let existingId: string | null = null
 
       // Search by phone first, then email as fallback
-      if (lead.phone) existingId = await findExistingCustomer(lead.phone, userKey, secret)
-      if (!existingId && lead.email) existingId = await findExistingCustomer(lead.email, userKey, secret)
+      if (phone) existingId = await findExistingCustomer(phone, userKey, secret)
+      if (!existingId && email) existingId = await findExistingCustomer(email, userKey, secret)
 
       if (existingId) {
         const date = new Date().toISOString().split('T')[0]
-        const note = `Re-submitted contact form on ${date} — not yet contacted.${lead.message?.trim() ? ' Message: ' + lead.message.trim() : ''}`
+        const note = `Re-submitted contact form on ${date} — not yet contacted.${message ? ' Message: ' + message : ''}`
         await postTimelineNote(existingId, note, userKey, secret)
-        console.log(`ZADARMA_DUPLICATE: note added to customer ${existingId}`)
+        console.log(`ZADARMA_DUPLICATE: timeline note added to customer ${existingId}`)
         return NextResponse.json({ success: true, duplicate: true, zadarma_lead_id: existingId })
       }
 
-      // Duplicate detected but customer not found in search — return duplicate signal anyway
+      console.log('ZADARMA_DUPLICATE: contact not found via search')
       return NextResponse.json({ success: true, duplicate: true, zadarma_lead_id: '' })
     }
 
@@ -243,6 +285,7 @@ export async function POST(request: NextRequest) {
       zadarmaData.data?.id ?? zadarmaData.id ?? ''
     )
 
+    console.log('ZADARMA_SUCCESS: lead created with ID', zadarmaLeadId)
     return NextResponse.json({ success: true, zadarma_lead_id: zadarmaLeadId })
 
   } catch (error) {
