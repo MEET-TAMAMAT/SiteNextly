@@ -40,15 +40,23 @@ function signZadarma(method: string, paramString: string, secret: string): strin
 // ── Zadarma helpers ────────────────────────────────────────────
 
 // Search for an existing Zadarma lead by phone or email
-// Uses /v1/zcrm/leads endpoint (not /customers — leads are not customers until converted)
+// NOTE: The /v1/zcrm/leads?search= endpoint does a NAME search, not phone/email
+// Form-created leads appear in "uncategorized" bucket
+// We fetch recent uncategorized leads and match by phone/email client-side
 async function findExistingLead(
-  searchTerm: string,
+  phone: string | null,
+  email: string | null,
   userKey: string,
   secret: string
 ): Promise<string | null> {
   try {
     const method = '/v1/zcrm/leads'
-    const searchParams: Record<string, string> = { search: searchTerm }
+    // Fetch recent leads — uncategorized leads from form appear here
+    const searchParams: Record<string, string> = {
+      limit: '100',
+      sort_attr: 'lead_created_at',
+      sort_desc: '1',
+    }
     const searchParamString = buildParamString(searchParams)
     const sig = signZadarma(method, searchParamString, secret)
     const res = await fetch(
@@ -62,19 +70,38 @@ async function findExistingLead(
       }
     )
     const data = await res.json()
-    console.log(`ZADARMA_SEARCH_LEADS (${searchTerm}):`, JSON.stringify(data))
+    console.log('ZADARMA_LEADS_FETCH: totalCount=', data?.data?.totalCount, 'uncategorizedCount=', data?.data?.uncategorizedCount)
 
-    // Try leads array first
-    const leadId = data?.data?.leads?.[0]?.id
-    if (leadId) return String(leadId)
+    const leads: any[] = data?.data?.leads ?? []
 
-    // Some Zadarma setups also return customers in the same search
-    const customerId = data?.data?.customers?.[0]?.id
-    if (customerId) return String(customerId)
+    // Match by phone
+    if (phone) {
+      const normalizedPhone = phone.replace(/\s/g, '')
+      for (const lead of leads) {
+        const phones: any[] = lead.phones ?? []
+        if (phones.some((p: any) => p.phone?.replace(/\s/g, '') === normalizedPhone)) {
+          console.log(`ZADARMA_DUPLICATE_FOUND: phone match, lead ID ${lead.id}`)
+          return String(lead.id)
+        }
+      }
+    }
 
+    // Match by email
+    if (email) {
+      const normalizedEmail = email.toLowerCase()
+      for (const lead of leads) {
+        const contacts: any[] = lead.contacts ?? []
+        if (contacts.some((c: any) => c.value?.toLowerCase() === normalizedEmail && c.type?.includes('email'))) {
+          console.log(`ZADARMA_DUPLICATE_FOUND: email match, lead ID ${lead.id}`)
+          return String(lead.id)
+        }
+      }
+    }
+
+    console.log('ZADARMA_DUPLICATE: lead not found in recent 100 leads')
     return null
   } catch (err) {
-    console.log('Search error (non-fatal):', String(err))
+    console.log('Duplicate search error (non-fatal):', String(err))
     return null
   }
 }
@@ -100,7 +127,7 @@ async function postTimelineNote(
       },
       body: paramString,
     })
-    console.log(`ZADARMA_TIMELINE_NOTE: added to customer ${customerId}`)
+    console.log(`ZADARMA_TIMELINE_NOTE: added to lead ${customerId}`)
   } catch (err) {
     console.log('Timeline note failed (non-fatal):', String(err))
   }
@@ -198,8 +225,8 @@ export async function POST(request: NextRequest) {
 
     // ── Source tag mapping ────────────────────────────────────────
     // Maps utm_source values to Zadarma source tag IDs
-    // Confirmed working: lead[source_tag_id] format
-    // NOTE: lead[utms][utm_source] etc. cause PHP errors — removed
+    // Confirmed working format: lead[source_tag_id]
+    // NOTE: lead[utms][utm_source] etc. cause PHP errors — permanently removed
     const sourceTagMap: Record<string, string> = {
       'facebook':       '120860',
       'instagram':      '126195',
@@ -226,8 +253,8 @@ export async function POST(request: NextRequest) {
 
     // ── UTMs: REMOVED ────────────────────────────────────────────
     // lead[utms][utm_source] etc. cause PHP error "Cannot access offset of type string on string"
-    // Confirmed via isolated testing — source tag above covers the key utm_source use case
-    // UTM data is still fully stored in Directus leads collection for internal analytics
+    // Confirmed via isolated testing — source_tag_id above covers the key utm_source use case
+    // Full UTM data is still stored in Directus leads collection for internal analytics
 
     // ── Sign and send to Zadarma ──────────────────────────────────
     const method      = '/v1/zcrm/leads'
@@ -255,13 +282,11 @@ export async function POST(request: NextRequest) {
     const isDuplicate        = phoneAlreadyUsed || contactAlreadyUsed
 
     if (isDuplicate) {
-      console.log('ZADARMA_DUPLICATE: existing contact detected, searching...')
-      let existingId: string | null = null
+      console.log('ZADARMA_DUPLICATE: detected, searching for existing lead...')
 
-      // Search by phone first, then email as fallback
-      // Uses /v1/zcrm/leads endpoint — leads are not in /customers until converted
-      if (phone) existingId = await findExistingLead(phone, userKey, secret)
-      if (!existingId && email) existingId = await findExistingLead(email, userKey, secret)
+      // Fetch recent leads and match by phone/email client-side
+      // (search endpoint only does name/text search, not phone/email)
+      const existingId = await findExistingLead(phone, email, userKey, secret)
 
       if (existingId) {
         const date = new Date().toISOString().split('T')[0]
@@ -270,9 +295,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ success: true, duplicate: true, zadarma_lead_id: existingId })
       }
 
-      // Duplicate detected but lead not found via search
-      // Still return success + duplicate so Directus marks it correctly
-      console.log('ZADARMA_DUPLICATE: lead not found via search — marked as duplicate without ID')
+      // Duplicate detected but not found in recent leads
+      console.log('ZADARMA_DUPLICATE: lead not found in recent 100 — marked as duplicate without ID')
       return NextResponse.json({ success: true, duplicate: true, zadarma_lead_id: '' })
     }
 
