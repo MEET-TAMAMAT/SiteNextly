@@ -130,20 +130,20 @@ export async function POST(request: NextRequest) {
 
     // ── Source tag mapping ────────────────────────────────────────
     // Maps utm_source to Zadarma source tag IDs
-    // Add remaining IDs once confirmed from Zadarma
     const sourceTagMap: Record<string, string> = {
-      'facebook': '120860',
-      'google':   '120911',
-      // 'instagram':      'ID',
-      // 'linkedin':       'ID',
-      // 'tiktok':         'ID',
-      // 'youtube':        'ID',
-      // 'x':              'ID',
-      // 'google_organic': 'ID',
-      // 'phone':          'ID',
-      // 'direct':         'ID',
-      // 'email':          'ID',
-      // 'referral':       'ID',
+      'facebook':        '120860',
+      'instagram':       '126195',
+      'linkedin':        '126196',
+      'tiktok':          '126197',
+      'youtube':         '126198',
+      'x':               '126199',
+      'phone':           '126201',
+      'google':          '126203', // Google Ads
+      'google_ads':      '126203', // Google Ads (alias)
+      'google_organic':  '126204',
+      'referral':        '126205',
+      'email':           '126206',
+      'direct':          '126207',
     }
     if (lead.utm_source && sourceTagMap[lead.utm_source]) {
       params['lead[source_tag_id]'] = sourceTagMap[lead.utm_source]
