@@ -149,9 +149,87 @@ export async function POST(request: NextRequest) {
       params['lead[source_tag_id]'] = sourceTagMap[lead.utm_source]
     }
 
-    // ── Labels (Teacher/School/Coach tags) ────────────────────────
-    // TODO: Add once correct array notation is confirmed with Zadarma
-    // test-zadarma.js needed to verify label format before adding here
+    // ── Label (tag) mapping — Teacher / School / Coach ────────────
+    // Uses PHP array append notation: lead[labels][]
+    // Both signing and body use phpEncode consistently so %5B%5D matches
+    const labelMap: Record<string, string> = {
+      'person':  '349392', // Teacher
+      'company': '337789', // School
+      'coach':   '337790', // Coach / Репетитори
+    }
+    if (lead.lead_type && labelMap[lead.lead_type]) {
+      params['lead[labels][]'] = labelMap[lead.lead_type]
+    }
+
+    // ── Duplicate handling ────────────────────────────────────────
+    // Check if we have phone or email to search for duplicates
+    const isDuplicate = Boolean(lead.phone || lead.email)
+
+    if (isDuplicate) {
+      try {
+        let existingId: string | null = null
+
+        // Search by phone first
+        if (lead.phone && !existingId) {
+          const searchMethod = '/v1/zcrm/customers'
+          const searchParams: Record<string, string> = { search: lead.phone }
+          const searchParamString = buildParamString(searchParams)
+          const searchSig = signZadarma(searchMethod, searchParamString, secret)
+          const searchRes = await fetch(
+            `https://api.zadarma.com/v1/zcrm/customers?${searchParamString}`,
+            {
+              method: 'GET',
+              headers: {
+                'Authorization': `${userKey}:${searchSig}`,
+                'User-Agent': 'NodeScript',
+              }
+            }
+          )
+          const searchData = await searchRes.json()
+          console.log('ZADARMA_SEARCH_PHONE:', JSON.stringify(searchData))
+          existingId = searchData?.data?.customers?.[0]?.id
+            ? String(searchData.data.customers[0].id)
+            : null
+        }
+
+        // Fallback: search by email
+        if (lead.email && !existingId) {
+          const searchMethod = '/v1/zcrm/customers'
+          const searchParams: Record<string, string> = { search: lead.email }
+          const searchParamString = buildParamString(searchParams)
+          const searchSig = signZadarma(searchMethod, searchParamString, secret)
+          const searchRes = await fetch(
+            `https://api.zadarma.com/v1/zcrm/customers?${searchParamString}`,
+            {
+              method: 'GET',
+              headers: {
+                'Authorization': `${userKey}:${searchSig}`,
+                'User-Agent': 'NodeScript',
+              }
+            }
+          )
+          const searchData = await searchRes.json()
+          console.log('ZADARMA_SEARCH_EMAIL:', JSON.stringify(searchData))
+          existingId = searchData?.data?.customers?.[0]?.id
+            ? String(searchData.data.customers[0].id)
+            : null
+        }
+
+        if (existingId) {
+          const date = new Date().toISOString().split('T')[0]
+          const note = `Re-submitted contact form on ${date} — not yet contacted.${lead.message ? ' Message: ' + lead.message : ''}`
+          await postTimelineNote(existingId, note, userKey, secret)
+          return NextResponse.json({
+            success: true,
+            duplicate: true,
+            zadarma_lead_id: existingId
+          })
+        }
+      } catch (dupErr) {
+        console.log('Duplicate handling error (non-fatal):', String(dupErr))
+      }
+      // If no duplicate found, continue to create new lead
+    }
 
     // ── Sign and send ─────────────────────────────────────────────
     const method = '/v1/zcrm/leads'
