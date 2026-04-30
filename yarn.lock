@@ -2848,8 +2848,3 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
-
-zadarma-api@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.npmjs.org/zadarma-api/-/zadarma-api-1.0.4.tgz"
-  integrity sha512-VB2Mer+Y8CBJfrIbe5SjH/erqT4PCx50fi6h4RtFwag+brHK1QhQ+IpPFOBciSQzsJjO+xwd9gQ55vvXedEIow==

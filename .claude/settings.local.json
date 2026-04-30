@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:tamamat-frontend-production.up.railway.app)",
-      "Bash(node test-zadarma.js)"
+      "Bash(node test-zadarma.js)",
+      "Bash(npm uninstall *)"
+    ],
+    "additionalDirectories": [
+      "D:\\TAMAMAT\\tamamat.com\\SiteNextly"
     ]
   }
 }
