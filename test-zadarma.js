@@ -70,10 +70,10 @@ async function run() {
   const rA = await postLocalRoute({
     name: 'Final Teacher Test',
     email: 'final-teacher@example.com',
-    phone: '+380993001001',
+    phone: '+380993001011',
     lead_type: 'person',
     messenger_type: 'whatsapp',
-    messenger_handle: '+380993001001',
+    messenger_handle: '+380993001011',
     country: 'UA',
     website: null,
     message: 'This is my final test message.',
@@ -90,7 +90,7 @@ async function run() {
   const rB = await postLocalRoute({
     name: 'Final School FB Test',
     email: 'final-school-fb@example.com',
-    phone: '+380993001002',
+    phone: '+380993001022',
     lead_type: 'company',
     messenger_type: 'telegram',
     messenger_handle: '@finalschooltest',
@@ -110,7 +110,7 @@ async function run() {
   const rC = await postLocalRoute({
     name: 'Final Instagram Test',
     email: 'final-instagram@example.com',
-    phone: '+380993001003',
+    phone: '+380993001022',
     lead_type: 'person',
     messenger_type: 'instagram',
     messenger_handle: '@final_ig_test',
@@ -130,7 +130,7 @@ async function run() {
   const rD = await postLocalRoute({
     name: 'Final Google Test',
     email: 'final-google@example.com',
-    phone: '+380993001004',
+    phone: '+380993001033',
     lead_type: 'person',
     utm_source: 'google',
     utm_medium: 'cpc',
@@ -145,7 +145,7 @@ async function run() {
   const rE = await postLocalRoute({
     name: 'Duplicate Submitter',
     email: 'duplicate@example.com',
-    phone: '+380993001001', // same as Test A
+    phone: '+380993001044', // same as Test A
     lead_type: 'person',
     message: 'Re-submitting because nobody called me back.',
     utm_source: 'direct',
@@ -169,7 +169,7 @@ async function run() {
   const rF = await postLocalRoute({
     name: 'Final Minimal Test',
     email: 'final-minimal@example.com',
-    phone: '+380993001005',
+    phone: '+380993001055',
     lead_type: null,
     messenger_type: null,
     messenger_handle: null,

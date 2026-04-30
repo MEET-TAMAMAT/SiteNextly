@@ -246,19 +246,29 @@ export async function POST(request: NextRequest) {
       params['lead[source_tag_id]'] = sourceTagMap[utmSource]
     }
 
-    // ── Lead type tags: Teacher / School ──────────────────────────
-    // Maps the frontend/Directus radio value to the regular Zadarma Tags field.
-    // Confirmed tag IDs from Zadarma/Teamsale UI:
+    // ── Lead type label mapping: Teacher / School ─────────────────
+    // Confirmed via Teamsale Network tab (leads:updateLead payload):
+    // Zadarma requires labels as full objects with id, label, and count —
+    // NOT just a bare ID. Sending only the ID is silently ignored.
+    //
+    // Confirmed label IDs and names from Teamsale → Settings → Labels:
     //   Teacher = 349392
     //   School  = 337789
-    // IMPORTANT: use indexed brackets, not empty [] brackets, to avoid signature issues.
-    const leadTypeTagMap: Record<string, string> = {
-      'person':  '349392', // Teacher
-      'company': '337789', // School
+    //
+    // Format mirrors what Teamsale's own frontend sends on save:
+    //   lead[labels][0][id]    = <id>
+    //   lead[labels][0][label] = <name>
+    //   lead[labels][0][count] = <count>  (current usage count — sent as-is)
+    const leadTypeLabelMap: Record<string, { id: string; label: string; count: string }> = {
+      'person':  { id: '349392', label: 'Teacher', count: '0'  },
+      'company': { id: '337789', label: 'School',  count: '36' },
     }
 
-    if (leadType && leadTypeTagMap[leadType]) {
-      params['lead[tags][0]'] = leadTypeTagMap[leadType]
+    const labelEntry = leadType ? leadTypeLabelMap[leadType] : null
+    if (labelEntry) {
+      params['lead[labels][0][id]']    = labelEntry.id
+      params['lead[labels][0][label]'] = labelEntry.label
+      params['lead[labels][0][count]'] = labelEntry.count
     }
 
     // ── UTMs: REMOVED ────────────────────────────────────────────
@@ -270,7 +280,7 @@ export async function POST(request: NextRequest) {
     const method      = '/v1/zcrm/leads'
     const paramString = buildParamString(params)
 
-    // Temporary troubleshooting logs — remove or comment out after the tag field is confirmed working.
+    // Temporary troubleshooting logs — remove after label field is confirmed working.
     console.log('ZADARMA_PARAMS:', params)
     console.log('ZADARMA_PARAM_STRING:', paramString)
 
