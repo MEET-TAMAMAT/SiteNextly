@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { ContactContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
+import { NotificationModal } from "./NotificationModal";
 
 interface ZadarmaContactProps {
   contactData: ContactContent;
@@ -229,6 +230,21 @@ const CONTACT_TYPES = [
   { value: "other", label: "Other" }
 ];
 
+const validateWebsite = (url: string): { isValid: boolean; errorMessage: string | null } => {
+  const trimmed = url.trim();
+  if (!trimmed) return { isValid: true, errorMessage: null }; // Optional field
+
+  // Pattern requires at least one dot for domain structure
+  // Accepts: domain.com, www.domain.com, http(s)://domain.com, http(s)://www.domain.com
+  const websitePattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
+
+  const isValid = websitePattern.test(trimmed);
+  return {
+    isValid,
+    errorMessage: isValid ? null : "Please enter a valid website (e.g., example.com)"
+  };
+};
+
 export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaContactProps) => {
   // Dynamic status options from Directus
   const LEAD_STATUS_OPTIONS = [
@@ -240,6 +256,17 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+
+  // Modal state
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    type: 'success' | 'error' | 'validation';
+    message: string;
+  }>({
+    isOpen: false,
+    type: 'success',
+    message: ''
+  });
 
   const [fieldValues, setFieldValues] = useState({
     name: '',
@@ -258,6 +285,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
   });
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
+  const [websiteError, setWebsiteError] = useState<string | null>(null);
 
   // UTM params — read from URL on mount
   const [utmParams, setUtmParams] = useState({
@@ -321,14 +349,30 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Validate website if provided
+    if (fieldValues.website.trim()) {
+      const websiteValidation = validateWebsite(fieldValues.website);
+      if (!websiteValidation.isValid) {
+        setWebsiteError(websiteValidation.errorMessage);
+        setShowValidation(true);
+        return;
+      }
+    }
+
     // Validate required fields
-    const requiredFields = ['name', 'email', 'phone'];
+    const requiredFields = ['name', 'email', 'phone', 'message'];
     const missingFields = requiredFields.filter(
       field => !fieldValues[field as keyof typeof fieldValues].trim()
     );
 
     if (missingFields.length > 0) {
       setShowValidation(true);
+      // Show validation modal instead of inline message
+      setModalState({
+        isOpen: true,
+        type: 'validation',
+        message: contactData.validation_missing_fields_message
+      });
       return;
     }
 
@@ -337,6 +381,12 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
     setIsError(false);
 
     try {
+      // Normalize website URL - add https:// if it's just a domain
+      let normalizedWebsite = fieldValues.website.trim();
+      if (normalizedWebsite && !normalizedWebsite.match(/^https?:\/\//i)) {
+        normalizedWebsite = `https://${normalizedWebsite}`;
+      }
+
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -348,7 +398,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
           messenger_type:   fieldTypes.messengerType     || null,
           messenger_handle: fieldValues.messengerValue   || null,
           country:          fieldValues.country          || null,
-          website:          fieldValues.website          || null,
+          website:          normalizedWebsite            || null,
           message:          fieldValues.message          || null,
           ...utmParams,
         }),
@@ -358,7 +408,12 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
 
       if (!res.ok) throw new Error(data.error || 'Submission failed');
 
-      setIsSuccess(true);
+      // Show success modal instead of inline message
+      setModalState({
+        isOpen: true,
+        type: 'success',
+        message: contactData.success_message
+      });
 
       // Reset form
       setFieldValues({
@@ -386,10 +441,16 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
       if (messageRef.current) messageRef.current.value = '';
 
       setShowValidation(false);
+      setWebsiteError(null);
 
     } catch (err) {
       console.error('Form submission error:', err);
-      setIsError(true);
+      // Show error modal instead of inline message
+      setModalState({
+        isOpen: true,
+        type: 'error',
+        message: contactData.error_message
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -441,8 +502,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
     };
   }, [fieldValues.status, fieldValues.country]);
 
-  const getFieldStyle = (fieldName: string, hasValue: boolean, isRequired = false) => {
-    const isError = showValidation && isRequired && !hasValue;
+  const getFieldStyle = (fieldName: string, hasValue: boolean, isRequired = false, customError?: string | null) => {
+    const isError = (showValidation && isRequired && !hasValue) || (customError !== undefined && customError !== null);
     const isFocused = focusedField === fieldName;
 
     return {
@@ -741,40 +802,47 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
               <div>
                 <input
                   ref={websiteRef}
-                  type="url"
+                  type="text"
                   id="website"
                   name="website"
-                  {...getFieldStyle('website', fieldValues.website.trim() !== '', false)}
-                  onChange={(e) => setFieldValues(prev => ({ ...prev, website: e.target.value }))}
+                  {...getFieldStyle('website', fieldValues.website.trim() !== '', false, websiteError)}
+                  onChange={(e) => {
+                    setFieldValues(prev => ({ ...prev, website: e.target.value }));
+                    // Clear website error when user starts typing
+                    if (websiteError) setWebsiteError(null);
+                  }}
                   onInput={(e) => setFieldValues(prev => ({ ...prev, website: (e.target as HTMLInputElement).value }))}
                   onFocus={(e) => {
                     setFocusedField('website');
                     setFieldValues(prev => ({ ...prev, website: (e.target as HTMLInputElement).value }));
                   }}
-                  onBlur={() => setFocusedField(null)}
+                  onBlur={() => {
+                    setFocusedField(null);
+                    // Validate on blur for immediate feedback
+                    const validation = validateWebsite(fieldValues.website);
+                    setWebsiteError(validation.isValid ? null : validation.errorMessage);
+                  }}
                   placeholder={contactData.website_field_placeholder}
                   {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'website_field_placeholder') : {})}
                 />
+
+                {/* Add inline error display */}
+                {websiteError && (
+                  <div className="mt-1 text-sm text-red-600 dark:text-red-400">
+                    {websiteError}
+                  </div>
+                )}
               </div>
 
-              {/* Field 8: Comment/Message (not required) */}
+              {/* Field 8: Comment/Message (required) */}
               <div>
                 <textarea
                   ref={messageRef}
                   id="message"
                   name="message"
                   rows={3}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-black dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none ${
-                    focusedField === 'message'
-                      ? 'border-green-500 dark:border-green-400 border-2'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                  style={{
-                    backgroundColor: getBackgroundColors(fieldValues.message.trim() !== '', isDark),
-                    boxShadow: focusedField === 'message'
-                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.message.trim() !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
-                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.message.trim() !== '', isDark)}`
-                  }}
+                  required
+                  {...getFieldStyle('message', fieldValues.message.trim() !== '', true)}
                   onChange={(e) => {
                     setFieldValues(prev => ({ ...prev, message: e.target.value }));
                     showValidation && setShowValidation(false);
@@ -785,6 +853,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                     setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }));
                   }}
                   onBlur={() => setFocusedField(null)}
+                  onInvalid={() => setShowValidation(true)}
                   placeholder={contactData.message_field_placeholder}
                   {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'message_field_placeholder') : {})}
                 />
@@ -801,38 +870,20 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                 {isSubmitting ? 'Sending...' : (contactData.submit_button_text || 'Send Message')}
               </button>
 
-              {/* Success Message */}
-              {isSuccess && (
-                <div className="text-center p-3 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
-                  <span
-                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'success_message') : {})}
-                  >
-                    {contactData.success_message}
-                  </span>
-                </div>
-              )}
-
-              {/* Error Message */}
-              {isError && (
-                <div className="text-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
-                  <span
-                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'error_message') : {})}
-                  >
-                    {contactData.error_message}
-                  </span>
-                </div>
-              )}
-
-              {/* Validation Message */}
-              {showValidation && (
-                <div className="text-center p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400">
-                  <span
-                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'validation_missing_fields_message') : {})}
-                  >
-                    {contactData.validation_missing_fields_message}
-                  </span>
-                </div>
-              )}
+              {/* Notification Modal */}
+              <NotificationModal
+                isOpen={modalState.isOpen}
+                type={modalState.type}
+                message={modalState.message}
+                autoCloseMs={modalState.type === 'success' ? 3000 : 0}
+                onClose={() => {
+                  setModalState({ isOpen: false, type: 'success', message: '' });
+                  // Reset the old state flags as well for consistency
+                  setIsSuccess(false);
+                  setIsError(false);
+                  setShowValidation(false);
+                }}
+              />
             </form>
           </div>
         </div>
