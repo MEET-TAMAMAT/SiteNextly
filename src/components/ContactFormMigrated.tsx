@@ -718,16 +718,23 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
 
               {/* Cloudflare Turnstile CAPTCHA */}
               <div className="flex justify-center">
-                <Turnstile
-                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
-                  onSuccess={(token) => setTurnstileToken(token)}
-                  onError={() => setTurnstileToken('')}
-                  onExpire={() => setTurnstileToken('')}
-                  options={{
-                    theme: isDark ? 'dark' : 'light',
-                    retry: 'auto'
-                  }}
-                />
+                {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? (
+                  <Turnstile
+                    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                    onError={() => setTurnstileToken('')}
+                    onExpire={() => setTurnstileToken('')}
+                    options={{
+                      theme: isDark ? 'dark' : 'light',
+                      retry: 'auto'
+                    }}
+                  />
+                ) : (
+                  <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                    <p>⚠️ CAPTCHA not configured on this environment</p>
+                    <p className="text-xs">Missing: NEXT_PUBLIC_TURNSTILE_SITE_KEY</p>
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}
