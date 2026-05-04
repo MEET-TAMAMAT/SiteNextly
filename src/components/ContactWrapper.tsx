@@ -27,6 +27,7 @@ export const Contact = async () => {
     success_message: "Thank you for your message! We'll get back to you soon.",
     // New Zadarma fields
     phone_field_placeholder: "Your phone in international format e.g. +380XXXXXXXXX",
+    company_field_placeholder: "School/Company Name",
     lead_status_teacher_label: "Teacher",
     lead_status_school_label: "School",
     messenger_dropdown_placeholder: "Specify your favorite messenger",

@@ -272,7 +272,8 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
     name: '',
     email: '',
     phone: '',
-    status: '',
+    status: 'person', // Default to Teacher
+    company: '',
     messengerValue: '',
     country: '',
     website: '',
@@ -311,6 +312,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
+  const companyRef = useRef<HTMLInputElement>(null);
   const messengerRef = useRef<HTMLInputElement>(null);
   const websiteRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
@@ -360,7 +362,13 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
     }
 
     // Validate required fields
-    const requiredFields = ['name', 'email', 'phone', 'message'];
+    const requiredFields = ['name', 'email', 'phone', 'message', 'status'];
+
+    // Add company field as required for school selection
+    if (fieldValues.status === 'company') {
+      requiredFields.push('company');
+    }
+
     const missingFields = requiredFields.filter(
       field => !fieldValues[field as keyof typeof fieldValues].trim()
     );
@@ -394,6 +402,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
           name:             fieldValues.name,
           email:            fieldValues.email,
           phone:            fieldValues.phone            || null,
+          company:          fieldValues.company          || null,
           lead_type:        fieldValues.status           || null, // 'person' or 'company'
           messenger_type:   fieldTypes.messengerType     || null,
           messenger_handle: fieldValues.messengerValue   || null,
@@ -421,6 +430,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
         email: '',
         phone: '',
         status: '',
+        company: '',
         messengerValue: '',
         country: '',
         website: '',
@@ -436,6 +446,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
       if (nameRef.current) nameRef.current.value = '';
       if (emailRef.current) emailRef.current.value = '';
       if (phoneRef.current) phoneRef.current.value = '';
+      if (companyRef.current) companyRef.current.value = '';
       if (messengerRef.current) messengerRef.current.value = '';
       if (websiteRef.current) websiteRef.current.value = '';
       if (messageRef.current) messageRef.current.value = '';
@@ -464,6 +475,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
         email: emailRef.current?.value || '',
         phone: phoneRef.current?.value || '',
         status: fieldValues.status,
+        company: companyRef.current?.value || '',
         messengerValue: messengerRef.current?.value || '',
         country: fieldValues.country,
         website: websiteRef.current?.value || '',
@@ -474,6 +486,7 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
           prev.name !== currentValues.name ||
           prev.email !== currentValues.email ||
           prev.phone !== currentValues.phone ||
+          prev.company !== currentValues.company ||
           prev.messengerValue !== currentValues.messengerValue ||
           prev.website !== currentValues.website ||
           prev.message !== currentValues.message;
@@ -619,91 +632,16 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
         {/* Contact Form */}
         <div className="lg:col-span-1">
           <div className="rounded-2xl px-8 py-10 shadow-lg dark:shadow-[0_10px_40px_rgba(255,255,255,0.1)]">
-            <h3
-              className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center"
-              {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'form_title') : {})}
-            >
-              {contactData.form_title}
-            </h3>
+            <div className="mb-8">
+              <h3
+                className="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center"
+                {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'form_title') : {})}
+              >
+                Send Us a Message as a...
+              </h3>
 
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              {/* Field 1: Name (required) */}
-              <div>
-                <input
-                  ref={nameRef}
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  {...getFieldStyle('name', fieldValues.name.trim() !== '', true)}
-                  onFocus={(e) => {
-                    setFocusedField('name');
-                    setFieldValues(prev => ({ ...prev, name: (e.target as HTMLInputElement).value }));
-                  }}
-                  onBlur={() => setFocusedField(null)}
-                  onChange={(e) => {
-                    setFieldValues(prev => ({ ...prev, name: e.target.value }));
-                    showValidation && setShowValidation(false);
-                  }}
-                  onInput={(e) => setFieldValues(prev => ({ ...prev, name: (e.target as HTMLInputElement).value }))}
-                  onInvalid={() => setShowValidation(true)}
-                  placeholder={contactData.name_field_placeholder}
-                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'name_field_placeholder') : {})}
-                />
-              </div>
-
-              {/* Field 2: Email (required) */}
-              <div>
-                <input
-                  ref={emailRef}
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  {...getFieldStyle('email', fieldValues.email.trim() !== '', true)}
-                  onChange={(e) => {
-                    setFieldValues(prev => ({ ...prev, email: e.target.value }));
-                    showValidation && setShowValidation(false);
-                  }}
-                  onInput={(e) => setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }))}
-                  onFocus={(e) => {
-                    setFocusedField('email');
-                    setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }));
-                  }}
-                  onBlur={() => setFocusedField(null)}
-                  onInvalid={() => setShowValidation(true)}
-                  placeholder={contactData.email_field_placeholder}
-                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'email_field_placeholder') : {})}
-                />
-              </div>
-
-              {/* Field 3: Phone (required) */}
-              <div>
-                <input
-                  ref={phoneRef}
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  required
-                  {...getFieldStyle('phone', fieldValues.phone.trim() !== '', true)}
-                  onChange={(e) => {
-                    setFieldValues(prev => ({ ...prev, phone: e.target.value }));
-                    showValidation && setShowValidation(false);
-                  }}
-                  onInput={(e) => setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }))}
-                  onFocus={(e) => {
-                    setFocusedField('phone');
-                    setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }));
-                  }}
-                  onBlur={() => setFocusedField(null)}
-                  onInvalid={() => setShowValidation(true)}
-                  placeholder={contactData.phone_field_placeholder}
-                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'phone_field_placeholder') : {})}
-                />
-              </div>
-
-              {/* Field 4: Status (not required) - Radio buttons */}
-              <div className="flex justify-center gap-8">
+              {/* Radio buttons below the title */}
+              <div className="flex justify-center gap-8 mb-8">
                 {LEAD_STATUS_OPTIONS.map(option => (
                   <label key={option.value} className="flex items-center cursor-pointer">
                     <input
@@ -711,8 +649,14 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                       name="status"
                       value={option.value}
                       checked={fieldValues.status === option.value}
-                      onChange={(e) => setFieldValues(prev => ({ ...prev, status: e.target.value }))}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      onChange={(e) => {
+                        setFieldValues(prev => ({ ...prev, status: e.target.value }));
+                        showValidation && setShowValidation(false);
+                      }}
+                      required
+                      className={`w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 ${
+                        showValidation && !fieldValues.status ? 'border-red-500 dark:border-red-400' : ''
+                      }`}
                     />
                     <span
                       className="ml-2 text-base font-medium text-gray-500 dark:text-gray-400"
@@ -723,141 +667,265 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
                   </label>
                 ))}
               </div>
-
-              {/* Field 5: Messenger/Social (not required) with type selection */}
-              <div className="space-y-3">
-                <div>
-                  <select
-                    value={fieldTypes.messengerType}
-                    onChange={(e) => setFieldTypes(prev => ({ ...prev, messengerType: e.target.value }))}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-500 dark:text-gray-400 placeholder-gray-500 dark:placeholder-gray-400 ${
-                      focusedField === 'messengerType'
-                        ? 'border-green-500 dark:border-green-400 border-2'
-                        : 'border-gray-300 dark:border-gray-600'
-                    }`}
-                    style={{
-                      backgroundColor: getBackgroundColors(fieldTypes.messengerType !== '', isDark),
-                      boxShadow: focusedField === 'messengerType'
-                        ? `inset 0 0 0 1000px ${getBackgroundColors(fieldTypes.messengerType !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
-                        : `inset 0 0 0 1000px ${getBackgroundColors(fieldTypes.messengerType !== '', isDark)}`
-                    }}
-                    onFocus={() => setFocusedField('messengerType')}
-                    onBlur={() => setFocusedField(null)}
-                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'messenger_dropdown_placeholder') : {})}
-                  >
-                    <option value="">{contactData.messenger_dropdown_placeholder}</option>
-                    {CONTACT_TYPES.map(type => (
-                      <option key={type.value} value={type.value}>{type.label}</option>
-                    ))}
-                  </select>
+              {showValidation && !fieldValues.status && (
+                <div className="mt-2 text-sm text-red-600 dark:text-red-400 text-center">
+                  Please select Teacher or School
                 </div>
-                <div>
-                  <input
-                    ref={messengerRef}
-                    type="text"
-                    id="messenger"
-                    name="messenger"
-                    {...getFieldStyle('messenger', fieldValues.messengerValue.trim() !== '', false)}
-                    onChange={(e) => setFieldValues(prev => ({ ...prev, messengerValue: e.target.value }))}
-                    onInput={(e) => setFieldValues(prev => ({ ...prev, messengerValue: (e.target as HTMLInputElement).value }))}
-                    onFocus={(e) => {
-                      setFocusedField('messenger');
-                      setFieldValues(prev => ({ ...prev, messengerValue: (e.target as HTMLInputElement).value }));
-                    }}
-                    onBlur={() => setFocusedField(null)}
-                    placeholder={contactData.messenger_field_placeholder}
-                    {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'messenger_field_placeholder') : {})}
-                  />
-                </div>
-              </div>
+              )}
+            </div>
 
-              {/* Field 6: Country (not required) */}
-              <div>
-                <select
-                  value={fieldValues.country}
-                  onChange={(e) => setFieldValues(prev => ({ ...prev, country: e.target.value }))}
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-500 dark:text-gray-400 placeholder-gray-500 dark:placeholder-gray-400 ${
-                    focusedField === 'country'
-                      ? 'border-green-500 dark:border-green-400 border-2'
-                      : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                  style={{
-                    backgroundColor: getBackgroundColors(fieldValues.country !== '', isDark),
-                    boxShadow: focusedField === 'country'
-                      ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.country !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
-                      : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.country !== '', isDark)}`
-                  }}
-                  onFocus={() => setFocusedField('country')}
-                  onBlur={() => setFocusedField(null)}
-                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'country_field_placeholder') : {})}
-                >
-                  <option value="">{contactData.country_field_placeholder}</option>
-                  {COUNTRIES.map(country => (
-                    <option key={country.code} value={country.code}>{country.name}</option>
-                  ))}
-                </select>
-              </div>
+            <form className="space-y-6" onSubmit={handleSubmit}>
 
-              {/* Field 7: Website (not required) */}
-              <div>
-                <input
-                  ref={websiteRef}
-                  type="text"
-                  id="website"
-                  name="website"
-                  {...getFieldStyle('website', fieldValues.website.trim() !== '', false, websiteError)}
-                  onChange={(e) => {
-                    setFieldValues(prev => ({ ...prev, website: e.target.value }));
-                    // Clear website error when user starts typing
-                    if (websiteError) setWebsiteError(null);
-                  }}
-                  onInput={(e) => setFieldValues(prev => ({ ...prev, website: (e.target as HTMLInputElement).value }))}
-                  onFocus={(e) => {
-                    setFocusedField('website');
-                    setFieldValues(prev => ({ ...prev, website: (e.target as HTMLInputElement).value }));
-                  }}
-                  onBlur={() => {
-                    setFocusedField(null);
-                    // Validate on blur for immediate feedback
-                    const validation = validateWebsite(fieldValues.website);
-                    setWebsiteError(validation.isValid ? null : validation.errorMessage);
-                  }}
-                  placeholder={contactData.website_field_placeholder}
-                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'website_field_placeholder') : {})}
-                />
+              {/* Conditional Fields Based on Selection */}
+              <div className="space-y-6">
+                  {/* School/Company Name - Only for School selection */}
+                  {fieldValues.status === 'company' && (
+                    <div>
+                      <input
+                        ref={companyRef}
+                        type="text"
+                        id="company"
+                        name="company"
+                        required
+                        {...getFieldStyle('company', fieldValues.company.trim() !== '', true)}
+                        onFocus={(e) => {
+                          setFocusedField('company');
+                          setFieldValues(prev => ({ ...prev, company: (e.target as HTMLInputElement).value }));
+                        }}
+                        onBlur={() => setFocusedField(null)}
+                        onChange={(e) => {
+                          setFieldValues(prev => ({ ...prev, company: e.target.value }));
+                          showValidation && setShowValidation(false);
+                        }}
+                        onInput={(e) => setFieldValues(prev => ({ ...prev, company: (e.target as HTMLInputElement).value }))}
+                        onInvalid={() => setShowValidation(true)}
+                        placeholder={contactData.company_field_placeholder}
+                        {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'company_field_placeholder') : {})}
+                      />
+                    </div>
+                  )}
 
-                {/* Add inline error display */}
-                {websiteError && (
-                  <div className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {websiteError}
+                  {/* Contact Name - Always required */}
+                  <div>
+                    <input
+                      ref={nameRef}
+                      type="text"
+                      id="name"
+                      name="name"
+                      required
+                      {...getFieldStyle('name', fieldValues.name.trim() !== '', true)}
+                      onFocus={(e) => {
+                        setFocusedField('name');
+                        setFieldValues(prev => ({ ...prev, name: (e.target as HTMLInputElement).value }));
+                      }}
+                      onBlur={() => setFocusedField(null)}
+                      onChange={(e) => {
+                        setFieldValues(prev => ({ ...prev, name: e.target.value }));
+                        showValidation && setShowValidation(false);
+                      }}
+                      onInput={(e) => setFieldValues(prev => ({ ...prev, name: (e.target as HTMLInputElement).value }))}
+                      onInvalid={() => setShowValidation(true)}
+                      placeholder={contactData.name_field_placeholder}
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'name_field_placeholder') : {})}
+                    />
                   </div>
-                )}
-              </div>
 
-              {/* Field 8: Comment/Message (required) */}
-              <div>
-                <textarea
-                  ref={messageRef}
-                  id="message"
-                  name="message"
-                  rows={3}
-                  required
-                  {...getFieldStyle('message', fieldValues.message.trim() !== '', true)}
-                  onChange={(e) => {
-                    setFieldValues(prev => ({ ...prev, message: e.target.value }));
-                    showValidation && setShowValidation(false);
-                  }}
-                  onInput={(e) => setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }))}
-                  onFocus={(e) => {
-                    setFocusedField('message');
-                    setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }));
-                  }}
-                  onBlur={() => setFocusedField(null)}
-                  onInvalid={() => setShowValidation(true)}
-                  placeholder={contactData.message_field_placeholder}
-                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'message_field_placeholder') : {})}
-                />
-              </div>
+                  {/* Email - Always required */}
+                  <div>
+                    <input
+                      ref={emailRef}
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      {...getFieldStyle('email', fieldValues.email.trim() !== '', true)}
+                      onChange={(e) => {
+                        setFieldValues(prev => ({ ...prev, email: e.target.value }));
+                        showValidation && setShowValidation(false);
+                      }}
+                      onInput={(e) => setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }))}
+                      onFocus={(e) => {
+                        setFocusedField('email');
+                        setFieldValues(prev => ({ ...prev, email: (e.target as HTMLInputElement).value }));
+                      }}
+                      onBlur={() => setFocusedField(null)}
+                      onInvalid={() => setShowValidation(true)}
+                      placeholder={contactData.email_field_placeholder}
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'email_field_placeholder') : {})}
+                    />
+                  </div>
+
+                  {/* Phone - Always required */}
+                  <div>
+                    <input
+                      ref={phoneRef}
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      required
+                      {...getFieldStyle('phone', fieldValues.phone.trim() !== '', true)}
+                      onChange={(e) => {
+                        setFieldValues(prev => ({ ...prev, phone: e.target.value }));
+                        showValidation && setShowValidation(false);
+                      }}
+                      onInput={(e) => setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }))}
+                      onFocus={(e) => {
+                        setFocusedField('phone');
+                        setFieldValues(prev => ({ ...prev, phone: (e.target as HTMLInputElement).value }));
+                      }}
+                      onBlur={() => setFocusedField(null)}
+                      onInvalid={() => setShowValidation(true)}
+                      placeholder={contactData.phone_field_placeholder}
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'phone_field_placeholder') : {})}
+                    />
+                  </div>
+
+                  {/* Country - Always optional */}
+                  <div>
+                    <select
+                      value={fieldValues.country}
+                      onChange={(e) => setFieldValues(prev => ({ ...prev, country: e.target.value }))}
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-500 dark:text-gray-400 placeholder-gray-500 dark:placeholder-gray-400 ${
+                        focusedField === 'country'
+                          ? 'border-green-500 dark:border-green-400 border-2'
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                      style={{
+                        backgroundColor: getBackgroundColors(fieldValues.country !== '', isDark),
+                        boxShadow: focusedField === 'country'
+                          ? `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.country !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                          : `inset 0 0 0 1000px ${getBackgroundColors(fieldValues.country !== '', isDark)}`
+                      }}
+                      onFocus={() => setFocusedField('country')}
+                      onBlur={() => setFocusedField(null)}
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'country_field_placeholder') : {})}
+                    >
+                      <option value="">{contactData.country_field_placeholder}</option>
+                      {COUNTRIES.map(country => (
+                        <option key={country.code} value={country.code}>{country.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Conditional fields based on selection type */}
+                  {fieldValues.status === 'person' && (
+                    <>
+                      {/* Messenger - Only for Teachers */}
+                      <div className="space-y-3">
+                        <div>
+                          <select
+                            value={fieldTypes.messengerType}
+                            onChange={(e) => setFieldTypes(prev => ({ ...prev, messengerType: e.target.value }))}
+                            className={`w-full px-4 py-3 border rounded-lg focus:outline-none text-gray-500 dark:text-gray-400 placeholder-gray-500 dark:placeholder-gray-400 ${
+                              focusedField === 'messengerType'
+                                ? 'border-green-500 dark:border-green-400 border-2'
+                                : 'border-gray-300 dark:border-gray-600'
+                            }`}
+                            style={{
+                              backgroundColor: getBackgroundColors(fieldTypes.messengerType !== '', isDark),
+                              boxShadow: focusedField === 'messengerType'
+                                ? `inset 0 0 0 1000px ${getBackgroundColors(fieldTypes.messengerType !== '', isDark)}, inset 0 0 8px rgba(34, 197, 94, 0.4)`
+                                : `inset 0 0 0 1000px ${getBackgroundColors(fieldTypes.messengerType !== '', isDark)}`
+                            }}
+                            onFocus={() => setFocusedField('messengerType')}
+                            onBlur={() => setFocusedField(null)}
+                            {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'messenger_dropdown_placeholder') : {})}
+                          >
+                            <option value="">{contactData.messenger_dropdown_placeholder}</option>
+                            {CONTACT_TYPES.map(type => (
+                              <option key={type.value} value={type.value}>{type.label}</option>
+                            ))}
+                          </select>
+                        </div>
+                        {fieldTypes.messengerType && (
+                          <div>
+                            <input
+                              ref={messengerRef}
+                              type="text"
+                              id="messenger"
+                              name="messenger"
+                              {...getFieldStyle('messenger', fieldValues.messengerValue.trim() !== '', false)}
+                              onChange={(e) => setFieldValues(prev => ({ ...prev, messengerValue: e.target.value }))}
+                              onInput={(e) => setFieldValues(prev => ({ ...prev, messengerValue: (e.target as HTMLInputElement).value }))}
+                              onFocus={(e) => {
+                                setFocusedField('messenger');
+                                setFieldValues(prev => ({ ...prev, messengerValue: (e.target as HTMLInputElement).value }));
+                              }}
+                              onBlur={() => setFocusedField(null)}
+                              placeholder={contactData.messenger_field_placeholder}
+                              {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'messenger_field_placeholder') : {})}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {fieldValues.status === 'company' && (
+                    <>
+                      {/* Website - Only for Schools */}
+                      <div>
+                        <input
+                          ref={websiteRef}
+                          type="text"
+                          id="website"
+                          name="website"
+                          {...getFieldStyle('website', fieldValues.website.trim() !== '', false, websiteError)}
+                          onChange={(e) => {
+                            setFieldValues(prev => ({ ...prev, website: e.target.value }));
+                            // Clear website error when user starts typing
+                            if (websiteError) setWebsiteError(null);
+                          }}
+                          onInput={(e) => setFieldValues(prev => ({ ...prev, website: (e.target as HTMLInputElement).value }))}
+                          onFocus={(e) => {
+                            setFocusedField('website');
+                            setFieldValues(prev => ({ ...prev, website: (e.target as HTMLInputElement).value }));
+                          }}
+                          onBlur={() => {
+                            setFocusedField(null);
+                            // Validate on blur for immediate feedback
+                            const validation = validateWebsite(fieldValues.website);
+                            setWebsiteError(validation.isValid ? null : validation.errorMessage);
+                          }}
+                          placeholder={contactData.website_field_placeholder}
+                          {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'website_field_placeholder') : {})}
+                        />
+
+                        {/* Add inline error display */}
+                        {websiteError && (
+                          <div className="mt-1 text-sm text-red-600 dark:text-red-400">
+                            {websiteError}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Message - Always required */}
+                  <div>
+                    <textarea
+                      ref={messageRef}
+                      id="message"
+                      name="message"
+                      rows={3}
+                      required
+                      {...getFieldStyle('message', fieldValues.message.trim() !== '', true)}
+                      onChange={(e) => {
+                        setFieldValues(prev => ({ ...prev, message: e.target.value }));
+                        showValidation && setShowValidation(false);
+                      }}
+                      onInput={(e) => setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }))}
+                      onFocus={(e) => {
+                        setFocusedField('message');
+                        setFieldValues(prev => ({ ...prev, message: (e.target as HTMLTextAreaElement).value }));
+                      }}
+                      onBlur={() => setFocusedField(null)}
+                      onInvalid={() => setShowValidation(true)}
+                      placeholder={contactData.message_field_placeholder}
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'message_field_placeholder') : {})}
+                    />
+                  </div>
+                </div>
 
               {/* Submit Button */}
               <button

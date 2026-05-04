@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
 
     const {
-      name, email, phone,
+      name, email, phone, company,
       lead_type, messenger_type, messenger_handle,
       country, website, message,
       utm_source, utm_medium, utm_campaign, utm_content, utm_term
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
           name,
           email,
           phone:            phone            || null,
+          company:          company          || null,
           lead_type:        lead_type        || null,
           messenger_type:   messenger_type   || null,
           messenger_handle: messenger_handle || null,

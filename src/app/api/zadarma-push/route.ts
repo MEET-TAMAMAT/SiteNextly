@@ -154,6 +154,7 @@ export async function POST(request: NextRequest) {
     const name            = safe(lead.name)
     const email           = safe(lead.email)
     const phone           = safe(lead.phone)
+    const company         = safe(lead.company)
     const leadType        = safe(lead.lead_type)
     const country         = safe(lead.country)
     const website         = safe(lead.website)
@@ -177,8 +178,26 @@ export async function POST(request: NextRequest) {
 
     // ── Phone ─────────────────────────────────────────────────────
     if (phone) {
-      params['lead[phones][0][phone]'] = phone
-      params['lead[phones][0][type]']  = 'work'
+      // Clean and format phone number for Zadarma
+      // Remove all non-digit characters except leading +
+      let formattedPhone = phone.trim()
+
+      // If it starts with +, keep the +, otherwise clean everything
+      if (formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone.slice(1).replace(/\D/g, '')
+      } else {
+        formattedPhone = formattedPhone.replace(/\D/g, '')
+        // Add + if it's a complete international number (10+ digits)
+        if (formattedPhone.length >= 10) {
+          formattedPhone = '+' + formattedPhone
+        }
+      }
+
+      // Only send if we have a valid-looking phone number
+      if (formattedPhone.length >= 8) {  // Minimum reasonable phone length
+        params['lead[phones][0][phone]'] = formattedPhone
+        params['lead[phones][0][type]']  = 'work'
+      }
     }
 
     // ── Email ─────────────────────────────────────────────────────
@@ -202,6 +221,7 @@ export async function POST(request: NextRequest) {
       'signal':    '12937',
       'line':      '12938',
       'wechat':    '12939',
+      'company':   '12948',  // School/Company field
     }
 
     if (messengerHandle && messengerType) {
@@ -210,11 +230,28 @@ export async function POST(request: NextRequest) {
         params[`lead[contacts][${ci}][value]`] = messengerHandle
         params[`lead[contacts][${ci}][type]`]  = messengerType
       } else if (customPropertyMap[messengerType]) {
-        // Send as Teamsale custom property
-        params['lead[custom_properties][0][id]']    = customPropertyMap[messengerType]
-        params['lead[custom_properties][0][value]'] = messengerHandle
+        // Send as Teamsale custom property (use field ID as slot)
+        const fieldId = customPropertyMap[messengerType]
+        params[`lead[custom_properties][${fieldId}][id]`]    = fieldId
+        params[`lead[custom_properties][${fieldId}][value]`] = messengerHandle
       }
       // 'other' type: stored in Directus only, not forwarded to Zadarma
+    }
+
+    // ── School/Company Name ───────────────────────────────────────
+    // Send company name as custom property for school leads (same pattern as messenger fields)
+    console.log('COMPANY_DEBUG_DETAILED:', {
+      company: company,
+      leadType: leadType,
+      condition: !!(company && leadType === 'company'),
+      customPropertyMap: customPropertyMap['company']
+    })
+
+    if (company && leadType === 'company') {
+      const fieldId = customPropertyMap['company']  // '12948'
+      console.log('ADDING_COMPANY_FIELD:', { fieldId, company })
+      params[`lead[custom_properties][${fieldId}][id]`]    = fieldId
+      params[`lead[custom_properties][${fieldId}][value]`] = company
     }
 
     // ── Comment / Message ─────────────────────────────────────────

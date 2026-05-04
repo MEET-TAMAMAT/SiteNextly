@@ -168,6 +168,7 @@ export interface ContactContent {
   success_message: string;
   // New Zadarma fields
   phone_field_placeholder: string;
+  company_field_placeholder: string;
   lead_status_teacher_label: string;
   lead_status_school_label: string;
   messenger_dropdown_placeholder: string;
