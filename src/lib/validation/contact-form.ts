@@ -8,12 +8,12 @@ const websiteSchema = z
     (val) => {
       if (!val || val.trim() === '') return true; // Optional field
 
-      // Same pattern as your current validation
-      const websitePattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
+      // Updated pattern to support subdomains (subdomain.domain.com, www.domain.com, etc.)
+      const websitePattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/.*)?$/;
       return websitePattern.test(val);
     },
     {
-      message: 'Please enter a valid website (e.g., example.com)',
+      message: 'Please enter a valid website (e.g., example.com, subdomain.example.com)',
     }
   );
 
@@ -65,7 +65,10 @@ const baseContactSchema = z.object({
     .string()
     .min(3, 'Messenger handle must be at least 3 characters')
     .max(50, 'Messenger handle is too long')
-    .regex(/^[a-zA-Z0-9._-]+$/, 'Messenger handle contains invalid characters')
+    .regex(
+      /^[\+@]?[a-zA-Z0-9._\-\s\(\)]+[@.\s]?[a-zA-Z0-9._\-\s\(\)]*$/,
+      'Please enter a valid messenger handle (phone number, @username, or user ID)'
+    )
     .optional()
     .or(z.literal('')),
 });
@@ -123,5 +126,7 @@ export const contactApiSchema = contactFormSchema.extend({
   utm_campaign: z.string().default('none'),
   utm_content: z.string().default('none'),
   utm_term: z.string().default('none'),
+  // Cloudflare Turnstile token
+  'cf-turnstile-response': z.string().min(1, 'CAPTCHA verification required'),
 });
 export type ContactApiData = z.infer<typeof contactApiSchema>;

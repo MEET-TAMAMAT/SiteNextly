@@ -26,6 +26,37 @@ export async function POST(request: NextRequest) {
     // Use validated data (type-safe and cleaned)
     const validatedData = validation.data
 
+    // Verify Cloudflare Turnstile token
+    const turnstileToken = validatedData['cf-turnstile-response']
+
+    if (!process.env.TURNSTILE_SECRET_KEY) {
+      console.error('TURNSTILE_SECRET_KEY not configured')
+      return NextResponse.json(
+        { error: 'CAPTCHA verification not configured' },
+        { status: 500 }
+      )
+    }
+
+    const formData = new FormData()
+    formData.append('secret', process.env.TURNSTILE_SECRET_KEY)
+    formData.append('response', turnstileToken)
+    formData.append('remoteip', request.ip || request.headers.get('x-forwarded-for') || 'unknown')
+
+    const turnstileVerification = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      body: formData,
+    })
+
+    const turnstileResult = await turnstileVerification.json()
+
+    if (!turnstileResult.success) {
+      console.error('Turnstile verification failed:', turnstileResult)
+      return NextResponse.json(
+        { error: 'CAPTCHA verification failed' },
+        { status: 400 }
+      )
+    }
+
     // Transform website URL - add https:// if it's just a domain
     let transformedWebsite = validatedData.website?.trim() || '';
     if (transformedWebsite && !transformedWebsite.match(/^https?:\/\//i)) {

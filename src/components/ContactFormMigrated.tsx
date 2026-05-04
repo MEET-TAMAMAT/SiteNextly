@@ -14,6 +14,7 @@ import { ContactContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
 import { NotificationModal } from "./NotificationModal";
 import { contactFormSchema, ContactFormData } from "@/lib/validation/contact-form";
+import { Turnstile } from '@marsidev/react-turnstile';
 
 interface ZadarmaContactProps {
   contactData: ContactContent;
@@ -283,6 +284,7 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
   });
 
   const [isDark, setIsDark] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
 
   // UTM params (unchanged logic)
   const [utmParams, setUtmParams] = useState({
@@ -339,16 +341,27 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
   // Form submission with react-hook-form
   const onSubmit = async (data: ContactFormData) => {
     try {
+      // Verify CAPTCHA token
+      if (!turnstileToken) {
+        setModalState({
+          isOpen: true,
+          type: 'validation',
+          message: 'Please complete the CAPTCHA verification'
+        });
+        return;
+      }
+
       // Transform website URL - add https:// if it's just a domain
       let transformedWebsite = data.website?.trim() || '';
       if (transformedWebsite && !transformedWebsite.match(/^https?:\/\//i)) {
         transformedWebsite = `https://${transformedWebsite}`;
       }
 
-      // Combine form data with UTM params
+      // Combine form data with UTM params and CAPTCHA token
       const submitData = {
         ...data,
         website: transformedWebsite,
+        'cf-turnstile-response': turnstileToken,
         ...utmParams
       };
 
@@ -371,8 +384,9 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
         message: contactData.success_message
       });
 
-      // Reset form
+      // Reset form and CAPTCHA token
       reset();
+      setTurnstileToken('');
 
     } catch (err) {
       console.error('Form submission error:', err);
@@ -700,6 +714,20 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Cloudflare Turnstile CAPTCHA */}
+              <div className="flex justify-center">
+                <Turnstile
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onError={() => setTurnstileToken('')}
+                  onExpire={() => setTurnstileToken('')}
+                  options={{
+                    theme: isDark ? 'dark' : 'light',
+                    retry: 'auto'
+                  }}
+                />
               </div>
 
               {/* Submit Button */}
