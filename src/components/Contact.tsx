@@ -679,31 +679,29 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
               {/* Conditional Fields Based on Selection */}
               <div className="space-y-6">
                   {/* School/Company Name - Only for School selection */}
-                  {fieldValues.status === 'company' && (
-                    <div>
-                      <input
-                        ref={companyRef}
-                        type="text"
-                        id="company"
-                        name="company"
-                        required
-                        {...getFieldStyle('company', fieldValues.company.trim() !== '', true)}
-                        onFocus={(e) => {
-                          setFocusedField('company');
-                          setFieldValues(prev => ({ ...prev, company: (e.target as HTMLInputElement).value }));
-                        }}
-                        onBlur={() => setFocusedField(null)}
-                        onChange={(e) => {
-                          setFieldValues(prev => ({ ...prev, company: e.target.value }));
-                          showValidation && setShowValidation(false);
-                        }}
-                        onInput={(e) => setFieldValues(prev => ({ ...prev, company: (e.target as HTMLInputElement).value }))}
-                        onInvalid={() => setShowValidation(true)}
-                        placeholder={contactData.company_field_placeholder}
-                        {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'company_field_placeholder') : {})}
-                      />
-                    </div>
-                  )}
+                  <div style={{ display: fieldValues.status === 'company' ? 'block' : 'none' }}>
+                    <input
+                      ref={companyRef}
+                      type="text"
+                      id="company"
+                      name="company"
+                      required={fieldValues.status === 'company'}
+                      {...getFieldStyle('company', fieldValues.company.trim() !== '', fieldValues.status === 'company')}
+                      onFocus={(e) => {
+                        setFocusedField('company');
+                        setFieldValues(prev => ({ ...prev, company: (e.target as HTMLInputElement).value }));
+                      }}
+                      onBlur={() => setFocusedField(null)}
+                      onChange={(e) => {
+                        setFieldValues(prev => ({ ...prev, company: e.target.value }));
+                        showValidation && setShowValidation(false);
+                      }}
+                      onInput={(e) => setFieldValues(prev => ({ ...prev, company: (e.target as HTMLInputElement).value }))}
+                      onInvalid={() => setShowValidation(true)}
+                      placeholder={contactData.company_field_placeholder}
+                      {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'company_field_placeholder') : {})}
+                    />
+                  </div>
 
                   {/* Contact Name - Always required */}
                   <div>

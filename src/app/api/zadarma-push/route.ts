@@ -240,16 +240,8 @@ export async function POST(request: NextRequest) {
 
     // ── School/Company Name ───────────────────────────────────────
     // Send company name as custom property for school leads (same pattern as messenger fields)
-    console.log('COMPANY_DEBUG_DETAILED:', {
-      company: company,
-      leadType: leadType,
-      condition: !!(company && leadType === 'company'),
-      customPropertyMap: customPropertyMap['company']
-    })
-
     if (company && leadType === 'company') {
       const fieldId = customPropertyMap['company']  // '12948'
-      console.log('ADDING_COMPANY_FIELD:', { fieldId, company })
       params[`lead[custom_properties][${fieldId}][id]`]    = fieldId
       params[`lead[custom_properties][${fieldId}][value]`] = company
     }
