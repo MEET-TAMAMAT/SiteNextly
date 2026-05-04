@@ -1,22 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { contactApiSchema, validateContactForm } from '@/lib/validation/contact-form'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const {
-      name, email, phone, company,
-      lead_type, messenger_type, messenger_handle,
-      country, website, message,
-      utm_source, utm_medium, utm_campaign, utm_content, utm_term
-    } = body
+    // Comprehensive server-side validation
+    const validation = contactApiSchema.safeParse(body)
 
-    if (!name || !email) {
+    if (!validation.success) {
+      const errorMessage = validation.error.issues.map(err =>
+        `${err.path.join('.')}: ${err.message}`
+      ).join(', ')
+
       return NextResponse.json(
-        { error: 'Name and email are required' },
+        {
+          error: 'Validation failed',
+          details: validation.error.format(),
+          message: errorMessage
+        },
         { status: 400 }
       )
     }
+
+    // Use validated data (type-safe and cleaned)
+    const validatedData = validation.data
+
+    // Transform website URL - add https:// if it's just a domain
+    let transformedWebsite = validatedData.website?.trim() || '';
+    if (transformedWebsite && !transformedWebsite.match(/^https?:\/\//i)) {
+      transformedWebsite = `https://${transformedWebsite}`;
+    }
+
+    const {
+      name, email, phone, company,
+      leadType, messengerType, messengerHandle,
+      country, message,
+      utm_source, utm_medium, utm_campaign, utm_content, utm_term
+    } = validatedData
+
+    const website = transformedWebsite;
 
     const directusRes = await fetch(
       `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/items/leads`,
@@ -33,9 +56,9 @@ export async function POST(request: NextRequest) {
           email,
           phone:            phone            || null,
           company:          company          || null,
-          lead_type:        lead_type        || null,
-          messenger_type:   messenger_type   || null,
-          messenger_handle: messenger_handle || null,
+          lead_type:        leadType         || null,
+          messenger_type:   messengerType    || null,
+          messenger_handle: messengerHandle  || null,
           country:          country          || null,
           website:          website          || null,
           message:          message          || null,

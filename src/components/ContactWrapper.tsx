@@ -1,5 +1,6 @@
 import { getContactContent } from "@/lib/directus";
 import { ZadarmaContactForm } from "./Contact";
+import { ZadarmaContactFormMigrated } from "./ContactFormMigrated";
 import { SectionTitle } from "./SectionTitle";
 import { ContactContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
@@ -47,7 +48,7 @@ export const Contact = async () => {
         title={contactData.main_title}
         {...getEditableAttributes('contact_section', contactData.id, 'main_title')}
       />
-      <ZadarmaContactForm contactData={contactData} isUsingDirectus={isUsingDirectus} />
+      <ZadarmaContactFormMigrated contactData={contactData} isUsingDirectus={isUsingDirectus} />
     </>
   );
 };
