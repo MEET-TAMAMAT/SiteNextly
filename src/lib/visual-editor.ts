@@ -18,9 +18,6 @@ export async function initVisualEditor() {
         console.log('Visual Editor: Content saved, refreshing page...');
         window.location.href = window.location.href;
       },
-      onError: (error) => {
-        console.error('Visual Editor error:', error);
-      },
     });
     console.log('Visual Editor initialized successfully');
   } catch (error) {
