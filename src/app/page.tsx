@@ -7,8 +7,8 @@ import { Pricing } from "@/components/Pricing";
 import { Faq } from "@/components/FaqWrapper";
 import { Contact } from "@/components/ContactWrapper";
 
-// Force dynamic rendering for Visual Editor
-export const revalidate = 0;
+// Force dynamic rendering for Visual Editor (temporarily removed for deployment)
+// export const revalidate = 0;
 
 
 export default function Home() {

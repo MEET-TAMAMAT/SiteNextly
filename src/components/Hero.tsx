@@ -8,8 +8,8 @@ import { getHomeContent, getImageUrl } from "@/lib/directus";
 import { HomeContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
 
-// Force dynamic rendering for Visual Editor
-export const revalidate = 0;
+// Force dynamic rendering for Visual Editor (temporarily removed for deployment)
+// export const revalidate = 0;
 
 export const Hero = async () => {
   // Server-side data fetching

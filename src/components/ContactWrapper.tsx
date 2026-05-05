@@ -5,8 +5,8 @@ import { SectionTitle } from "./SectionTitle";
 import { ContactContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
 
-// Force dynamic rendering for Visual Editor
-export const revalidate = 0;
+// Force dynamic rendering for Visual Editor (temporarily removed for deployment)
+// export const revalidate = 0;
 
 export const Contact = async () => {
   const contactContent = await getContactContent();
