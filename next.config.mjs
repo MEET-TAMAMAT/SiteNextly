@@ -30,11 +30,6 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  experimental: {
-    esmExternals: false,
-  },
-  output: 'standalone',
-  poweredByHeader: false,
   transpilePackages: ['@directus/sdk'],
 };
 
