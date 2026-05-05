@@ -5,6 +5,9 @@ import { SectionTitle } from "./SectionTitle";
 import { ContactContent } from "@/types";
 import { getEditableAttributes } from "@/lib/visual-editor";
 
+// Force dynamic rendering for Visual Editor
+export const revalidate = 0;
+
 export const Contact = async () => {
   const contactContent = await getContactContent();
 
@@ -13,7 +16,7 @@ export const Contact = async () => {
     status: "published",
     main_title: "Ways to Reach Us",
     contact_info_title: "Contact Information",
-    form_title: "Send Us a Message",
+    form_title: "Send Us a Message as a",
     email_address: "info@tamamat.com",
     email_label: "Email",
     telegram_handle: "@tamamatinfo",
@@ -29,8 +32,8 @@ export const Contact = async () => {
     // New Zadarma fields
     phone_field_placeholder: "Your phone in international format e.g. +380XXXXXXXXX",
     company_field_placeholder: "School/Company Name",
-    lead_status_teacher_label: "Teacher",
-    lead_status_school_label: "School",
+    lead_status_teacher_label: "Teacher/Person",
+    lead_status_school_label: "School/Company",
     messenger_dropdown_placeholder: "Specify your favorite messenger",
     messenger_field_placeholder: "Username or phone number associated with the messenger",
     country_field_placeholder: "Select Your Country (optional)",

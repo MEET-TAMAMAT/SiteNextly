@@ -513,7 +513,7 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
                 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 text-center"
                 {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'form_title') : {})}
               >
-                Send Us a Message as a...
+                {contactData.form_title}
               </h3>
 
               {/* Lead Type Radio Buttons */}
@@ -529,7 +529,8 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
                       }`}
                     />
                     <span
-                      className="ml-2 text-base font-medium text-gray-500 dark:text-gray-400"
+                      className="ml-2 text-base font-medium"
+                      style={{ color: "#3B82F6" }}
                       {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, option.value === 'person' ? 'lead_status_teacher_label' : 'lead_status_school_label') : {})}
                     >
                       {option.label}

@@ -4,14 +4,29 @@ let initialized = false;
 
 export async function initVisualEditor() {
   if (typeof window === 'undefined' || initialized) return;
+
+  // Only initialize if we're actually in Visual Editor mode
+  if (!isVisualEditorMode()) return;
+
   initialized = true;
 
-  await apply({
-    directusUrl: process.env.NEXT_PUBLIC_DIRECTUS_URL as string,
-    onSaved: () => {
-      window.location.reload();
-    },
-  });
+  try {
+    await apply({
+      directusUrl: process.env.NEXT_PUBLIC_DIRECTUS_URL as string,
+      onSaved: () => {
+        // Force a hard refresh to clear all caches
+        console.log('Visual Editor: Content saved, refreshing page...');
+        window.location.href = window.location.href;
+      },
+      onError: (error) => {
+        console.error('Visual Editor error:', error);
+      },
+    });
+    console.log('Visual Editor initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize Visual Editor:', error);
+    initialized = false;
+  }
 }
 
 export function destroyVisualEditor() {
