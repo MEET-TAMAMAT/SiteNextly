@@ -33,6 +33,8 @@ const nextConfig = {
   experimental: {
     esmExternals: false,
   },
+  output: 'standalone',
+  poweredByHeader: false,
   transpilePackages: ['@directus/sdk'],
 };
 
