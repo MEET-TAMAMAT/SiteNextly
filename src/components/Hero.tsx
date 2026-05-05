@@ -22,7 +22,7 @@ export const Hero = async () => {
     home_title: "Online Platform for Small Classes",
     home_description: "TAMAMAT is an online teaching platform designed for small groups and effective lesson management tools.",
     home_button: "Watch Video",
-    home_image: heroImg,
+    home_image: null,
     created_on: "",
     updated_on: ""
   };
