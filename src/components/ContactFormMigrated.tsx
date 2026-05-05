@@ -15,6 +15,7 @@ import { getEditableAttributes } from "@/lib/visual-editor";
 import { NotificationModal } from "./NotificationModal";
 import { contactFormSchema, ContactFormData } from "@/lib/validation/contact-form";
 import { Turnstile } from '@marsidev/react-turnstile';
+import { ZadarmaWidget } from './ZadarmaWidget';
 
 interface ZadarmaContactProps {
   contactData: ContactContent;
@@ -426,6 +427,9 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
             </h3>
 
             <div className="space-y-6">
+              {/* Zadarma Click to Call Widget */}
+              <ZadarmaWidget contactData={contactData} isUsingDirectus={isUsingDirectus} />
+
               {/* Email */}
               <div className="flex items-start space-x-4">
                 <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{backgroundColor: "#3B82F6"}}>

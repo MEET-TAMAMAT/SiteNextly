@@ -177,6 +177,9 @@ export interface ContactContent {
   website_field_placeholder: string;
   error_message: string;
   validation_missing_fields_message: string;
+  // Zadarma Call Widget fields
+  call_widget_title: string;
+  call_widget_description: string;
 }
 
 // Directus Footer Section Configuration

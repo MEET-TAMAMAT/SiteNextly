@@ -39,7 +39,10 @@ export const Contact = async () => {
     country_field_placeholder: "Select Your Country (optional)",
     website_field_placeholder: "Company or personal website (optional)",
     error_message: "Sorry, there was an error sending your message. Please try again.",
-    validation_missing_fields_message: "Please fill in all required fields before submitting."
+    validation_missing_fields_message: "Please fill in all required fields before submitting.",
+    // Zadarma Call Widget fields
+    call_widget_title: "Call us Now!",
+    call_widget_description: "Click the blue button to call us free from anywhere"
   };
 
   const contactData = contactContent || fallbackContactData;

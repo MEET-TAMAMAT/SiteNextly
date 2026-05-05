@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Uncial_Antiqua } from "next/font/google";
 import { Nunito } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import Script from "next/script";
 import "./globals.css";
 import "../styles/animations.css";
 
@@ -10,6 +11,7 @@ import { DirectusNavbar } from "@/components/DirectusNavbar-Legacy";
 import { Footer } from "@/components/FooterWrapper";
 import { BackToTop } from "@/components/BackToTop";
 import { VisualEditorProvider } from "@/components/VisualEditorProvider";
+import { ZadarmaScripts } from "@/components/ZadarmaScripts";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -48,6 +50,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="/zadarma-click-to-call/style.min.css" />
+        <script src="/zadarma-click-to-call/detectWebRTC.min.js"></script>
+        <script src="/zadarma-click-to-call/jssip.min.js"></script>
+        <script src="/zadarma-click-to-call/widget.min.js"></script>
+      </head>
       <body className={`${inter.className} ${uncialAntiqua.variable} ${nunito.variable}`}>
         <VisualEditorProvider>
           <ThemeProvider attribute="class" defaultTheme="light">
@@ -57,6 +65,7 @@ export default function RootLayout({
             <BackToTop />
           </ThemeProvider>
         </VisualEditorProvider>
+
       </body>
     </html>
   );
