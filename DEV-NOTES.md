@@ -100,3 +100,21 @@ DETERMIN THE ORIGIN OF THE CURRENT FOLDER IN GITHUB REPOSITORY
 git remote get-url origin
 git config --get remote.origin.url
 
+
+TO SATRT A SECURE HTTPS DEVELOPMENT SERVER ON PORT 3000:
+
+Method 1: 
+Using npm script (Recommended)
+npm run dev-https
+
+
+Method 2: Direct Next.js command
+next dev -p 3000 --experimental-https
+
+If port 3000 is in use, first stop existing process:
+PowerShell:
+
+Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+Then start the HTTPS server:
+
+npm run dev-https
