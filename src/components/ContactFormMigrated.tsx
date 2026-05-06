@@ -432,7 +432,7 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
 
               {/* Email */}
               <div className="flex items-start space-x-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{backgroundColor: "#3B82F6"}}>
+                <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{backgroundColor: "#f4a300"}}>
                   <EnvelopeIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -455,7 +455,7 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
 
               {/* Telegram */}
               <div className="flex items-start space-x-4">
-                <div className="flex items-center justify-center w-12 h-12 bg-blue-500 rounded-full flex-shrink-0">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{backgroundColor: "#a855f7"}}>
                   <ChatBubbleLeftRightIcon className="w-6 h-6 text-white" />
                 </div>
                 <div>
