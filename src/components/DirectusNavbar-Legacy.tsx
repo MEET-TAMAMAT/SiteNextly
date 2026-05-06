@@ -90,31 +90,44 @@ export const DirectusNavbar = () => {
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 10);
-      const sections = [
-        { name: 'Contact', element: document.getElementById('contact') },
-        { name: 'FAQ', element: document.getElementById('faq') },
-        { name: 'Pricing', element: document.getElementById('pricing') },
-        { name: 'Features', element: document.getElementById('features') },
-        { name: 'How it Works', element: document.getElementById('how-it-works') }
-      ];
-      const offset = 200;
-      let currentActive = 'Home';
-      for (const section of sections) {
-        if (section.element) {
-          const rect = section.element.getBoundingClientRect();
-          if (rect.top <= offset) {
-            currentActive = section.name;
-            break;
-          }
+    // Delay scroll handler to prevent initial layout interference
+    const timeoutId = setTimeout(() => {
+      let ticking = false;
+      const handleScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            const scrollTop = window.scrollY;
+            setIsScrolled(scrollTop > 10);
+            const sections = [
+              { name: 'Contact', element: document.getElementById('contact') },
+              { name: 'FAQ', element: document.getElementById('faq') },
+              { name: 'Pricing', element: document.getElementById('pricing') },
+              { name: 'Features', element: document.getElementById('features') },
+              { name: 'How it Works', element: document.getElementById('how-it-works') }
+            ];
+            const offset = 200;
+            let currentActive = 'Home';
+            for (const section of sections) {
+              if (section.element) {
+                const rect = section.element.getBoundingClientRect();
+                if (rect.top <= offset) {
+                  currentActive = section.name;
+                  break;
+                }
+              }
+            }
+            setActiveLink(currentActive);
+            ticking = false;
+          });
+          ticking = true;
         }
-      }
-      setActiveLink(currentActive);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+      };
+      window.addEventListener('scroll', handleScroll, { passive: true });
+
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Keep full navigation item objects (preserves id for visual editor)
@@ -198,12 +211,12 @@ export const DirectusNavbar = () => {
     <>
 
       {/* Floating Navigation Container */}
-      <div className="navbar-container fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100vw-32px)] max-w-7xl transition-all duration-400">
-        <nav className="navbar bg-white/80 dark:bg-black/10 backdrop-blur-[20px] border border-gray-200/50 dark:border-white/10 rounded-[50px] px-6 py-3 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-400 relative overflow-hidden">
+      <div className="navbar-container fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100vw-32px)] max-w-7xl">
+        <nav className="navbar bg-white/80 dark:bg-black/10 backdrop-blur-[20px] border border-gray-200/50 dark:border-white/10 rounded-[50px] px-6 py-3 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] relative overflow-hidden min-w-0">
           <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-800 group-hover:left-full"></div>
 
           {/* Logo Section */}
-          <Link href="/" className="flex items-center gap-3 text-gray-800 dark:text-white font-bold text-xl z-10 relative">
+          <Link href="/" className="flex items-center gap-3 text-gray-800 dark:text-white font-bold text-xl z-10 relative flex-shrink-0 min-w-0 max-w-[60%] lg:max-w-none">
             <Image
               src={getLogoSource()}
               width={logoWidth}
@@ -263,7 +276,7 @@ export const DirectusNavbar = () => {
           </ul>
 
           {/* Mobile Controls Group */}
-          <div className="lg:hidden flex items-center gap-3 flex-shrink-0">
+          <div className="lg:hidden flex items-center gap-3 flex-shrink-0 min-w-0 max-w-[40%]">
             {themeToggleEnabled && (
               <div className="text-gray-700 dark:text-white">
                 <ThemeChanger />
@@ -355,6 +368,36 @@ export const DirectusNavbar = () => {
       </div>
 
       <style jsx global>{`
+        /* Prevent horizontal overflow globally */
+        html, body {
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
+          width: 100% !important;
+        }
+        * {
+          box-sizing: border-box !important;
+        }
+
+        /* Ensure stable navbar positioning from initial render */
+        .navbar-container {
+          position: fixed !important;
+          top: 2rem !important;
+          left: 50% !important;
+          transform: translateX(-50%) translateZ(0) !important;
+          z-index: 50 !important;
+          width: calc(100vw - 2rem) !important;
+          max-width: 80rem !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        .navbar {
+          position: relative !important;
+          margin: 0 auto !important;
+          transform: translateZ(0) !important;
+          backface-visibility: hidden !important;
+          width: 100% !important;
+        }
         html.dark, html.dark body { background-color: #0f172a !important; color: #ffffff !important; }
         html:not(.dark), html:not(.dark) body { background-color: #ffffff !important; color: #1f2937 !important; }
         html.dark body { --tw-bg-opacity: 1; }
@@ -390,32 +433,26 @@ export const DirectusNavbar = () => {
         .navbar::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.8s ease; }
         .navbar:hover::before { left: 100%; }
         .navbar:hover { transform: translateY(-2px); box-shadow: 0 25px 50px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3); }
-        /* Ensure consistent centering across all screen sizes */
-        .navbar-container {
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          margin-left: 0 !important;
-          margin-right: 0 !important;
-        }
-
-
-        /* Fix initial load centering issue */
-        .navbar {
-          margin: 0 auto;
-          position: relative;
-        }
-
-        /* Clean mobile responsive rules */
+        /* Responsive width adjustments only */
         @media (max-width: 1024px) {
-          .fixed.top-8 {
-            top: 20px;
-            width: calc(100vw - 40px) !important;
+          .navbar-container {
+            top: 1.25rem !important;
+            width: calc(100vw - 2.5rem) !important;
           }
         }
         @media (max-width: 768px) {
-          .fixed.top-8 {
-            top: 15px;
-            width: calc(100vw - 32px) !important;
+          .navbar-container {
+            top: 1rem !important;
+            width: calc(100vw - 2rem) !important;
+          }
+          .navbar {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .navbar-container {
+            width: calc(100vw - 1.5rem) !important;
           }
           .navbar {
             padding-left: 0.75rem !important;
@@ -423,12 +460,12 @@ export const DirectusNavbar = () => {
           }
         }
         @media (max-width: 480px) {
-          .fixed.top-8 {
-            width: calc(100vw - 24px) !important;
+          .navbar-container {
+            width: calc(100vw - 1.25rem) !important;
           }
           .navbar {
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
+            padding-left: 0.625rem !important;
+            padding-right: 0.625rem !important;
           }
         }
       `}</style>
