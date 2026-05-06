@@ -263,7 +263,7 @@ export const DirectusNavbar = () => {
           </ul>
 
           {/* Mobile Controls Group */}
-          <div className="lg:hidden flex items-center gap-6">
+          <div className="lg:hidden flex items-center gap-4">
             {themeToggleEnabled && (
               <div className="text-gray-700 dark:text-white">
                 <ThemeChanger />
@@ -416,8 +416,8 @@ export const DirectusNavbar = () => {
             width: calc(100vw - 24px) !important;
           }
           .navbar {
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
           }
         }
         @media (max-width: 480px) {
