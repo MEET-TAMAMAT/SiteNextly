@@ -51,10 +51,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Zadarma widget styles */}
+        <link rel="preload" href="/zadarma-click-to-call/style.min.css" as="style" />
         <link rel="stylesheet" href="/zadarma-click-to-call/style.min.css" />
-        <script src="/zadarma-click-to-call/detectWebRTC.min.js"></script>
-        <script src="/zadarma-click-to-call/jssip.min.js"></script>
-        <script src="/zadarma-click-to-call/widget.min.js"></script>
       </head>
       <body className={`${inter.className} ${uncialAntiqua.variable} ${nunito.variable}`}>
         <VisualEditorProvider>
@@ -65,6 +64,23 @@ export default function RootLayout({
             <BackToTop />
           </ThemeProvider>
         </VisualEditorProvider>
+
+        {/* Zadarma Scripts - loaded after page content */}
+        <Script
+          src="/zadarma-click-to-call/detectWebRTC.min.js"
+          strategy="beforeInteractive"
+          id="zadarma-detectrtc"
+        />
+        <Script
+          src="/zadarma-click-to-call/jssip.min.js"
+          strategy="beforeInteractive"
+          id="zadarma-jssip"
+        />
+        <Script
+          src="/zadarma-click-to-call/widget.min.js"
+          strategy="afterInteractive"
+          id="zadarma-widget"
+        />
 
       </body>
     </html>
