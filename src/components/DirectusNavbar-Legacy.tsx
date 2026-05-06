@@ -263,7 +263,7 @@ export const DirectusNavbar = () => {
           </ul>
 
           {/* Mobile Controls Group */}
-          <div className="lg:hidden flex items-center gap-4 flex-shrink-0">
+          <div className="lg:hidden flex items-center gap-3 flex-shrink-0">
             {themeToggleEnabled && (
               <div className="text-gray-700 dark:text-white">
                 <ThemeChanger />
@@ -405,23 +405,17 @@ export const DirectusNavbar = () => {
           position: relative;
         }
 
-        /* Simple mobile overflow fix */
-        @media (max-width: 480px) {
-          .fixed.top-8 {
-            width: calc(100vw - 20px) !important;
-          }
-        }
-
+        /* Clean mobile responsive rules */
         @media (max-width: 1024px) {
           .fixed.top-8 {
             top: 20px;
-            width: calc(100vw - 32px) !important;
+            width: calc(100vw - 40px) !important;
           }
         }
         @media (max-width: 768px) {
           .fixed.top-8 {
             top: 15px;
-            width: calc(100vw - 24px) !important;
+            width: calc(100vw - 32px) !important;
           }
           .navbar {
             padding-left: 0.75rem !important;
@@ -430,11 +424,11 @@ export const DirectusNavbar = () => {
         }
         @media (max-width: 480px) {
           .fixed.top-8 {
-            width: calc(100vw - 16px) !important;
+            width: calc(100vw - 24px) !important;
           }
           .navbar {
-            padding-left: 0.75rem !important;
-            padding-right: 0.75rem !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
           }
         }
       `}</style>
