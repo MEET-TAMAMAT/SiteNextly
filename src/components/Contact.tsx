@@ -552,9 +552,14 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
             <div className="space-y-6">
               {/* Email */}
               <div className="flex items-start space-x-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{backgroundColor: "#f4a300"}}>
+                <Link
+                  href={`mailto:${contactData.email_address}`}
+                  className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
+                  style={{backgroundColor: "#f4a300"}}
+                  aria-label="Send email"
+                >
                   <EnvelopeIcon className="w-6 h-6 text-white" />
-                </div>
+                </Link>
                 <div>
                   <h4
                     className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1"
@@ -575,9 +580,16 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
 
               {/* Telegram */}
               <div className="flex items-start space-x-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0" style={{backgroundColor: "#a855f7"}}>
+                <Link
+                  href={`https://t.me/${contactData.telegram_handle.replace('@', '')}`}
+                  className="flex items-center justify-center w-12 h-12 rounded-full flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
+                  style={{backgroundColor: "#a855f7"}}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Open Telegram chat"
+                >
                   <ChatBubbleLeftRightIcon className="w-6 h-6 text-white" />
-                </div>
+                </Link>
                 <div>
                   <h4
                     className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-1"
