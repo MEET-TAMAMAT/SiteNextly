@@ -198,7 +198,7 @@ export const DirectusNavbar = () => {
     <>
 
       {/* Floating Navigation Container */}
-      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-60px)] container xl:px-8 transition-all duration-400">
+      <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-60px)] max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-400">
         <nav className="navbar bg-white/80 dark:bg-black/10 backdrop-blur-[20px] border border-gray-200/50 dark:border-white/10 rounded-[50px] px-6 py-3 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-400 relative overflow-hidden">
           <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-800 group-hover:left-full"></div>
 
@@ -390,8 +390,34 @@ export const DirectusNavbar = () => {
         .navbar::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transition: left 0.8s ease; }
         .navbar:hover::before { left: 100%; }
         .navbar:hover { transform: translateY(-2px); box-shadow: 0 25px 50px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3); }
-        @media (max-width: 1024px) { .fixed.top-8 { top: 20px; width: calc(100% - 30px); } }
-        @media (max-width: 768px) { .fixed.top-8 { top: 15px; width: calc(100% - 20px); } }
+        @media (max-width: 1024px) {
+          .fixed.top-8 {
+            top: 20px;
+            width: calc(100% - 32px) !important;
+            max-width: calc(100vw - 32px) !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .fixed.top-8 {
+            top: 15px;
+            width: calc(100% - 24px) !important;
+            max-width: calc(100vw - 24px) !important;
+          }
+          .navbar {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .fixed.top-8 {
+            width: calc(100% - 16px) !important;
+            max-width: calc(100vw - 16px) !important;
+          }
+          .navbar {
+            padding-left: 0.75rem !important;
+            padding-right: 0.75rem !important;
+          }
+        }
       `}</style>
     </>
   );
