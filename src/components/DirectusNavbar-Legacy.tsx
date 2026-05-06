@@ -198,8 +198,8 @@ export const DirectusNavbar = () => {
     <>
 
       {/* Floating Navigation Container */}
-      <div className={`navbar-container fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100vw-32px)] max-w-7xl transition-all duration-400 ${loading ? 'loading' : 'loaded'}`}>
-        <nav className="navbar bg-white/80 dark:bg-black/10 backdrop-blur-[20px] border border-gray-200/50 dark:border-white/10 rounded-[50px] px-6 py-3 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-400 relative overflow-hidden min-w-0">
+      <div className="navbar-container fixed top-8 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100vw-32px)] max-w-7xl transition-all duration-400">
+        <nav className="navbar bg-white/80 dark:bg-black/10 backdrop-blur-[20px] border border-gray-200/50 dark:border-white/10 rounded-[50px] px-6 py-3 flex items-center justify-between shadow-[0_20px_40px_rgba(0,0,0,0.1)] transition-all duration-400 relative overflow-hidden">
           <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-800 group-hover:left-full"></div>
 
           {/* Logo Section */}
@@ -398,40 +398,17 @@ export const DirectusNavbar = () => {
           margin-right: 0 !important;
         }
 
-        /* Handle loading states to prevent content shift */
-        .navbar-container.loading {
-          transition: none !important;
-        }
-
-        .navbar-container.loaded {
-          transition: all 0.4s ease !important;
-        }
 
         /* Fix initial load centering issue */
         .navbar {
           margin: 0 auto;
           position: relative;
-          min-width: 0;
-          max-width: 100%;
         }
 
-        /* Prevent overflow during content loading */
-        @media (max-width: 768px) {
-          .navbar {
-            min-width: 0 !important;
-            width: 100% !important;
-          }
-
-          /* Ensure logo doesn't cause overflow */
-          .navbar img {
-            max-width: 120px !important;
-            height: auto !important;
-          }
-
-          /* Mobile controls should never overflow */
-          .lg\\:hidden {
-            flex-shrink: 0 !important;
-            min-width: fit-content !important;
+        /* Simple mobile overflow fix */
+        @media (max-width: 480px) {
+          .fixed.top-8 {
+            width: calc(100vw - 20px) !important;
           }
         }
 
