@@ -235,7 +235,7 @@ export const DirectusNavbar = () => {
               <li className="ml-2">
                 <Link
                   href={loginButton.href}
-                  className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.3)] transition-all duration-300 hover:transform hover:translate-y-[-1px] hover:shadow-[0_10px_20px_rgba(59,130,246,0.4)] whitespace-nowrap"
+                  className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:transform hover:scale-105 transition-transform duration-200"
                   {...(headerConfig ? getEditableAttributes('header_config', headerConfig.id, 'login_button_text') : {})}
                 >
                   {loginButton.text}

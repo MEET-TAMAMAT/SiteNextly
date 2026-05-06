@@ -237,11 +237,10 @@ export function PopupWidget() {
                           </div>
                         )}
                       </div>
-                      <div className="mb-3">
+                      <div className="mb-3 flex justify-center">
                         <button
                           type="submit"
-                          className="w-full px-3 py-4 text-white rounded-md focus:opacity-90 focus:outline-none"
-                          style={{backgroundColor: "#3B82F6"}}
+                          className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-6 py-4 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:transform hover:scale-105 transition-transform duration-200 focus:outline-none"
                         >
                           {isSubmitting ? (
                             <svg

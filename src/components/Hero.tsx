@@ -15,12 +15,12 @@ export const Hero = async () => {
   // Server-side data fetching
   const homeContent = await getHomeContent();
 
-  // Fallback content if Directus is not available
+  // Fallback content if Directus is not available - UPDATED to match Directus content
   const fallbackHomeContent: HomeContent = {
     id: "fallback",
     status: "published",
-    home_title: "Online Platform for Small Classes",
-    home_description: "TAMAMAT is an online teaching platform designed for small groups and effective lesson management tools.",
+    home_title: "Online Teaching Platform for Small Classes",
+    home_description: "TAMAMAT is designed for Direct Method teaching and small group lessons of up to 8 students - perfect for language schools and beyond! Keep your students engaged with dynamic question-switching, ensuring active participation and focus. Our shortcut selection tools make managing group lessons effortless, interactive, and highly effective.",
     home_button: "Watch Video",
     home_image: null,
     created_on: "",
@@ -58,7 +58,7 @@ export const Hero = async () => {
               <div className="hero-buttons flex flex-row items-center justify-center">
                 <Link
                   href="#how-it-works"
-                  className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8Apx_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:transform hover:scale-105 transition-transform duration-200"
+                  className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-5 py-2.5 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:transform hover:scale-105 transition-transform duration-200"
                   {...(isUsingDirectus ? getEditableAttributes('tamamat_com_home', content.id, 'home_button') : {})}
                 >
                   {content.home_button}

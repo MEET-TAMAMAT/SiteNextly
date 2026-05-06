@@ -39,9 +39,13 @@ export const HowItWorks = () => {
     const loadContent = async () => {
       try {
         const data = await getHowItWorksContent();
-        setContent(data);
+        if (data) {
+          setContent(data);
+        }
       } catch (error) {
         console.error("Failed to load content:", error);
+        // Only set content to null if we truly failed, not on CORS errors
+        setContent(null);
       } finally {
         setLoading(false);
       }
@@ -50,14 +54,14 @@ export const HowItWorks = () => {
     loadContent();
   }, []);
 
-  // Fallback content if Directus fetch fails
+  // Fallback content if Directus fetch fails - UPDATED to match Directus content
   const fallbackContent = {
     id: 1,
     main_heading: "Teach Faster with Smart Shortcuts",
     manual_selection_title: "Manual Selection",
-    manual_selection_description: "- Students are automatically assigned keyboard numbers from [1] to [9]. The button [5] mutes/unmutes all\n\n- The teacher presses a student's number to unmute and highlight them\n\n- A student is ready to answer",
+    manual_selection_description: "- Students are assigned keyboard numbers from [ 1 ] to [ 9 ]\n\n- The button [ 5 ] mutes/unmutes all\n\n- The teacher presses a student's number to unmute and highlight them\n\n- A student is ready to answer",
     auto_selection_title: "Auto Selection",
-    auto_selection_description: "- Press [0] to randomly select a student\n\n- The system instantly chooses one participant, unmutes them, and highlights them on the screen\n\n- Each press generates a new random selection",
+    auto_selection_description: "- Press [ 0 ] to randomly select a student\n\n- The system instantly chooses one participant, unmutes them, and highlights them on the screen\n\n- Each press generates a new random selection",
     video_button_text: "Watch Video",
     main_illustration: null
   };

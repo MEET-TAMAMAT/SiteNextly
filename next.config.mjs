@@ -27,14 +27,6 @@ const nextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/directus/:path*',
-        destination: 'https://admin.tamamat.com/:path*',
-      },
-    ];
-  },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },

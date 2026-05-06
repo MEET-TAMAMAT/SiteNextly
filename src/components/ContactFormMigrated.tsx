@@ -748,15 +748,16 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
               </div>
 
               {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full px-6 py-3 text-white rounded-lg hover:opacity-90 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{backgroundColor: "#3B82F6"}}
-                {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'submit_button_text') : {})}
-              >
-                {isSubmitting ? 'Sending...' : (contactData.submit_button_text || 'Send Message')}
-              </button>
+              <div className="flex justify-center">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="bg-gradient-to-r from-[#3B82F6] to-[#2563EB] text-white px-8 py-3 rounded-[25px] font-semibold text-sm shadow-[0_8px_20px_rgba(59,130,246,0.4)] whitespace-nowrap inline-flex items-center hover:transform hover:scale-105 transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:scale-100"
+                  {...(contactData.id ? getEditableAttributes('contact_section', contactData.id, 'submit_button_text') : {})}
+                >
+                  {isSubmitting ? 'Sending...' : (contactData.submit_button_text || 'Send Message')}
+                </button>
+              </div>
 
               {/* Notification Modal */}
               <NotificationModal
