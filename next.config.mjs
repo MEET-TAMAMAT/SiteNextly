@@ -21,7 +21,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'self' https://admin.tamamat.com https://directus-production-d4f6.up.railway.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://api.zadarma.com; frame-src 'self' https://challenges.cloudflare.com; connect-src 'self' https: wss: https://challenges.cloudflare.com https://admin.tamamat.com https://directus-production-d4f6.up.railway.app https://api.zadarma.com wss://pbxfr1.zadarma.com:4443; style-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; img-src 'self' data: https:",
+            value: "frame-ancestors 'self' https://admin.tamamat.com https://directus-production-d4f6.up.railway.app",
           },
         ],
       },
