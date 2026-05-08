@@ -97,7 +97,7 @@ export const contactFormSchema = baseContactSchema
   .refine(
     (data) => {
       // Messenger handle validation only when messenger type is selected
-      if (data.messengerType && data.messengerType !== '') {
+      if (data.messengerType && data.messengerType.length > 0) {
         return data.messengerHandle && data.messengerHandle.trim().length >= 3;
       }
       return true;
