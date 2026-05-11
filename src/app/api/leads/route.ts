@@ -72,6 +72,30 @@ export async function POST(request: NextRequest) {
 
     const website = transformedWebsite;
 
+    // Check for duplicate phone number if phone is provided
+    let isDuplicate = false;
+    if (phone && phone.trim()) {
+      try {
+        const duplicateCheckRes = await fetch(
+          `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/items/leads?filter[phone][_eq]=${encodeURIComponent(phone.trim())}&fields=id&limit=1`,
+          {
+            headers: {
+              'Authorization': `Bearer ${process.env.DIRECTUS_TOKEN}`,
+            },
+            cache: 'no-store',
+          }
+        );
+
+        if (duplicateCheckRes.ok) {
+          const duplicateResult = await duplicateCheckRes.json();
+          isDuplicate = duplicateResult.data && duplicateResult.data.length > 0;
+        }
+      } catch (duplicateError) {
+        console.error('Error checking for duplicate phone:', duplicateError);
+        // Continue with normal flow even if duplicate check fails
+      }
+    }
+
     const directusRes = await fetch(
       `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/items/leads`,
       {
@@ -112,7 +136,11 @@ export async function POST(request: NextRequest) {
     }
 
     const lead = await directusRes.json()
-    return NextResponse.json({ success: true, id: lead.data.id })
+    return NextResponse.json({
+      success: true,
+      id: lead.data.id,
+      isDuplicate: isDuplicate
+    })
 
   } catch (error) {
     console.error('Lead submission error:', error)

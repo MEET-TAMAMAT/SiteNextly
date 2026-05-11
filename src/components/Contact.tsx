@@ -417,11 +417,16 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
 
       if (!res.ok) throw new Error(data.error || 'Submission failed');
 
-      // Show success modal instead of inline message
+      // Check if this is a duplicate submission
+      const message = data.isDuplicate
+        ? contactData.duplicate_submission_message || "Thank you! We already have your information and will review it again. We'll get back to you soon."
+        : contactData.success_message;
+
+      // Show success modal with appropriate message
       setModalState({
         isOpen: true,
         type: 'success',
-        message: contactData.success_message
+        message: message
       });
 
       // Reset form
