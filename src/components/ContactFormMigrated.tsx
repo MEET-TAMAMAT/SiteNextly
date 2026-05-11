@@ -278,10 +278,12 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
     isOpen: boolean;
     type: 'success' | 'error' | 'validation';
     message: string;
+    isDuplicate?: boolean;
   }>({
     isOpen: false,
     type: 'success',
-    message: ''
+    message: '',
+    isDuplicate: false
   });
 
   const [isDark, setIsDark] = useState(false);
@@ -347,7 +349,8 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
         setModalState({
           isOpen: true,
           type: 'validation',
-          message: 'Please complete the CAPTCHA verification'
+          message: 'Please complete the CAPTCHA verification',
+          isDuplicate: false
         });
         return;
       }
@@ -394,7 +397,8 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
       setModalState({
         isOpen: true,
         type: 'success',
-        message: message
+        message: message,
+        isDuplicate: result.isDuplicate || false
       });
 
       // Reset form and CAPTCHA token
@@ -406,7 +410,8 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
       setModalState({
         isOpen: true,
         type: 'error',
-        message: contactData.error_message
+        message: contactData.error_message,
+        isDuplicate: false
       });
     }
   };
@@ -776,8 +781,12 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
                 isOpen={modalState.isOpen}
                 type={modalState.type}
                 message={modalState.message}
-                autoCloseMs={modalState.type === 'success' ? 3000 : 0}
-                onClose={() => setModalState({ isOpen: false, type: 'success', message: '' })}
+                autoCloseMs={
+                  modalState.type === 'success'
+                    ? (modalState.isDuplicate ? 8000 : 3000)  // 8 seconds for duplicates, 3 seconds for regular success
+                    : 0
+                }
+                onClose={() => setModalState({ isOpen: false, type: 'success', message: '', isDuplicate: false })}
               />
             </form>
           </div>
