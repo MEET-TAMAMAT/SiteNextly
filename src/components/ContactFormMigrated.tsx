@@ -783,7 +783,7 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
                 message={modalState.message}
                 autoCloseMs={
                   modalState.type === 'success'
-                    ? (modalState.isDuplicate ? 8000 : 3000)  // 8 seconds for duplicates, 3 seconds for regular success
+                    ? (modalState.isDuplicate ? 8000 : 5000)  // 8 seconds for duplicates, 5 seconds for regular success
                     : 0
                 }
                 onClose={() => setModalState({ isOpen: false, type: 'success', message: '', isDuplicate: false })}
