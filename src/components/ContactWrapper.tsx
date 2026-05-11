@@ -40,6 +40,7 @@ export const Contact = async () => {
     website_field_placeholder: "Company or personal website (optional)",
     error_message: "Sorry, there was an error sending your message. Please try again.",
     validation_missing_fields_message: "Please fill in all required fields before submitting.",
+    duplicate_submission_message: "Thank you! We already have your information and will review it again. We'll get back to you soon.",
     // Zadarma Call Widget fields
     call_widget_title: "Call us Now!",
     call_widget_description: "Click the blue button to call us free from anywhere"
