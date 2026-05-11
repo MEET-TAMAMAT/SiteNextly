@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     // Check for duplicate phone number if phone is provided
     let isDuplicate = false;
-    let debugInfo = {};
+    let debugInfo: any = {};
     if (phone && phone.trim()) {
       try {
         const filterQuery = JSON.stringify({
