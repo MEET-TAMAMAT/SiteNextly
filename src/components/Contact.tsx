@@ -422,12 +422,6 @@ export const ZadarmaContactForm = ({ contactData, isUsingDirectus }: ZadarmaCont
         ? (contactData.duplicate_submission_message || "Thank you! We already have your information and will review it again. We'll get back to you soon.")
         : contactData.success_message;
 
-      console.log('🔍 Duplicate check:', {
-        isDuplicate: data.isDuplicate,
-        duplicateMessage: contactData.duplicate_submission_message,
-        finalMessage: message
-      });
-
       // Show success modal with appropriate message
       setModalState({
         isOpen: true,
