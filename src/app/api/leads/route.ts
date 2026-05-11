@@ -76,8 +76,12 @@ export async function POST(request: NextRequest) {
     let isDuplicate = false;
     if (phone && phone.trim()) {
       try {
+        const filterQuery = JSON.stringify({
+          phone: { _eq: phone.trim() }
+        });
+
         const duplicateCheckRes = await fetch(
-          `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/items/leads?filter[phone][_eq]=${encodeURIComponent(phone.trim())}&fields=id&limit=1`,
+          `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/items/leads?filter=${encodeURIComponent(filterQuery)}&fields=id&limit=1`,
           {
             headers: {
               'Authorization': `Bearer ${process.env.DIRECTUS_TOKEN}`,
