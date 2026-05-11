@@ -74,28 +74,43 @@ export async function POST(request: NextRequest) {
 
     // Check for duplicate phone number if phone is provided
     let isDuplicate = false;
+    let debugInfo = {};
     if (phone && phone.trim()) {
       try {
         const filterQuery = JSON.stringify({
           phone: { _eq: phone.trim() }
         });
 
-        const duplicateCheckRes = await fetch(
-          `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/items/leads?filter=${encodeURIComponent(filterQuery)}&fields=id&limit=1`,
-          {
-            headers: {
-              'Authorization': `Bearer ${process.env.DIRECTUS_TOKEN}`,
-            },
-            cache: 'no-store',
-          }
-        );
+        const queryUrl = `${process.env.NEXT_PUBLIC_DIRECTUS_URL}/items/leads?filter=${encodeURIComponent(filterQuery)}&fields=id&limit=1`;
+        console.log('🔍 Duplicate check URL:', queryUrl);
+        console.log('🔍 Checking phone:', phone.trim());
+
+        const duplicateCheckRes = await fetch(queryUrl, {
+          headers: {
+            'Authorization': `Bearer ${process.env.DIRECTUS_TOKEN}`,
+          },
+          cache: 'no-store',
+        });
+
+        console.log('🔍 Duplicate check response status:', duplicateCheckRes.status);
 
         if (duplicateCheckRes.ok) {
           const duplicateResult = await duplicateCheckRes.json();
+          console.log('🔍 Duplicate check result:', duplicateResult);
           isDuplicate = duplicateResult.data && duplicateResult.data.length > 0;
+          console.log('🔍 isDuplicate:', isDuplicate);
+
+          debugInfo = {
+            queryUrl,
+            phoneChecked: phone.trim(),
+            responseStatus: duplicateCheckRes.status,
+            duplicateResult,
+            isDuplicate
+          };
         }
       } catch (duplicateError) {
         console.error('Error checking for duplicate phone:', duplicateError);
+        debugInfo.error = duplicateError.message;
         // Continue with normal flow even if duplicate check fails
       }
     }
@@ -143,7 +158,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       id: lead.data.id,
-      isDuplicate: isDuplicate
+      isDuplicate: isDuplicate,
+      debug: debugInfo // Remove this after debugging
     })
 
   } catch (error) {
