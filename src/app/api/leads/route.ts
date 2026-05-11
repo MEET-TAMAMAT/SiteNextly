@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
         }
       } catch (duplicateError) {
         console.error('Error checking for duplicate phone:', duplicateError);
-        debugInfo.error = duplicateError.message;
+        debugInfo.error = duplicateError instanceof Error ? duplicateError.message : String(duplicateError);
         // Continue with normal flow even if duplicate check fails
       }
     }
