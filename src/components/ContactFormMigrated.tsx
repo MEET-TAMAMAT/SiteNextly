@@ -378,11 +378,23 @@ export const ZadarmaContactFormMigrated = ({ contactData, isUsingDirectus }: Zad
         throw new Error(result.message || 'Submission failed');
       }
 
-      // Show success modal
+      // Check if this is a duplicate submission
+      const message = result.isDuplicate
+        ? (contactData.duplicate_submission_message || "Thank you! We already have your information and will review it again. We'll get back to you soon.")
+        : contactData.success_message;
+
+      console.log('🔍 Duplicate check:', {
+        isDuplicate: result.isDuplicate,
+        duplicateMessage: contactData.duplicate_submission_message,
+        finalMessage: message,
+        fullResult: result
+      });
+
+      // Show success modal with appropriate message
       setModalState({
         isOpen: true,
         type: 'success',
-        message: contactData.success_message
+        message: message
       });
 
       // Reset form and CAPTCHA token
